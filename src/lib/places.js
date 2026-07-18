@@ -20,6 +20,16 @@ export const AGE_GROUPS = [
   { id: '11', label: '10–12', helper: 'bigger adventures' },
 ];
 
+export const TRENDING_TURKEY_SEARCHES = [
+  { label: 'İstanbul çocukla gezilecek yerler', location: 'Istanbul', category: 'all', insight: 'Google Suggest: İstanbul, Anadolu/Avrupa yakası ve ara tatil aramaları güçlü.' },
+  { label: 'Ankara çocukla gidilecek yerler', location: 'Ankara', category: 'all', insight: 'Google Suggest: Ankara hem “gidilecek” hem “gezilecek” varyantıyla çıkıyor.' },
+  { label: 'İzmir çocukla gezilecek yerler', location: 'Izmir', category: 'all', insight: 'Google Suggest: İzmir + çocuk gezisi ve kahvaltı niyeti görünüyor.' },
+  { label: 'Bursa çocukla gezilecek yerler', location: 'Bursa', category: 'all', insight: 'Google Suggest: Bursa şehir bazlı çocuk gezisi taleplerinde çıkıyor.' },
+  { label: 'Antalya çocukla gezilecek yerler', location: 'Antalya', category: 'all', insight: 'Google Suggest: Antalya çocukla gezi/tatil niyetinde yakalanıyor.' },
+  { label: 'Çocuk dostu kahvaltı mekanları', location: 'Istanbul', category: 'family-cafe', insight: 'Google Suggest: “çocuk dostu kahvaltı mekanları” ayrı bir para/rezervasyon niyeti.' },
+  { label: 'Kapalı alan / yağmurlu gün', location: 'Istanbul', category: 'indoor', insight: 'Ara tatil ve kapalı alan aramaları sezonluk SEO fırsatı.' },
+];
+
 const SUMMARY_BY_CATEGORY = {
   playground: 'High-energy play stop. Best when you need an easy win nearby.',
   park: 'Low-pressure outdoor option for walks, snacks and flexible play.',
@@ -55,7 +65,8 @@ function toUiPlace(place) {
     name: place.name,
     category: place.category,
     categoryLabel: categoryLabel(place.category),
-    distanceKm: typeof place.distanceKm === 'number' ? place.distanceKm : '—',
+    distanceKm: typeof place.distanceKm === 'number' ? place.distanceKm : null,
+    distanceLabel: typeof place.distanceKm === 'number' ? `${place.distanceKm} km` : 'City pick',
     score,
     lat: place.lat,
     lon: place.lon,

@@ -21,10 +21,40 @@ const SEEDS = Object.freeze({
     { name: 'American Museum of Natural History', category: 'museum', lat: 40.7813, lon: -73.9739, familyTags: ['rainy-day', 'toilets'] },
     { name: 'New York Aquarium', category: 'aquarium', lat: 40.5743, lon: -73.9757, familyTags: ['rainy-day', 'toilets'] },
   ],
+  ankara: [
+    { name: 'Anıtkabir ve Barış Parkı', category: 'attraction', lat: 39.925, lon: 32.8369, familyTags: ['free', 'stroller-friendly'] },
+    { name: 'MTA Şehit Cuma Dağ Tabiat Tarihi Müzesi', category: 'museum', lat: 39.8997, lon: 32.7739, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Eymir Gölü', category: 'park', lat: 39.8124, lon: 32.8284, familyTags: ['stroller-friendly', 'free'] },
+    { name: 'Harikalar Diyarı', category: 'park', lat: 39.9837, lon: 32.6182, familyTags: ['playground', 'free', 'toilets'] },
+  ],
+  izmir: [
+    { name: 'İzmir Doğal Yaşam Parkı', category: 'zoo', lat: 38.4948, lon: 26.9424, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Kültürpark', category: 'park', lat: 38.4326, lon: 27.1454, familyTags: ['free', 'stroller-friendly'] },
+    { name: 'Key Museum', category: 'museum', lat: 38.2038, lon: 27.323, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Sasalı Kent Ormanı', category: 'park', lat: 38.4979, lon: 26.9579, familyTags: ['free', 'outdoor seating'] },
+  ],
+  bursa: [
+    { name: 'Bursa Hayvanat Bahçesi', category: 'zoo', lat: 40.2114, lon: 29.0342, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Hüdavendigar Kent Parkı', category: 'park', lat: 40.2051, lon: 28.9992, familyTags: ['playground', 'free'] },
+    { name: 'Bursa Bilim ve Teknoloji Merkezi', category: 'museum', lat: 40.2522, lon: 29.0575, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Botanik Park', category: 'park', lat: 40.2085, lon: 29.0362, familyTags: ['stroller-friendly', 'free'] },
+  ],
+  antalya: [
+    { name: 'Antalya Aquarium', category: 'aquarium', lat: 36.8791, lon: 30.6588, familyTags: ['rainy-day', 'toilets', 'stroller-friendly'] },
+    { name: 'Karaalioğlu Parkı', category: 'park', lat: 36.8808, lon: 30.7085, familyTags: ['free', 'stroller-friendly'] },
+    { name: 'Aktur Park', category: 'attraction', lat: 36.8846, lon: 30.6636, familyTags: ['toilets'] },
+    { name: 'Oyuncak Müzesi', category: 'museum', lat: 36.8841, lon: 30.7041, familyTags: ['rainy-day'] },
+  ],
+  kapadokya: [
+    { name: 'Göreme Açık Hava Müzesi', category: 'museum', lat: 38.6401, lon: 34.8454, familyTags: ['toilets'] },
+    { name: 'Paşabağları', category: 'attraction', lat: 38.6786, lon: 34.8532, familyTags: ['outdoor seating'] },
+    { name: 'Zelve Açık Hava Müzesi', category: 'museum', lat: 38.6716, lon: 34.8636, familyTags: ['toilets'] },
+    { name: 'Avanos Kızılırmak Kenarı', category: 'park', lat: 38.715, lon: 34.8469, familyTags: ['free', 'stroller-friendly'] },
+  ],
 });
 
 export function normalizeCityKey(city = '') {
-  return String(city).trim().toLowerCase().replace(/\s+/g, '-').replace(/^nyc$/, 'new-york');
+  return String(city).trim().toLowerCase().replace(/ı/g, 'i').replace(/İ/g, 'i').replace(/\s+/g, '-').replace(/^nyc$/, 'new-york').replace(/^cappadocia$/, 'kapadokya');
 }
 
 export function getFallbackPlaces(city = 'istanbul', originOrFilters = {}, maybeFilters = {}) {

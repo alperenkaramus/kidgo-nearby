@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Baby, Compass, ExternalLink, Loader2, MapPin, Navigation, Search, Sparkles, Umbrella } from 'lucide-react';
-import { AGE_GROUPS, CATEGORIES, getDirectionsUrl, getMapUrl, searchPlaces } from './lib/places.js';
+import { Baby, Compass, ExternalLink, Loader2, MapPin, Navigation, Search, Sparkles, Telescope, TrendingUp, Umbrella } from 'lucide-react';
+import { AGE_GROUPS, CATEGORIES, TRENDING_TURKEY_SEARCHES, getDirectionsUrl, getMapUrl, searchPlaces } from './lib/places.js';
 import './styles.css';
 
 const radiusOptions = [2, 5, 10, 20];
@@ -9,14 +9,16 @@ function App() {
   const [location, setLocation] = useState('Istanbul');
   const [submittedLocation, setSubmittedLocation] = useState('Istanbul');
   const [coords, setCoords] = useState(null);
-  const [age, setAge] = useState('3-5');
+  const [age, setAge] = useState('4');
   const [category, setCategory] = useState('all');
   const [radiusKm, setRadiusKm] = useState(5);
   const [places, setPlaces] = useState([]);
   const [status, setStatus] = useState('idle');
-  const [notice, setNotice] = useState('Demo fallback covers Istanbul, London and New York while live geo APIs are wired.');
+  const [activeInsight, setActiveInsight] = useState('Turkey mode: Google autocomplete shows strong demand for İstanbul, Ankara, İzmir, Bursa, Antalya and child-friendly venue queries.');
+  const [notice, setNotice] = useState('Live OpenStreetMap is tried first; if a city is slow, Turkey-ready fallback picks keep the demo usable.');
 
   const selectedAge = useMemo(() => AGE_GROUPS.find((item) => item.id === age), [age]);
+  const selectedCategory = useMemo(() => CATEGORIES.find((item) => item.id === category), [category]);
 
   useEffect(() => {
     let cancelled = false;
@@ -29,12 +31,12 @@ function App() {
         setPlaces(results);
         setStatus(results.length ? 'success' : 'empty');
         setNotice(results.some((place) => place.source?.includes('fallback'))
-          ? 'Showing resilient fallback ideas; live Overpass/Nominatim can plug into the same interface.'
-          : 'Ranked by kid fit, category match, distance and family-friendly signals.');
+          ? 'Showing ranked fallback + open-map ready data. Live OSM may be slow, but the product flow stays usable.'
+          : 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.');
       } catch (error) {
         if (cancelled) return;
         setStatus('error');
-        setNotice(error instanceof Error ? error.message : 'Search failed. Showing no results.');
+        setNotice(error instanceof Error ? error.message : 'Search failed. Try a Turkey radar chip.');
       }
     }
 
@@ -48,6 +50,14 @@ function App() {
     event.preventDefault();
     setCoords(null);
     setSubmittedLocation(location.trim() || 'Istanbul');
+  }
+
+  function applyTrend(item) {
+    setLocation(item.location);
+    setSubmittedLocation(item.location);
+    setCoords(null);
+    setCategory(item.category);
+    setActiveInsight(item.insight);
   }
 
   function useCurrentLocation() {
@@ -66,43 +76,84 @@ function App() {
         setCoords(nextCoords);
         setSubmittedLocation('Current location');
         setLocation('Current location');
-        setNotice('Using browser location. If live API is offline, ranked demo places still appear.');
+        setActiveInsight('Current-location mode: this is the global product behavior — works beyond Turkey when live OSM responds.');
+        setNotice('Using browser location. If live OSM is slow, fallback mode still keeps the interface testable.');
       },
       () => {
         setStatus('error');
-        setNotice('Location permission was blocked or unavailable. Try a city name instead.');
+        setNotice('Location permission was blocked or unavailable. Try Istanbul, Ankara, Izmir, Bursa or Antalya.');
       },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
     );
   }
 
   const isLoading = status === 'loading';
+  const featured = places.slice(0, 3);
 
   return (
     <main className="app-shell">
-      <section className="hero-card">
-        <div className="eyebrow"><Sparkles size={16} /> Global family finder MVP</div>
-        <h1>What can we do nearby with the kids?</h1>
-        <p className="hero-copy">Find playgrounds, parks, museums, zoos and low-stress family stops ranked for age fit, distance and parent practicality.</p>
+      <section className="hero-grid">
+        <div className="hero-card">
+          <div className="eyebrow"><Sparkles size={16} /> Turkey search radar → global family geo app</div>
+          <h1>Çocukla yakınında nereye gidilir?</h1>
+          <p className="hero-copy">Google’da aranan çocuklu aile gezi niyetlerini canlı geo aramaya çeviren mobil karar motoru. Önce Türkiye’de güçlü aramaları yakala, sonra global “kids near me”e büyüt.</p>
 
-        <form className="search-panel" onSubmit={handleSubmit}>
-          <label htmlFor="location">Location</label>
-          <div className="location-row">
-            <div className="input-wrap">
-              <Search size={18} />
-              <input
-                id="location"
-                value={location}
-                onChange={(event) => setLocation(event.target.value)}
-                placeholder="Try Istanbul, London or New York"
-              />
+          <form className="search-panel" onSubmit={handleSubmit}>
+            <label htmlFor="location">City or current location</label>
+            <div className="location-row">
+              <div className="input-wrap">
+                <Search size={18} />
+                <input
+                  id="location"
+                  value={location}
+                  onChange={(event) => setLocation(event.target.value)}
+                  placeholder="Istanbul, Ankara, Izmir, London..."
+                />
+              </div>
+              <button className="primary-button" type="submit">Find places</button>
             </div>
-            <button className="primary-button" type="submit">Search</button>
+            <button className="ghost-button" type="button" onClick={useCurrentLocation}>
+              <Navigation size={17} /> Use current location
+            </button>
+          </form>
+        </div>
+
+        <aside className="map-art-card" aria-label="Product visual map">
+          <div className="orbit one">🛝</div>
+          <div className="orbit two">☔</div>
+          <div className="orbit three">🦁</div>
+          <div className="map-path" />
+          <div className="pin-card main-pin">
+            <span>Best now</span>
+            <strong>{featured[0]?.name || 'Family pick'}</strong>
+            <small>{featured[0]?.distanceLabel || 'City pick'} · {featured[0]?.score || 0} score</small>
           </div>
-          <button className="ghost-button" type="button" onClick={useCurrentLocation}>
-            <Navigation size={17} /> Use current location
-          </button>
-        </form>
+          <div className="mini-stack">
+            {featured.map((place, index) => (
+              <div className="mini-place" key={place.id}>
+                <b>#{index + 1}</b>
+                <span>{place.name}</span>
+              </div>
+            ))}
+          </div>
+        </aside>
+      </section>
+
+      <section className="trend-card">
+        <div className="section-heading">
+          <TrendingUp size={20} />
+          <div>
+            <h2>Turkey Google demand radar</h2>
+            <p>{activeInsight}</p>
+          </div>
+        </div>
+        <div className="trend-chips">
+          {TRENDING_TURKEY_SEARCHES.map((item) => (
+            <button key={item.label} type="button" onClick={() => applyTrend(item)}>
+              {item.label}
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="filter-card" aria-label="Search filters">
@@ -110,7 +161,7 @@ function App() {
           <Baby size={20} />
           <div>
             <h2>Kid profile</h2>
-            <p>{selectedAge?.helper}</p>
+            <p>{selectedAge?.helper} · {selectedCategory?.label}</p>
           </div>
         </div>
         <div className="segmented-grid age-grid">
@@ -161,7 +212,7 @@ function App() {
         <div className="results-heading">
           <div>
             <p className="kicker">{coords ? `${coords.lat}, ${coords.lon}` : submittedLocation}</p>
-            <h2>Best family picks nearby</h2>
+            <h2>Ranked family picks</h2>
           </div>
           <span className="result-count">{isLoading ? 'Searching…' : `${places.length} ideas`}</span>
         </div>
@@ -175,14 +226,15 @@ function App() {
           <div className="state-card">
             <Loader2 className="spin" size={28} />
             <h3>Finding kid-friendly options…</h3>
-            <p>Checking location, filters and fallback data.</p>
+            <p>Checking city, filters, live OSM and Turkey fallback ranking.</p>
           </div>
         )}
 
         {status === 'empty' && (
           <div className="state-card">
+            <Telescope size={28} />
             <h3>No exact matches yet</h3>
-            <p>Try a wider radius or switch to All categories. The fallback seed keeps the MVP usable while live POI search is connected.</p>
+            <p>Try a wider radius, All categories, or a Turkey radar chip.</p>
           </div>
         )}
 
@@ -190,21 +242,28 @@ function App() {
           <div className="cards-grid">
             {places.map((place, index) => (
               <article className="place-card" key={place.id}>
-                <div className="card-topline">
-                  <span className="rank">#{index + 1}</span>
-                  <span className="score">{place.score} family score</span>
+                <div className="image-panel">
+                  <span className="floating-rank">#{index + 1}</span>
+                  <span className="floating-score">{place.score}</span>
+                  <div className={`category-illustration ${place.category}`}>
+                    {CATEGORIES.find((item) => item.id === place.category)?.emoji || '✨'}
+                  </div>
                 </div>
-                <h3>{place.name}</h3>
-                <p className="summary">{place.summary}</p>
-                <div className="meta-row"><MapPin size={16} /> {place.distanceKm} km · {place.address}</div>
-                <div className="tag-row">
-                  <span className="category-tag">{place.categoryLabel}</span>
-                  {place.rainyDay && <span className="rain-tag">Rainy day</span>}
-                  {place.tags.map((tag) => <span key={tag}>{tag}</span>)}
-                </div>
-                <div className="card-actions">
-                  <a href={getMapUrl(place)} target="_blank" rel="noreferrer">Map <ExternalLink size={15} /></a>
-                  <a href={getDirectionsUrl(place)} target="_blank" rel="noreferrer">Directions <Navigation size={15} /></a>
+                <div className="place-body">
+                  <div className="card-topline">
+                    <span className="category-tag">{place.categoryLabel}</span>
+                    {place.rainyDay && <span className="rain-tag">Rainy day</span>}
+                  </div>
+                  <h3>{place.name}</h3>
+                  <p className="summary">{place.summary}</p>
+                  <div className="meta-row"><MapPin size={16} /> {place.distanceLabel} · {place.address}</div>
+                  <div className="tag-row">
+                    {place.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                  </div>
+                  <div className="card-actions">
+                    <a href={getMapUrl(place)} target="_blank" rel="noreferrer">Map <ExternalLink size={15} /></a>
+                    <a href={getDirectionsUrl(place)} target="_blank" rel="noreferrer">Directions <Navigation size={15} /></a>
+                  </div>
                 </div>
               </article>
             ))}
