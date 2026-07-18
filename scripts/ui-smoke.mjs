@@ -10,6 +10,7 @@ import {
   searchPlaces,
   getMapUrl,
   getDirectionsUrl,
+  getGoogleSearchUrl,
 } from '../src/lib/places.js';
 import { getFallbackPlaces } from '../src/lib/geodata/index.js';
 
@@ -40,12 +41,18 @@ const results = await searchPlaces({
 assert.ok(Array.isArray(results), 'searchPlaces returns an array');
 assert.ok(results.length > 0, 'any Turkey city search returns live or fallback places');
 assert.ok(results.every((place) => place.name && place.category && typeof place.score === 'number'), 'places include card data');
+assert.ok(results.every((place) => place.scoreParts && typeof place.scoreParts.familySignals === 'number'), 'places include score breakdown for deeper analysis');
 const fallbackResults = getFallbackPlaces('Diyarbakır');
 assert.ok(fallbackResults.some((place) => /diyarbak/i.test(place.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))), 'non-Istanbul Turkish city fallback is city-labeled');
 assert.ok(fallbackResults.every((place) => !/istanbul/i.test(place.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))), 'non-Istanbul fallback does not silently show Istanbul');
 assert.ok(results[0].score >= results.at(-1).score, 'places are ranked by family score');
 assert.match(getMapUrl(results[0]), /^https:\/\/www\.openstreetmap\.org\//, 'map link uses OSM');
 assert.match(getDirectionsUrl(results[0]), /^https:\/\/www\.google\.com\/maps\/dir\//, 'directions link uses Google Maps');
+assert.match(getGoogleSearchUrl(results[0]), /^https:\/\/www\.google\.com\/maps\/search\//, 'Google rating/search CTA opens Google Maps search');
+
+const istanbulRated = await searchPlaces({ location: 'Istanbul', age: '4', category: 'all', radiusKm: 20 });
+assert.ok(istanbulRated.some((place) => place.googleRating && place.googleReviewCount), 'curated major-city fallback cards include Google ratings/review counts');
+assert.ok(istanbulRated.some((place) => place.evidence?.length), 'cards include recommendation rationale');
 
 const globalResults = await searchPlaces({ location: 'Berlin', age: '7', category: 'all', radiusKm: 10 });
 assert.ok(globalResults.length > 0, 'non-Turkey country city fallback/search returns places');

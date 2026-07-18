@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Baby, Compass, ExternalLink, Globe2, Loader2, MapPin, Navigation, Search, Sparkles, Telescope, TrendingUp, Umbrella } from 'lucide-react';
-import { AGE_GROUPS, CATEGORIES, COUNTRIES, DEFAULT_COUNTRY, DEFAULT_LANGUAGE, LANGUAGES, TRENDING_TURKEY_SEARCHES, TURKEY_CITIES, getDirectionsUrl, getMapUrl, searchPlaces } from './lib/places.js';
+import { AGE_GROUPS, CATEGORIES, COUNTRIES, DEFAULT_COUNTRY, DEFAULT_LANGUAGE, LANGUAGES, TRENDING_TURKEY_SEARCHES, TURKEY_CITIES, getDirectionsUrl, getGoogleSearchUrl, getMapUrl, searchPlaces } from './lib/places.js';
 import './styles.css';
 
 const radiusOptions = [2, 5, 10, 20];
@@ -17,23 +17,23 @@ const COPY = {
     noticeLive: 'Canlı OpenStreetMap sonuçları çocuk uyumu, mesafe ve aile sinyallerine göre sıralandı.',
     noticeFallback: 'Şehir bazlı fallback + açık harita hazır veri gösteriliyor. Canlı OSM yavaş olsa bile ürün akışı bozulmuyor.',
     noticeGeoNo: 'Tarayıcı konumu yok; şehir araması aktif kalıyor.', noticeGeoUse: 'Mevcut konum kullanılıyor. Canlı OSM yavaşsa fallback mod arayüzü test edilebilir tutar.',
-    noticeGeoErr: 'Konum izni kapalı veya alınamadı. Bir Türkiye şehri seç.', emptyTitle: 'Net eşleşme yok', emptyBody: 'Yarıçapı büyüt, Tümü seç veya 81 şehir modundan bir şehir dene.', loadingTitle: 'Çocuk dostu yerler aranıyor…', loadingBody: 'Şehir, filtreler, canlı OSM ve Türkiye fallback sıralaması kontrol ediliyor.', map: 'Harita', directions: 'Yol tarifi', rainy: 'Kapalı alan',
+    noticeGeoErr: 'Konum izni kapalı veya alınamadı. Bir Türkiye şehri seç.', emptyTitle: 'Net eşleşme yok', emptyBody: 'Yarıçapı büyüt, Tümü seç veya 81 şehir modundan bir şehir dene.', loadingTitle: 'Çocuk dostu yerler aranıyor…', loadingBody: 'Şehir, filtreler, canlı OSM ve Türkiye fallback sıralaması kontrol ediliyor.', map: 'Harita', directions: 'Yol tarifi', google: 'Google', rainy: 'Kapalı alan', whyPick: 'Neden önerildi', confidence: 'Güven', scoreMix: 'Skor kırılımı',
   },
   en: {
     eyebrow: 'Turkey search radar → global family geo app', title: 'Where can we go nearby with kids?', hero: 'A mobile decision engine that turns family search demand into live geo discovery. Works across all Turkish cities and is ready for global growth with English, Russian and German UI.',
     language: 'Language', country: 'Country', countryHelp: 'Turkey keeps the 81-city mode; other countries use global city picks.', locationLabel: 'City or current location', placeholder: 'Istanbul, Ankara, Izmir, London...', search: 'Find places', current: 'Use current location',
     bestNow: 'Best now', cityPick: 'City pick', score: 'score', demandTitle: 'Turkey Google demand radar', allCitiesTitle: 'Country & city', allCitiesHelp: 'Turkey has full 81-city coverage; other countries use global starter cities. Live OSM is tried first, then a city-aware fallback keeps the app usable.', citiesDefault: 'Pick a city', filtersTitle: 'Kid profile', radius: 'Search radius', resultsTitle: 'Ranked family picks', searching: 'Searching…', ideas: 'ideas',
-    noticeLive: 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.', noticeFallback: 'Showing city-ready fallback + open-map data. The product flow stays usable when live OSM is slow.', noticeGeoNo: 'Browser geolocation is unavailable; city search stays active.', noticeGeoUse: 'Using current location. If live OSM is slow, fallback mode keeps the UI testable.', noticeGeoErr: 'Location permission was blocked or unavailable. Pick a city.', emptyTitle: 'No exact matches yet', emptyBody: 'Try a wider radius, All categories, or the 81-city mode.', loadingTitle: 'Finding kid-friendly options…', loadingBody: 'Checking city, filters, live OSM and Turkey fallback ranking.', map: 'Map', directions: 'Directions', rainy: 'Rainy day',
+    noticeLive: 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.', noticeFallback: 'Showing city-ready fallback + open-map data. The product flow stays usable when live OSM is slow.', noticeGeoNo: 'Browser geolocation is unavailable; city search stays active.', noticeGeoUse: 'Using current location. If live OSM is slow, fallback mode keeps the UI testable.', noticeGeoErr: 'Location permission was blocked or unavailable. Pick a city.', emptyTitle: 'No exact matches yet', emptyBody: 'Try a wider radius, All categories, or the 81-city mode.', loadingTitle: 'Finding kid-friendly options…', loadingBody: 'Checking city, filters, live OSM and Turkey fallback ranking.', map: 'Map', directions: 'Directions', google: 'Google', rainy: 'Rainy day', whyPick: 'Why this pick', confidence: 'Confidence', scoreMix: 'Score mix',
   },
   ru: {
     eyebrow: 'Радар поиска Турции → глобальное семейное geo-приложение', title: 'Куда пойти рядом с детьми?', hero: 'Мобильный сервис, который превращает семейные поисковые запросы в гео-рекомендации. Работает по всем городам Турции и готов к росту на английском, русском и немецком.',
     language: 'Язык', country: 'Страна', countryHelp: 'Для Турции доступен режим 81 города; другие страны используют глобальные подборки городов.', locationLabel: 'Город или текущее место', placeholder: 'Istanbul, Ankara, Izmir, London...', search: 'Найти места', current: 'Моя геолокация', bestNow: 'Лучшее сейчас', cityPick: 'Выбор города', score: 'балл', demandTitle: 'Google-спрос по Турции', allCitiesTitle: 'Страна и город', allCitiesHelp: 'Турция покрывает 81 город; другие страны используют стартовые глобальные города. Сначала пробуем OSM, затем городской fallback.', citiesDefault: 'Выберите город', filtersTitle: 'Профиль ребёнка', radius: 'Радиус поиска', resultsTitle: 'Семейные места по рейтингу', searching: 'Поиск…', ideas: 'идеи',
-    noticeLive: 'Результаты OpenStreetMap ранжированы по возрасту, расстоянию и семейным сигналам.', noticeFallback: 'Показан городской fallback + открытые карты; интерфейс работает даже при медленном OSM.', noticeGeoNo: 'Геолокация недоступна; используйте поиск по городу.', noticeGeoUse: 'Используется текущее местоположение. При медленном OSM включится fallback.', noticeGeoErr: 'Доступ к геолокации закрыт. Выберите город.', emptyTitle: 'Точных совпадений нет', emptyBody: 'Увеличьте радиус, выберите Все или город из списка.', loadingTitle: 'Ищем места для детей…', loadingBody: 'Проверяем город, фильтры, OSM и fallback.', map: 'Карта', directions: 'Маршрут', rainy: 'В помещении',
+    noticeLive: 'Результаты OpenStreetMap ранжированы по возрасту, расстоянию и семейным сигналам.', noticeFallback: 'Показан городской fallback + открытые карты; интерфейс работает даже при медленном OSM.', noticeGeoNo: 'Геолокация недоступна; используйте поиск по городу.', noticeGeoUse: 'Используется текущее местоположение. При медленном OSM включится fallback.', noticeGeoErr: 'Доступ к геолокации закрыт. Выберите город.', emptyTitle: 'Точных совпадений нет', emptyBody: 'Увеличьте радиус, выберите Все или город из списка.', loadingTitle: 'Ищем места для детей…', loadingBody: 'Проверяем город, фильтры, OSM и fallback.', map: 'Карта', directions: 'Маршрут', google: 'Google', rainy: 'В помещении', whyPick: 'Почему выбрано', confidence: 'Надёжность', scoreMix: 'Состав оценки',
   },
   de: {
     eyebrow: 'Türkei-Suchradar → globale Familien-Geo-App', title: 'Wohin in der Nähe mit Kindern?', hero: 'Eine mobile Entscheidungs-App, die Familiensuchen in Geo-Empfehlungen verwandelt. Funktioniert in allen türkischen Städten und ist mit Englisch, Russisch und Deutsch global skalierbar.',
     language: 'Sprache', country: 'Land', countryHelp: 'Für die Türkei bleibt der 81-Städte-Modus aktiv; andere Länder nutzen globale Stadtvorschläge.', locationLabel: 'Stadt oder aktueller Standort', placeholder: 'Istanbul, Ankara, Izmir, London...', search: 'Orte finden', current: 'Aktuellen Standort nutzen', bestNow: 'Jetzt am besten', cityPick: 'Stadt-Tipp', score: 'Score', demandTitle: 'Google-Nachfrage Türkei', allCitiesTitle: 'Land und Stadt', allCitiesHelp: 'Die Türkei hat 81-Städte-Abdeckung; andere Länder nutzen globale Startstädte. Zuerst OSM, dann Stadt-Fallback.', citiesDefault: 'Stadt wählen', filtersTitle: 'Kinderprofil', radius: 'Suchradius', resultsTitle: 'Sortierte Familien-Tipps', searching: 'Suche…', ideas: 'Ideen',
-    noticeLive: 'Live-OpenStreetMap-Ergebnisse nach Kinderfit, Entfernung und Familiensignalen sortiert.', noticeFallback: 'Stadt-Fallback + offene Kartendaten werden angezeigt; der Flow bleibt auch bei langsamem OSM nutzbar.', noticeGeoNo: 'Browser-Geolocation nicht verfügbar; Stadtsuche bleibt aktiv.', noticeGeoUse: 'Aktueller Standort wird verwendet. Bei langsamem OSM bleibt der Fallback nutzbar.', noticeGeoErr: 'Standortzugriff blockiert. Bitte Stadt wählen.', emptyTitle: 'Noch keine genauen Treffer', emptyBody: 'Radius erweitern, Alle wählen oder eine Stadt nutzen.', loadingTitle: 'Kinderfreundliche Orte werden gesucht…', loadingBody: 'Stadt, Filter, OSM und Fallback werden geprüft.', map: 'Karte', directions: 'Route', rainy: 'Drinnen',
+    noticeLive: 'Live-OpenStreetMap-Ergebnisse nach Kinderfit, Entfernung und Familiensignalen sortiert.', noticeFallback: 'Stadt-Fallback + offene Kartendaten werden angezeigt; der Flow bleibt auch bei langsamem OSM nutzbar.', noticeGeoNo: 'Browser-Geolocation nicht verfügbar; Stadtsuche bleibt aktiv.', noticeGeoUse: 'Aktueller Standort wird verwendet. Bei langsamem OSM bleibt der Fallback nutzbar.', noticeGeoErr: 'Standortzugriff blockiert. Bitte Stadt wählen.', emptyTitle: 'Noch keine genauen Treffer', emptyBody: 'Radius erweitern, Alle wählen oder eine Stadt nutzen.', loadingTitle: 'Kinderfreundliche Orte werden gesucht…', loadingBody: 'Stadt, Filter, OSM und Fallback werden geprüft.', map: 'Karte', directions: 'Route', google: 'Google', rainy: 'Drinnen', whyPick: 'Warum dieser Tipp', confidence: 'Vertrauen', scoreMix: 'Score-Mix',
   },
 };
 
@@ -82,7 +82,7 @@ function App() {
         if (cancelled) return;
         setPlaces(results);
         setStatus(results.length ? 'success' : 'empty');
-        setNotice(results.some((place) => place.source?.includes('fallback')) ? t.noticeFallback : t.noticeLive);
+        setNotice(results.some((place) => place.source?.toLowerCase().includes('fallback') || place.source?.toLowerCase().includes('seed')) ? t.noticeFallback : t.noticeLive);
       } catch (error) {
         if (cancelled) return;
         setStatus('error');
@@ -191,7 +191,35 @@ function App() {
         {status === 'empty' && <div className="state-card"><Telescope size={28} /><h3>{t.emptyTitle}</h3><p>{t.emptyBody}</p></div>}
         {!isLoading && places.length > 0 && <div className="cards-grid">{places.map((place, index) => {
           const cat = CATEGORIES.find((item) => item.id === place.category);
-          return <article className="place-card" key={place.id}><div className="image-panel"><span className="floating-rank">#{index + 1}</span><span className="floating-score">{place.score}</span><div className={`category-illustration ${place.category}`}>{cat?.emoji || '✨'}</div></div><div className="place-body"><div className="card-topline"><span className="category-tag">{cat?.labels[lang] || place.categoryLabel}</span>{place.rainyDay && <span className="rain-tag">{t.rainy}</span>}</div><h3>{place.name}</h3><p className="summary">{CATEGORY_SUMMARIES[lang][place.category] || CATEGORY_SUMMARIES.en[place.category]}</p><div className="meta-row"><MapPin size={16} /> {place.distanceLabel} · {place.address}</div><div className="tag-row">{place.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><div className="card-actions"><a href={getMapUrl(place)} target="_blank" rel="noreferrer">{t.map} <ExternalLink size={15} /></a><a href={getDirectionsUrl(place)} target="_blank" rel="noreferrer">{t.directions} <Navigation size={15} /></a></div></div></article>;
+          const scoreParts = Object.entries(place.scoreParts || {}).filter(([, value]) => value > 0).slice(0, 4);
+          return (
+            <article className="place-card" key={place.id}>
+              <div className="image-panel">
+                <span className="floating-rank">#{index + 1}</span>
+                <span className="floating-score">{place.score}</span>
+                {place.googleRating && <span className="floating-google">★ {place.googleRating} <small>{place.googleReviewLabel}</small></span>}
+                <div className={`category-illustration ${place.category}`}>{cat?.emoji || '✨'}</div>
+              </div>
+              <div className="place-body">
+                <div className="card-topline"><span className="category-tag">{cat?.labels[lang] || place.categoryLabel}</span>{place.rainyDay && <span className="rain-tag">{t.rainy}</span>}</div>
+                <h3>{place.name}</h3>
+                <p className="summary">{CATEGORY_SUMMARIES[lang][place.category] || CATEGORY_SUMMARIES.en[place.category]}</p>
+                <div className="rating-row">
+                  <span>{place.googleRating ? `★ ${place.googleRating} Google` : 'Google rating pending'}</span>
+                  <span>{place.googleReviewLabel ? `${place.googleReviewLabel} reviews` : place.source}</span>
+                  <span>{t.confidence}: {place.confidence}</span>
+                </div>
+                <div className="meta-row"><MapPin size={16} /> {place.distanceLabel} · {place.address}</div>
+                <div className="evidence-box">
+                  <strong>{t.whyPick}</strong>
+                  <ul>{place.evidence.map((item) => <li key={item}>{item}</li>)}</ul>
+                  {scoreParts.length > 0 && <p>{t.scoreMix}: {scoreParts.map(([key, value]) => `${key} +${value}`).join(' · ')}</p>}
+                </div>
+                <div className="tag-row">{place.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                <div className="card-actions"><a href={getMapUrl(place)} target="_blank" rel="noreferrer">{t.map} <ExternalLink size={15} /></a><a href={getGoogleSearchUrl(place)} target="_blank" rel="noreferrer">{t.google} <ExternalLink size={15} /></a><a href={getDirectionsUrl(place)} target="_blank" rel="noreferrer">{t.directions} <Navigation size={15} /></a></div>
+              </div>
+            </article>
+          );
         })}</div>}
       </section>
     </main>

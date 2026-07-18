@@ -76,10 +76,35 @@ function prettyTags(place) {
   const extras = [];
   if (place.tags?.openingHours) extras.push('hours listed');
   if (place.tags?.website) extras.push('website');
+  if (place.googleRating) extras.push('google-rated');
   return [...tags, ...extras]
     .map((tag) => String(tag).replace(/-/g, ' '))
     .map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1))
-    .slice(0, 5);
+    .slice(0, 6);
+}
+
+function formatReviewCount(count) {
+  const reviews = Number(count);
+  if (!Number.isFinite(reviews) || reviews <= 0) return '';
+  if (reviews >= 1000) return `${Math.round(reviews / 100) / 10}k`;
+  return String(reviews);
+}
+
+function evidenceVerdict(place) {
+  const parts = place.scoreParts || {};
+  const lines = [];
+  if (place.googleRating) lines.push(`Google ${place.googleRating} (${formatReviewCount(place.googleReviewCount)} reviews)`);
+  if ((parts.familySignals || 0) >= 14) lines.push('strong family amenities');
+  if ((parts.distance || 0) >= 15) lines.push('nearby enough for a low-friction trip');
+  if ((parts.ageFit || 0) >= 5) lines.push('good age fit');
+  if (place.familyTags?.includes('rainy-day')) lines.push('works as an indoor backup');
+  return lines.slice(0, 3);
+}
+
+function confidenceLevel(place) {
+  if (place.googleRating && place.googleReviewCount >= 10000) return 'high';
+  if (place.googleRating || place.source === 'osm') return 'medium';
+  return 'starter';
 }
 
 function toUiPlace(place) {
@@ -98,7 +123,13 @@ function toUiPlace(place) {
     tags: prettyTags(place),
     rainyDay: place.familyTags?.includes('rainy-day') || place.category === 'indoor',
     summary: SUMMARY_BY_CATEGORY[place.category] || 'Family-friendly candidate ranked from open map signals.',
-    source: place.source === 'osm' ? 'Live OpenStreetMap' : 'fallback seed',
+    source: place.source === 'osm' ? 'Live OpenStreetMap' : (place.source === 'seed-google-rated' ? 'Curated + Google rating seed' : 'fallback seed'),
+    googleRating: place.googleRating || null,
+    googleReviewCount: place.googleReviewCount || null,
+    googleReviewLabel: formatReviewCount(place.googleReviewCount),
+    confidence: confidenceLevel(place),
+    scoreParts: place.scoreParts || {},
+    evidence: evidenceVerdict(place),
     mapsUrl: place.mapsUrl,
     directionsUrl: place.directionsUrl,
   };
@@ -132,4 +163,9 @@ export function getMapUrl(place) {
 
 export function getDirectionsUrl(place) {
   return place.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lon}`;
+}
+
+export function getGoogleSearchUrl(place) {
+  const query = encodeURIComponent(`${place.name} ${place.address || ''} Google Maps`);
+  return `https://www.google.com/maps/search/?api=1&query=${query}`;
 }

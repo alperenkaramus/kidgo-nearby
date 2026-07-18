@@ -35,6 +35,27 @@ function distanceScore(distanceM = 5000) {
   return 0;
 }
 
+export function ratingScore(place = {}) {
+  const rating = Number(place.googleRating ?? place.rating);
+  const reviews = Number(place.googleReviewCount ?? place.reviewCount ?? 0);
+  if (!Number.isFinite(rating) || rating <= 0) return 0;
+  const ratingBoost = Math.max(0, (rating - 3.8) * 14);
+  const reviewTrust = Math.min(10, Math.log10(Math.max(1, reviews)) * 3.2);
+  return Math.round(ratingBoost + reviewTrust);
+}
+
+export function evidenceBreakdown(place = {}, filters = {}) {
+  const wantedCategory = normalizeCategory(filters.category);
+  return {
+    category: CATEGORY_BASE[place.category] ?? 15,
+    categoryMatch: wantedCategory && wantedCategory === place.category ? 25 : 0,
+    familySignals: (place.familyTags || []).reduce((sum, tag) => sum + (TAG_WEIGHTS[tag] || 1), 0),
+    distance: distanceScore(place.distanceM),
+    ageFit: ageScore(place, filters.age),
+    google: ratingScore(place),
+  };
+}
+
 function ageScore(place, age) {
   if (!Number.isFinite(Number(age))) return 0;
   const years = Number(age);
@@ -46,18 +67,21 @@ function ageScore(place, age) {
 }
 
 export function scorePlace(place, filters = {}) {
-  const wantedCategory = normalizeCategory(filters.category);
-  const base = CATEGORY_BASE[place.category] ?? 15;
-  const categoryBoost = wantedCategory && wantedCategory === place.category ? 25 : 0;
-  const tagBoost = (place.familyTags || []).reduce((sum, tag) => sum + (TAG_WEIGHTS[tag] || 1), 0);
-  const score = base + categoryBoost + tagBoost + distanceScore(place.distanceM) + ageScore(place, filters.age);
-  return Math.max(0, Math.round(score));
+  const parts = evidenceBreakdown(place, filters);
+  const score = Object.values(parts).reduce((sum, value) => sum + value, 0);
+  return Math.max(0, Math.min(100, Math.round(score)));
 }
 
 export function rankPlaces(places = [], filters = {}) {
   return places
-    .map((place) => ({ ...place, familyScore: scorePlace(place, filters) }))
-    .sort((a, b) => b.familyScore - a.familyScore || (a.distanceM ?? Infinity) - (b.distanceM ?? Infinity) || a.name.localeCompare(b.name));
+    .map((place) => ({ ...place, scoreParts: evidenceBreakdown(place, filters), familyScore: scorePlace(place, filters) }))
+    .sort((a, b) =>
+      b.familyScore - a.familyScore
+      || (b.googleRating ?? 0) - (a.googleRating ?? 0)
+      || (b.googleReviewCount ?? 0) - (a.googleReviewCount ?? 0)
+      || (a.distanceM ?? Infinity) - (b.distanceM ?? Infinity)
+      || a.name.localeCompare(b.name)
+    );
 }
 
 export function filterPlacesByCategory(places = [], category) {

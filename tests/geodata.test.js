@@ -89,6 +89,8 @@ test('searchFamilyPlaces falls back to local seed data when fetch fails', async 
   });
 
   assert.ok(places.length > 0);
-  assert.equal(places[0].source, 'seed');
+  assert.equal(places[0].source, 'seed-google-rated');
+  assert.ok(places[0].googleRating > 0);
+  assert.ok(places[0].scoreParts.google > 0);
   assert.ok(places[0].familyScore >= places.at(-1).familyScore);
 });
