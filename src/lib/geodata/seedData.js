@@ -53,22 +53,46 @@ const SEEDS = Object.freeze({
   ],
 });
 
+function titleCaseCity(city = 'City') {
+  return String(city).replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function genericPlaces(cityKey, origin) {
+  const base = origin || { lat: 39.0, lon: 35.0 };
+  const city = titleCaseCity(cityKey);
+  return [
+    { name: `${city} çocuk dostu park`, category: 'park', lat: base.lat + 0.006, lon: base.lon + 0.006, familyTags: ['free', 'stroller-friendly'] },
+    { name: `${city} oyun alanı`, category: 'playground', lat: base.lat - 0.005, lon: base.lon + 0.004, familyTags: ['playground', 'free'] },
+    { name: `${city} müze / kapalı alan`, category: 'museum', lat: base.lat + 0.004, lon: base.lon - 0.006, familyTags: ['rainy-day', 'toilets'] },
+    { name: `${city} çocuk dostu kafe`, category: 'family-cafe', lat: base.lat - 0.004, lon: base.lon - 0.004, familyTags: ['rainy-day', 'high chairs'] },
+  ];
+}
+
 export function normalizeCityKey(city = '') {
-  return String(city).trim().toLowerCase().replace(/ı/g, 'i').replace(/İ/g, 'i').replace(/\s+/g, '-').replace(/^nyc$/, 'new-york').replace(/^cappadocia$/, 'kapadokya');
+  return String(city)
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ı/g, 'i')
+    .replace(/İ/g, 'i')
+    .replace(/\s+/g, '-')
+    .replace(/^nyc$/, 'new-york')
+    .replace(/^cappadocia$/, 'kapadokya');
 }
 
 export function getFallbackPlaces(city = 'istanbul', originOrFilters = {}, maybeFilters = {}) {
   const origin = originOrFilters?.lat ? originOrFilters : originOrFilters?.origin;
   const filters = originOrFilters?.lat ? maybeFilters : originOrFilters;
   const cityKey = normalizeCityKey(city);
-  const seedPlaces = SEEDS[cityKey] || SEEDS.istanbul;
+  const seedPlaces = SEEDS[cityKey] || genericPlaces(cityKey, origin);
   const enriched = seedPlaces.map((place, index) =>
     withDistanceAndUrls(
       {
         id: `seed/${cityKey}/${index + 1}`,
         ...place,
         tags: {},
-        source: 'seed',
+        source: SEEDS[cityKey] ? 'seed' : 'generic-city-seed',
       },
       origin,
     ),

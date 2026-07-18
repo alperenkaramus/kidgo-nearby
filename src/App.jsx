@@ -1,11 +1,54 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Baby, Compass, ExternalLink, Loader2, MapPin, Navigation, Search, Sparkles, Telescope, TrendingUp, Umbrella } from 'lucide-react';
-import { AGE_GROUPS, CATEGORIES, TRENDING_TURKEY_SEARCHES, getDirectionsUrl, getMapUrl, searchPlaces } from './lib/places.js';
+import { Baby, Compass, ExternalLink, Globe2, Loader2, MapPin, Navigation, Search, Sparkles, Telescope, TrendingUp, Umbrella } from 'lucide-react';
+import { AGE_GROUPS, CATEGORIES, LANGUAGES, TRENDING_TURKEY_SEARCHES, TURKEY_CITIES, getDirectionsUrl, getMapUrl, searchPlaces } from './lib/places.js';
 import './styles.css';
 
 const radiusOptions = [2, 5, 10, 20];
+const featuredCityNames = ['Istanbul', 'Ankara', 'Izmir', 'Bursa', 'Antalya', 'Muğla', 'Eskişehir', 'Gaziantep', 'Trabzon', 'Kayseri', 'Konya', 'Mersin'];
+
+const COPY = {
+  tr: {
+    eyebrow: 'Türkiye arama radarı → global aile geo app',
+    title: 'Çocukla yakınında nereye gidilir?',
+    hero: 'Google’da aranan çocuklu aile gezi niyetlerini canlı geo aramaya çeviren mobil karar motoru. Türkiye’nin 81 şehrinde çalışır; İngilizce, Rusça ve Almanca arayüzle global büyümeye hazır.',
+    language: 'Dil', locationLabel: 'Şehir veya mevcut konum', placeholder: 'Istanbul, Ankara, Izmir, London...', search: 'Yerleri bul', current: 'Mevcut konumu kullan',
+    bestNow: 'Şimdi en iyi', cityPick: 'Şehir önerisi', score: 'puan', demandTitle: 'Türkiye Google talep radarı', allCitiesTitle: '81 şehir modu', allCitiesHelp: 'Sadece İstanbul değil: şehir seç, canlı OSM denensin; olmazsa şehir bazlı fallback devreye girsin.',
+    filtersTitle: 'Çocuk profili', radius: 'Arama yarıçapı', resultsTitle: 'Sıralı aile önerileri', searching: 'Aranıyor…', ideas: 'öneri',
+    noticeLive: 'Canlı OpenStreetMap sonuçları çocuk uyumu, mesafe ve aile sinyallerine göre sıralandı.',
+    noticeFallback: 'Şehir bazlı fallback + açık harita hazır veri gösteriliyor. Canlı OSM yavaş olsa bile ürün akışı bozulmuyor.',
+    noticeGeoNo: 'Tarayıcı konumu yok; şehir araması aktif kalıyor.', noticeGeoUse: 'Mevcut konum kullanılıyor. Canlı OSM yavaşsa fallback mod arayüzü test edilebilir tutar.',
+    noticeGeoErr: 'Konum izni kapalı veya alınamadı. Bir Türkiye şehri seç.', emptyTitle: 'Net eşleşme yok', emptyBody: 'Yarıçapı büyüt, Tümü seç veya 81 şehir modundan bir şehir dene.', loadingTitle: 'Çocuk dostu yerler aranıyor…', loadingBody: 'Şehir, filtreler, canlı OSM ve Türkiye fallback sıralaması kontrol ediliyor.', map: 'Harita', directions: 'Yol tarifi', rainy: 'Kapalı alan',
+  },
+  en: {
+    eyebrow: 'Turkey search radar → global family geo app', title: 'Where can we go nearby with kids?', hero: 'A mobile decision engine that turns family search demand into live geo discovery. Works across all Turkish cities and is ready for global growth with English, Russian and German UI.',
+    language: 'Language', locationLabel: 'City or current location', placeholder: 'Istanbul, Ankara, Izmir, London...', search: 'Find places', current: 'Use current location',
+    bestNow: 'Best now', cityPick: 'City pick', score: 'score', demandTitle: 'Turkey Google demand radar', allCitiesTitle: '81-city mode', allCitiesHelp: 'Not only Istanbul: pick any Turkish city, try live OSM, then fall back to city-ready picks.', filtersTitle: 'Kid profile', radius: 'Search radius', resultsTitle: 'Ranked family picks', searching: 'Searching…', ideas: 'ideas',
+    noticeLive: 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.', noticeFallback: 'Showing city-ready fallback + open-map data. The product flow stays usable when live OSM is slow.', noticeGeoNo: 'Browser geolocation is unavailable; city search stays active.', noticeGeoUse: 'Using current location. If live OSM is slow, fallback mode keeps the UI testable.', noticeGeoErr: 'Location permission was blocked or unavailable. Pick a city.', emptyTitle: 'No exact matches yet', emptyBody: 'Try a wider radius, All categories, or the 81-city mode.', loadingTitle: 'Finding kid-friendly options…', loadingBody: 'Checking city, filters, live OSM and Turkey fallback ranking.', map: 'Map', directions: 'Directions', rainy: 'Rainy day',
+  },
+  ru: {
+    eyebrow: 'Радар поиска Турции → глобальное семейное geo-приложение', title: 'Куда пойти рядом с детьми?', hero: 'Мобильный сервис, который превращает семейные поисковые запросы в гео-рекомендации. Работает по всем городам Турции и готов к росту на английском, русском и немецком.',
+    language: 'Язык', locationLabel: 'Город или текущее место', placeholder: 'Istanbul, Ankara, Izmir, London...', search: 'Найти места', current: 'Моя геолокация', bestNow: 'Лучшее сейчас', cityPick: 'Выбор города', score: 'балл', demandTitle: 'Google-спрос по Турции', allCitiesTitle: 'Режим 81 города', allCitiesHelp: 'Не только Стамбул: выберите любой город Турции, сначала OSM, затем городской fallback.', filtersTitle: 'Профиль ребёнка', radius: 'Радиус поиска', resultsTitle: 'Семейные места по рейтингу', searching: 'Поиск…', ideas: 'идеи',
+    noticeLive: 'Результаты OpenStreetMap ранжированы по возрасту, расстоянию и семейным сигналам.', noticeFallback: 'Показан городской fallback + открытые карты; интерфейс работает даже при медленном OSM.', noticeGeoNo: 'Геолокация недоступна; используйте поиск по городу.', noticeGeoUse: 'Используется текущее местоположение. При медленном OSM включится fallback.', noticeGeoErr: 'Доступ к геолокации закрыт. Выберите город.', emptyTitle: 'Точных совпадений нет', emptyBody: 'Увеличьте радиус, выберите Все или город из списка.', loadingTitle: 'Ищем места для детей…', loadingBody: 'Проверяем город, фильтры, OSM и fallback.', map: 'Карта', directions: 'Маршрут', rainy: 'В помещении',
+  },
+  de: {
+    eyebrow: 'Türkei-Suchradar → globale Familien-Geo-App', title: 'Wohin in der Nähe mit Kindern?', hero: 'Eine mobile Entscheidungs-App, die Familiensuchen in Geo-Empfehlungen verwandelt. Funktioniert in allen türkischen Städten und ist mit Englisch, Russisch und Deutsch global skalierbar.',
+    language: 'Sprache', locationLabel: 'Stadt oder aktueller Standort', placeholder: 'Istanbul, Ankara, Izmir, London...', search: 'Orte finden', current: 'Aktuellen Standort nutzen', bestNow: 'Jetzt am besten', cityPick: 'Stadt-Tipp', score: 'Score', demandTitle: 'Google-Nachfrage Türkei', allCitiesTitle: '81-Städte-Modus', allCitiesHelp: 'Nicht nur Istanbul: Jede türkische Stadt wählen, zuerst OSM, dann Stadt-Fallback.', filtersTitle: 'Kinderprofil', radius: 'Suchradius', resultsTitle: 'Sortierte Familien-Tipps', searching: 'Suche…', ideas: 'Ideen',
+    noticeLive: 'Live-OpenStreetMap-Ergebnisse nach Kinderfit, Entfernung und Familiensignalen sortiert.', noticeFallback: 'Stadt-Fallback + offene Kartendaten werden angezeigt; der Flow bleibt auch bei langsamem OSM nutzbar.', noticeGeoNo: 'Browser-Geolocation nicht verfügbar; Stadtsuche bleibt aktiv.', noticeGeoUse: 'Aktueller Standort wird verwendet. Bei langsamem OSM bleibt der Fallback nutzbar.', noticeGeoErr: 'Standortzugriff blockiert. Bitte Stadt wählen.', emptyTitle: 'Noch keine genauen Treffer', emptyBody: 'Radius erweitern, Alle wählen oder eine Stadt nutzen.', loadingTitle: 'Kinderfreundliche Orte werden gesucht…', loadingBody: 'Stadt, Filter, OSM und Fallback werden geprüft.', map: 'Karte', directions: 'Route', rainy: 'Drinnen',
+  },
+};
+
+const CATEGORY_SUMMARIES = {
+  tr: { playground: 'Enerji atmalık oyun durağı. Yakında hızlı çözüm gerektiğinde iyi.', park: 'Yürüyüş, atıştırma ve esnek oyun için düşük stresli açık alan.', museum: 'Hava sıcak/yağmurluysa iyi keşif ve kapalı alan seçeneği.', zoo: 'Hayvan odaklı, çocuk ilgisi yüksek ve planı kolay gezi.', aquarium: 'Yağmurlu günler ve meraklı çocuklar için güvenilir kapalı deneyim.', library: 'Okuma, tuvalet ve sakin mola için düşük maliyetli reset noktası.', 'family-cafe': 'Ebeveyn kahvesi, atıştırma ve kısa mola için pratik seçenek.', restaurant: 'Aile sinyali güçlüyse yemek odaklı durak.', attraction: 'Çocukla denenebilir cazibe noktası; saatleri kontrol et.', indoor: 'Yağmurlu/sıcak günler için kapalı alan adayı.' },
+  en: {}, ru: {}, de: {}
+};
+CATEGORY_SUMMARIES.en = {
+  playground: 'High-energy play stop. Best when you need an easy win nearby.', park: 'Low-pressure outdoor option for walks, snacks and flexible play.', museum: 'Good discovery option when weather makes indoor time easier.', zoo: 'Animal-focused outing with strong kid appeal.', aquarium: 'Reliable indoor animal experience for curious kids.', library: 'Quiet, low-cost reset spot for reading and calmer time.', 'family-cafe': 'Parent-friendly snack/reset option.', restaurant: 'Food-first stop ranked when family signals look useful.', attraction: 'Kid-friendly attraction candidate; check opening hours.', indoor: 'Indoor/rainy-day candidate for backup plans.'
+};
+CATEGORY_SUMMARIES.ru = CATEGORY_SUMMARIES.en;
+CATEGORY_SUMMARIES.de = CATEGORY_SUMMARIES.en;
 
 function App() {
+  const [lang, setLang] = useState('tr');
   const [location, setLocation] = useState('Istanbul');
   const [submittedLocation, setSubmittedLocation] = useState('Istanbul');
   const [coords, setCoords] = useState(null);
@@ -14,15 +57,16 @@ function App() {
   const [radiusKm, setRadiusKm] = useState(5);
   const [places, setPlaces] = useState([]);
   const [status, setStatus] = useState('idle');
-  const [activeInsight, setActiveInsight] = useState('Turkey mode: Google autocomplete shows strong demand for İstanbul, Ankara, İzmir, Bursa, Antalya and child-friendly venue queries.');
-  const [notice, setNotice] = useState('Live OpenStreetMap is tried first; if a city is slow, Turkey-ready fallback picks keep the demo usable.');
+  const [activeTrendIndex, setActiveTrendIndex] = useState(0);
+  const [notice, setNotice] = useState(COPY.tr.noticeFallback);
 
+  const t = COPY[lang];
   const selectedAge = useMemo(() => AGE_GROUPS.find((item) => item.id === age), [age]);
   const selectedCategory = useMemo(() => CATEGORIES.find((item) => item.id === category), [category]);
+  const activeInsight = TRENDING_TURKEY_SEARCHES[activeTrendIndex]?.insight[lang] || TRENDING_TURKEY_SEARCHES[0].insight.en;
 
   useEffect(() => {
     let cancelled = false;
-
     async function runSearch() {
       setStatus('loading');
       try {
@@ -30,59 +74,36 @@ function App() {
         if (cancelled) return;
         setPlaces(results);
         setStatus(results.length ? 'success' : 'empty');
-        setNotice(results.some((place) => place.source?.includes('fallback'))
-          ? 'Showing ranked fallback + open-map ready data. Live OSM may be slow, but the product flow stays usable.'
-          : 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.');
+        setNotice(results.some((place) => place.source?.includes('fallback')) ? t.noticeFallback : t.noticeLive);
       } catch (error) {
         if (cancelled) return;
         setStatus('error');
-        setNotice(error instanceof Error ? error.message : 'Search failed. Try a Turkey radar chip.');
+        setNotice(error instanceof Error ? error.message : t.noticeGeoErr);
       }
     }
-
     runSearch();
-    return () => {
-      cancelled = true;
-    };
-  }, [age, category, coords, radiusKm, submittedLocation]);
+    return () => { cancelled = true; };
+  }, [age, category, coords, radiusKm, submittedLocation, t.noticeFallback, t.noticeLive, t.noticeGeoErr]);
 
   function handleSubmit(event) {
-    event.preventDefault();
-    setCoords(null);
-    setSubmittedLocation(location.trim() || 'Istanbul');
+    event.preventDefault(); setCoords(null); setSubmittedLocation(location.trim() || 'Istanbul');
   }
-
+  function pickCity(city) { setLocation(city); setSubmittedLocation(city); setCoords(null); }
   function applyTrend(item) {
-    setLocation(item.location);
-    setSubmittedLocation(item.location);
-    setCoords(null);
+    const index = TRENDING_TURKEY_SEARCHES.indexOf(item);
+    if (index >= 0) setActiveTrendIndex(index);
+    pickCity(item.location);
     setCategory(item.category);
-    setActiveInsight(item.insight);
   }
-
   function useCurrentLocation() {
-    if (!navigator.geolocation) {
-      setNotice('Browser geolocation is not available, so city search stays active.');
-      return;
-    }
-
+    if (!navigator.geolocation) { setNotice(t.noticeGeoNo); return; }
     setStatus('loading');
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const nextCoords = {
-          lat: Number(position.coords.latitude.toFixed(5)),
-          lon: Number(position.coords.longitude.toFixed(5)),
-        };
-        setCoords(nextCoords);
-        setSubmittedLocation('Current location');
-        setLocation('Current location');
-        setActiveInsight('Current-location mode: this is the global product behavior — works beyond Turkey when live OSM responds.');
-        setNotice('Using browser location. If live OSM is slow, fallback mode still keeps the interface testable.');
+        const nextCoords = { lat: Number(position.coords.latitude.toFixed(5)), lon: Number(position.coords.longitude.toFixed(5)) };
+        setCoords(nextCoords); setSubmittedLocation('Current location'); setLocation('Current location'); setNotice(t.noticeGeoUse);
       },
-      () => {
-        setStatus('error');
-        setNotice('Location permission was blocked or unavailable. Try Istanbul, Ankara, Izmir, Bursa or Antalya.');
-      },
+      () => { setStatus('error'); setNotice(t.noticeGeoErr); },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
     );
   }
@@ -92,183 +113,64 @@ function App() {
 
   return (
     <main className="app-shell">
+      <div className="topbar">
+        <div className="brand-mark"><Globe2 size={17} /> KidGo Nearby</div>
+        <div className="language-switcher" aria-label={t.language}>
+          {LANGUAGES.map((item) => <button key={item.id} className={item.id === lang ? 'active' : ''} onClick={() => setLang(item.id)}>{item.label}</button>)}
+        </div>
+      </div>
+
       <section className="hero-grid">
         <div className="hero-card">
-          <div className="eyebrow"><Sparkles size={16} /> Turkey search radar → global family geo app</div>
-          <h1>Çocukla yakınında nereye gidilir?</h1>
-          <p className="hero-copy">Google’da aranan çocuklu aile gezi niyetlerini canlı geo aramaya çeviren mobil karar motoru. Önce Türkiye’de güçlü aramaları yakala, sonra global “kids near me”e büyüt.</p>
-
+          <div className="eyebrow"><Sparkles size={16} /> {t.eyebrow}</div>
+          <h1>{t.title}</h1>
+          <p className="hero-copy">{t.hero}</p>
           <form className="search-panel" onSubmit={handleSubmit}>
-            <label htmlFor="location">City or current location</label>
+            <label htmlFor="location">{t.locationLabel}</label>
             <div className="location-row">
-              <div className="input-wrap">
-                <Search size={18} />
-                <input
-                  id="location"
-                  value={location}
-                  onChange={(event) => setLocation(event.target.value)}
-                  placeholder="Istanbul, Ankara, Izmir, London..."
-                />
-              </div>
-              <button className="primary-button" type="submit">Find places</button>
+              <div className="input-wrap"><Search size={18} /><input id="location" value={location} onChange={(event) => setLocation(event.target.value)} placeholder={t.placeholder} /></div>
+              <button className="primary-button" type="submit">{t.search}</button>
             </div>
-            <button className="ghost-button" type="button" onClick={useCurrentLocation}>
-              <Navigation size={17} /> Use current location
-            </button>
+            <button className="ghost-button" type="button" onClick={useCurrentLocation}><Navigation size={17} /> {t.current}</button>
           </form>
         </div>
-
         <aside className="map-art-card" aria-label="Product visual map">
-          <div className="orbit one">🛝</div>
-          <div className="orbit two">☔</div>
-          <div className="orbit three">🦁</div>
-          <div className="map-path" />
-          <div className="pin-card main-pin">
-            <span>Best now</span>
-            <strong>{featured[0]?.name || 'Family pick'}</strong>
-            <small>{featured[0]?.distanceLabel || 'City pick'} · {featured[0]?.score || 0} score</small>
-          </div>
-          <div className="mini-stack">
-            {featured.map((place, index) => (
-              <div className="mini-place" key={place.id}>
-                <b>#{index + 1}</b>
-                <span>{place.name}</span>
-              </div>
-            ))}
-          </div>
+          <div className="orbit one">🛝</div><div className="orbit two">☔</div><div className="orbit three">🦁</div><div className="map-path" />
+          <div className="pin-card main-pin"><span>{t.bestNow}</span><strong>{featured[0]?.name || t.cityPick}</strong><small>{featured[0]?.distanceLabel || t.cityPick} · {featured[0]?.score || 0} {t.score}</small></div>
+          <div className="mini-stack">{featured.map((place, index) => <div className="mini-place" key={place.id}><b>#{index + 1}</b><span>{place.name}</span></div>)}</div>
         </aside>
       </section>
 
       <section className="trend-card">
-        <div className="section-heading">
-          <TrendingUp size={20} />
-          <div>
-            <h2>Turkey Google demand radar</h2>
-            <p>{activeInsight}</p>
-          </div>
-        </div>
-        <div className="trend-chips">
-          {TRENDING_TURKEY_SEARCHES.map((item) => (
-            <button key={item.label} type="button" onClick={() => applyTrend(item)}>
-              {item.label}
-            </button>
-          ))}
-        </div>
+        <div className="section-heading"><TrendingUp size={20} /><div><h2>{t.demandTitle}</h2><p>{activeInsight}</p></div></div>
+        <div className="trend-chips">{TRENDING_TURKEY_SEARCHES.map((item) => <button key={item.location + item.category} type="button" onClick={() => applyTrend(item)}>{item.labels[lang] || item.labels.en}</button>)}</div>
+      </section>
+
+      <section className="cities-card">
+        <div className="section-heading"><MapPin size={20} /><div><h2>{t.allCitiesTitle}</h2><p>{t.allCitiesHelp}</p></div></div>
+        <select className="city-select" value={TURKEY_CITIES.includes(location) ? location : ''} onChange={(event) => pickCity(event.target.value)}>
+          <option value="">81 cities</option>{TURKEY_CITIES.map((city) => <option key={city} value={city}>{city}</option>)}
+        </select>
+        <div className="city-rail">{featuredCityNames.map((city) => <button key={city} type="button" onClick={() => pickCity(city)} className={submittedLocation === city ? 'active' : ''}>{city}</button>)}</div>
       </section>
 
       <section className="filter-card" aria-label="Search filters">
-        <div className="section-heading">
-          <Baby size={20} />
-          <div>
-            <h2>Kid profile</h2>
-            <p>{selectedAge?.helper} · {selectedCategory?.label}</p>
-          </div>
-        </div>
-        <div className="segmented-grid age-grid">
-          {AGE_GROUPS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={item.id === age ? 'segment active' : 'segment'}
-              onClick={() => setAge(item.id)}
-            >
-              <strong>{item.label}</strong>
-              <span>{item.helper}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="chips" aria-label="Categories">
-          {CATEGORIES.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={item.id === category ? 'chip active' : 'chip'}
-              onClick={() => setCategory(item.id)}
-            >
-              <span>{item.emoji}</span> {item.label}
-            </button>
-          ))}
-        </div>
-
-        <label className="radius-label" htmlFor="radius">Search radius: <strong>{radiusKm} km</strong></label>
-        <input
-          id="radius"
-          type="range"
-          min="2"
-          max="20"
-          step="1"
-          value={radiusKm}
-          onChange={(event) => setRadiusKm(Number(event.target.value))}
-        />
-        <div className="radius-pills">
-          {radiusOptions.map((radius) => (
-            <button key={radius} type="button" onClick={() => setRadiusKm(radius)} className={radius === radiusKm ? 'tiny active' : 'tiny'}>{radius} km</button>
-          ))}
-        </div>
+        <div className="section-heading"><Baby size={20} /><div><h2>{t.filtersTitle}</h2><p>{selectedAge?.helpers[lang]} · {selectedCategory?.labels[lang]}</p></div></div>
+        <div className="segmented-grid age-grid">{AGE_GROUPS.map((item) => <button key={item.id} type="button" className={item.id === age ? 'segment active' : 'segment'} onClick={() => setAge(item.id)}><strong>{item.label}</strong><span>{item.helpers[lang]}</span></button>)}</div>
+        <div className="chips" aria-label="Categories">{CATEGORIES.map((item) => <button key={item.id} type="button" className={item.id === category ? 'chip active' : 'chip'} onClick={() => setCategory(item.id)}><span>{item.emoji}</span> {item.labels[lang]}</button>)}</div>
+        <label className="radius-label" htmlFor="radius">{t.radius}: <strong>{radiusKm} km</strong></label><input id="radius" type="range" min="2" max="20" step="1" value={radiusKm} onChange={(event) => setRadiusKm(Number(event.target.value))} />
+        <div className="radius-pills">{radiusOptions.map((radius) => <button key={radius} type="button" onClick={() => setRadiusKm(radius)} className={radius === radiusKm ? 'tiny active' : 'tiny'}>{radius} km</button>)}</div>
       </section>
 
       <section className="results-section">
-        <div className="results-heading">
-          <div>
-            <p className="kicker">{coords ? `${coords.lat}, ${coords.lon}` : submittedLocation}</p>
-            <h2>Ranked family picks</h2>
-          </div>
-          <span className="result-count">{isLoading ? 'Searching…' : `${places.length} ideas`}</span>
-        </div>
-
-        <div className="notice" role={status === 'error' ? 'alert' : 'status'}>
-          {status === 'error' ? <Umbrella size={18} /> : <Compass size={18} />}
-          <span>{notice}</span>
-        </div>
-
-        {isLoading && (
-          <div className="state-card">
-            <Loader2 className="spin" size={28} />
-            <h3>Finding kid-friendly options…</h3>
-            <p>Checking city, filters, live OSM and Turkey fallback ranking.</p>
-          </div>
-        )}
-
-        {status === 'empty' && (
-          <div className="state-card">
-            <Telescope size={28} />
-            <h3>No exact matches yet</h3>
-            <p>Try a wider radius, All categories, or a Turkey radar chip.</p>
-          </div>
-        )}
-
-        {!isLoading && places.length > 0 && (
-          <div className="cards-grid">
-            {places.map((place, index) => (
-              <article className="place-card" key={place.id}>
-                <div className="image-panel">
-                  <span className="floating-rank">#{index + 1}</span>
-                  <span className="floating-score">{place.score}</span>
-                  <div className={`category-illustration ${place.category}`}>
-                    {CATEGORIES.find((item) => item.id === place.category)?.emoji || '✨'}
-                  </div>
-                </div>
-                <div className="place-body">
-                  <div className="card-topline">
-                    <span className="category-tag">{place.categoryLabel}</span>
-                    {place.rainyDay && <span className="rain-tag">Rainy day</span>}
-                  </div>
-                  <h3>{place.name}</h3>
-                  <p className="summary">{place.summary}</p>
-                  <div className="meta-row"><MapPin size={16} /> {place.distanceLabel} · {place.address}</div>
-                  <div className="tag-row">
-                    {place.tags.map((tag) => <span key={tag}>{tag}</span>)}
-                  </div>
-                  <div className="card-actions">
-                    <a href={getMapUrl(place)} target="_blank" rel="noreferrer">Map <ExternalLink size={15} /></a>
-                    <a href={getDirectionsUrl(place)} target="_blank" rel="noreferrer">Directions <Navigation size={15} /></a>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        <div className="results-heading"><div><p className="kicker">{coords ? `${coords.lat}, ${coords.lon}` : submittedLocation}</p><h2>{t.resultsTitle}</h2></div><span className="result-count">{isLoading ? t.searching : `${places.length} ${t.ideas}`}</span></div>
+        <div className="notice" role={status === 'error' ? 'alert' : 'status'}>{status === 'error' ? <Umbrella size={18} /> : <Compass size={18} />}<span>{notice}</span></div>
+        {isLoading && <div className="state-card"><Loader2 className="spin" size={28} /><h3>{t.loadingTitle}</h3><p>{t.loadingBody}</p></div>}
+        {status === 'empty' && <div className="state-card"><Telescope size={28} /><h3>{t.emptyTitle}</h3><p>{t.emptyBody}</p></div>}
+        {!isLoading && places.length > 0 && <div className="cards-grid">{places.map((place, index) => {
+          const cat = CATEGORIES.find((item) => item.id === place.category);
+          return <article className="place-card" key={place.id}><div className="image-panel"><span className="floating-rank">#{index + 1}</span><span className="floating-score">{place.score}</span><div className={`category-illustration ${place.category}`}>{cat?.emoji || '✨'}</div></div><div className="place-body"><div className="card-topline"><span className="category-tag">{cat?.labels[lang] || place.categoryLabel}</span>{place.rainyDay && <span className="rain-tag">{t.rainy}</span>}</div><h3>{place.name}</h3><p className="summary">{CATEGORY_SUMMARIES[lang][place.category] || CATEGORY_SUMMARIES.en[place.category]}</p><div className="meta-row"><MapPin size={16} /> {place.distanceLabel} · {place.address}</div><div className="tag-row">{place.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><div className="card-actions"><a href={getMapUrl(place)} target="_blank" rel="noreferrer">{t.map} <ExternalLink size={15} /></a><a href={getDirectionsUrl(place)} target="_blank" rel="noreferrer">{t.directions} <Navigation size={15} /></a></div></div></article>;
+        })}</div>}
       </section>
     </main>
   );
