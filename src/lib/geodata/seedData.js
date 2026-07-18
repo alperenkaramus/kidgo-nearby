@@ -45,6 +45,18 @@ const SEEDS = Object.freeze({
     { name: 'Aktur Park', category: 'attraction', lat: 36.8846, lon: 30.6636, familyTags: ['toilets'] },
     { name: 'Oyuncak Müzesi', category: 'museum', lat: 36.8841, lon: 30.7041, familyTags: ['rainy-day'] },
   ],
+  berlin: [
+    { name: 'FEZ-Berlin', category: 'attraction', lat: 52.458, lon: 13.542, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Tierpark Berlin', category: 'zoo', lat: 52.5005, lon: 13.5325, familyTags: ['stroller-friendly', 'toilets'] },
+    { name: 'Deutsches Technikmuseum', category: 'museum', lat: 52.4986, lon: 13.3777, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Volkspark Friedrichshain', category: 'park', lat: 52.5281, lon: 13.4316, familyTags: ['playground', 'free'] },
+  ],
+  moscow: [
+    { name: 'Moscow Zoo', category: 'zoo', lat: 55.7616, lon: 37.578, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Gorky Park', category: 'park', lat: 55.7298, lon: 37.601, familyTags: ['free', 'stroller-friendly'] },
+    { name: 'Darwin Museum', category: 'museum', lat: 55.6908, lon: 37.5626, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'KidZania Moscow', category: 'indoor', lat: 55.7518, lon: 37.5352, familyTags: ['rainy-day', 'toilets'] },
+  ],
   kapadokya: [
     { name: 'Göreme Açık Hava Müzesi', category: 'museum', lat: 38.6401, lon: 34.8454, familyTags: ['toilets'] },
     { name: 'Paşabağları', category: 'attraction', lat: 38.6786, lon: 34.8532, familyTags: ['outdoor seating'] },
