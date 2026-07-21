@@ -98,6 +98,69 @@ const SEEDS = Object.freeze({
     { name: 'S.E.A. Aquarium Singapore', category: 'aquarium', lat: 1.2588, lon: 103.8205, familyTags: ['rainy-day', 'toilets'] },
     { name: 'Jacob Ballas Children’s Garden', category: 'park', lat: 1.3239, lon: 103.8160, familyTags: ['playground', 'free'] },
   ],
+  'los-angeles': [
+    { name: 'Griffith Park', category: 'park', lat: 34.1366, lon: -118.2942, familyTags: ['free', 'stroller-friendly', 'playground'] },
+    { name: 'Natural History Museum of Los Angeles County', category: 'museum', lat: 34.0169, lon: -118.2888, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'California Science Center', category: 'museum', lat: 34.0162, lon: -118.2864, familyTags: ['rainy-day', 'toilets', 'free'] },
+    { name: 'Santa Monica Pier', category: 'attraction', lat: 34.0094, lon: -118.4973, familyTags: ['playground', 'toilets', 'outdoor seating'] },
+    { name: 'Los Angeles Zoo', category: 'zoo', lat: 34.1480, lon: -118.2849, familyTags: ['toilets', 'stroller-friendly'] },
+  ],
+  chicago: [
+    { name: 'Maggie Daley Park', category: 'playground', lat: 41.8827, lon: -87.6194, familyTags: ['playground', 'free', 'toilets'] },
+    { name: 'Lincoln Park Zoo', category: 'zoo', lat: 41.9211, lon: -87.6339, familyTags: ['free', 'stroller-friendly', 'toilets'] },
+    { name: 'Field Museum', category: 'museum', lat: 41.8663, lon: -87.6170, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Shedd Aquarium', category: 'aquarium', lat: 41.8676, lon: -87.6136, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Navy Pier', category: 'attraction', lat: 41.8917, lon: -87.6078, familyTags: ['toilets', 'outdoor seating'] },
+  ],
+  miami: [
+    { name: 'Miami Children’s Museum', category: 'museum', lat: 25.7849, lon: -80.1764, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Phillip and Patricia Frost Museum of Science', category: 'museum', lat: 25.7850, lon: -80.1870, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Zoo Miami', category: 'zoo', lat: 25.6110, lon: -80.3984, familyTags: ['stroller-friendly', 'toilets'] },
+    { name: 'Bayfront Park', category: 'park', lat: 25.7752, lon: -80.1860, familyTags: ['free', 'stroller-friendly'] },
+    { name: 'Jungle Island', category: 'attraction', lat: 25.7866, lon: -80.1747, familyTags: ['toilets'] },
+  ],
+  'san-francisco': [
+    { name: 'California Academy of Sciences', category: 'museum', lat: 37.7699, lon: -122.4661, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Exploratorium', category: 'museum', lat: 37.8014, lon: -122.3976, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Golden Gate Park Koret Children’s Quarter', category: 'playground', lat: 37.7682, lon: -122.4577, familyTags: ['playground', 'free'] },
+    { name: 'San Francisco Zoo', category: 'zoo', lat: 37.7331, lon: -122.5030, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Crissy Field', category: 'park', lat: 37.8036, lon: -122.4650, familyTags: ['free', 'stroller-friendly', 'outdoor seating'] },
+  ],
+  orlando: [
+    { name: 'Lake Eola Park', category: 'park', lat: 28.5436, lon: -81.3738, familyTags: ['free', 'stroller-friendly'] },
+    { name: 'Orlando Science Center', category: 'museum', lat: 28.5723, lon: -81.3689, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Crayola Experience Orlando', category: 'indoor', lat: 28.4451, lon: -81.3955, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Gatorland', category: 'attraction', lat: 28.3553, lon: -81.4039, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Harry P. Leu Gardens', category: 'park', lat: 28.5680, lon: -81.3550, familyTags: ['stroller-friendly', 'outdoor seating'] },
+  ],
+  boston: [
+    { name: 'Boston Children’s Museum', category: 'museum', lat: 42.3518, lon: -71.0496, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Museum of Science', category: 'museum', lat: 42.3677, lon: -71.0710, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Boston Common Frog Pond', category: 'playground', lat: 42.3551, lon: -71.0656, familyTags: ['playground', 'free'] },
+    { name: 'Franklin Park Zoo', category: 'zoo', lat: 42.3032, lon: -71.0869, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'New England Aquarium', category: 'aquarium', lat: 42.3592, lon: -71.0497, familyTags: ['rainy-day', 'toilets'] },
+  ],
+  'washington-dc': [
+    { name: 'National Air and Space Museum', category: 'museum', lat: 38.8882, lon: -77.0199, familyTags: ['rainy-day', 'free', 'toilets'] },
+    { name: 'National Museum of Natural History', category: 'museum', lat: 38.8913, lon: -77.0261, familyTags: ['rainy-day', 'free', 'toilets'] },
+    { name: 'Smithsonian National Zoo', category: 'zoo', lat: 38.9305, lon: -77.0559, familyTags: ['free', 'stroller-friendly', 'toilets'] },
+    { name: 'National Mall', category: 'park', lat: 38.8896, lon: -77.0230, familyTags: ['free', 'stroller-friendly'] },
+    { name: 'Yards Park', category: 'park', lat: 38.8736, lon: -77.0005, familyTags: ['playground', 'free', 'outdoor seating'] },
+  ],
+  seattle: [
+    { name: 'Seattle Children’s Museum', category: 'museum', lat: 47.6226, lon: -122.3515, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Pacific Science Center', category: 'museum', lat: 47.6198, lon: -122.3517, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Woodland Park Zoo', category: 'zoo', lat: 47.6685, lon: -122.3506, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Seattle Aquarium', category: 'aquarium', lat: 47.6074, lon: -122.3429, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Gas Works Park', category: 'park', lat: 47.6456, lon: -122.3344, familyTags: ['free', 'stroller-friendly'] },
+  ],
+  austin: [
+    { name: 'Thinkery', category: 'museum', lat: 30.2975, lon: -97.7043, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Zilker Metropolitan Park', category: 'park', lat: 30.2669, lon: -97.7729, familyTags: ['playground', 'free', 'stroller-friendly'] },
+    { name: 'Austin Nature & Science Center', category: 'museum', lat: 30.2722, lon: -97.7734, familyTags: ['free', 'toilets'] },
+    { name: 'Pease District Park', category: 'park', lat: 30.2819, lon: -97.7524, familyTags: ['playground', 'free'] },
+    { name: 'Bullock Texas State History Museum', category: 'museum', lat: 30.2803, lon: -97.7390, familyTags: ['rainy-day', 'toilets'] },
+  ],
   amsterdam: [
     { name: 'NEMO Science Museum', category: 'museum', lat: 52.3742, lon: 4.9123, familyTags: ['rainy-day', 'toilets'] },
     { name: 'Vondelpark', category: 'park', lat: 52.3579, lon: 4.8686, familyTags: ['playground', 'free', 'stroller-friendly'] },
@@ -223,3 +286,4 @@ export function getFallbackPlaces(city = 'istanbul', originOrFilters = {}, maybe
 }
 
 export const FALLBACK_CITIES = Object.keys(SEEDS);
+

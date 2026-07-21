@@ -8,22 +8,22 @@ const featuredCityNames = ['New York', 'London', 'Paris', 'Barcelona', 'Dubai', 
 
 const COPY = {
   tr: {
-    eyebrow: 'Yurtdışı aile geo adviser → daha fazla şehir, daha fazla seçenek',
-    title: 'Yurtdışında çocukla ne yapsak?',
-    hero: 'Global şehirlerde aileye uygun park, müze, indoor, akvaryum, kafe ve hızlı plan seçenekleri üreten geo adviser. Türkiye kapsamı duruyor ama ana odak artık yurtdışı şehir keşfi.',
+    eyebrow: 'KidGo Nearby · aileyle dışarı çıkma asistanı',
+    title: 'Çocukla gidilecek güzel yerleri 30 saniyede bul.',
+    hero: 'Şehir, yaş ve bugünkü moda göre park, oyun alanı, müze, akvaryum, indoor alternatif ve aile molalarını daha keyifli bir rota listesine çevirir.',
     language: 'Dil', country: 'Ülke', countryHelp: 'Öncelik yurtdışı şehirler; Türkiye 81 şehir modu ayrı kapsam olarak duruyor.', locationLabel: 'Şehir veya mevcut konum', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Yerleri bul', current: 'Mevcut konumu kullan',
-    bestNow: 'Şimdi en iyi', cityPick: 'Şehir önerisi', score: 'puan', demandTitle: 'Global aile şehir radarı', allCitiesTitle: 'Ülke ve şehir', allCitiesHelp: 'ABD, Avrupa, Körfez ve Asya şehirleri öncelikli. Şehir seçilince canlı OSM denenir; olmazsa şehir bazlı zengin fallback daha fazla öneri gösterir.', citiesDefault: 'Şehir seç',
+    bestNow: 'Bugünün seçimi', cityPick: 'Şehir önerisi', score: 'puan', demandTitle: 'Popüler aile planları', allCitiesTitle: 'Nereye gidiyorsunuz?', allCitiesHelp: 'Önce ülke ve şehir seç, sonra yaş ve ruh haline göre listeyi daralt. Başlangıçta gerçek popüler şehir verileri + güvenli fallback kullanılır.', citiesDefault: 'Şehir seç',
     filtersTitle: 'Çocuk profili', intentTitle: 'Bugünkü mod', radius: 'Arama yarıçapı', resultsTitle: 'Sıralı aile önerileri', searching: 'Aranıyor…', ideas: 'öneri',
     noticeLive: 'Canlı OpenStreetMap sonuçları çocuk uyumu, mesafe ve aile sinyallerine göre sıralandı.',
-    noticeFallback: 'Şehir bazlı fallback + açık harita hazır veri gösteriliyor. Canlı OSM yavaş olsa bile ürün akışı bozulmuyor.',
+    noticeFallback: 'Şu an düşük maliyetli launch modu: seçili şehir için curated/fallback öneriler gösteriliyor; Google Places ücretli çağrıları kapalı.',
     noticeGeoNo: 'Tarayıcı konumu yok; şehir araması aktif kalıyor.', noticeGeoUse: 'Mevcut konum kullanılıyor. Canlı OSM yavaşsa fallback mod arayüzü test edilebilir tutar.',
-    noticeGeoErr: 'Konum izni kapalı veya alınamadı. Bir yurtdışı şehir seç.', emptyTitle: 'Net eşleşme yok', emptyBody: 'Yarıçapı büyüt, Tümü seç veya başka bir global şehir dene.', loadingTitle: 'Çocuk dostu yerler aranıyor…', loadingBody: 'Şehir, filtreler, canlı OSM, Google Places ve global fallback sıralaması kontrol ediliyor.', map: 'Harita', directions: 'Yol tarifi', google: 'Google', rainy: 'Kapalı alan', whyPick: 'Neden önerildi', confidence: 'Güven', scoreMix: 'Skor kırılımı', liveGoogle: 'Canlı Google', openNow: 'Şu an açık',
+    noticeGeoErr: 'Konum izni kapalı veya alınamadı. Bir şehir seç.', emptyTitle: 'Net eşleşme yok', emptyBody: 'Tümü seç veya başka bir global şehir dene.', loadingTitle: 'Aile planı hazırlanıyor…', loadingBody: 'Şehir, yaş, mod ve kategori sinyallerine göre en uygun duraklar sıralanıyor.', map: 'Harita', directions: 'Yol tarifi', google: 'Google', rainy: 'Kapalı alan', whyPick: 'Neden önerildi', confidence: 'Güven', scoreMix: 'Skor', liveGoogle: 'Canlı Google', openNow: 'Şu an açık',
   },
   en: {
-    eyebrow: 'Global family geo adviser → more cities, more options', title: 'Where can we go nearby with kids?', hero: 'A global geo adviser for family trips: parks, museums, indoor backups, aquariums, cafés and quick plans across international cities. Turkey coverage stays, but the product now leads with abroad-first discovery.',
+    eyebrow: 'KidGo Nearby · family day-out assistant', title: 'Find better kid-friendly places in 30 seconds.', hero: 'Pick a city, age and mood. KidGo turns parks, playgrounds, museums, aquariums, indoor backups and snack stops into a clearer family plan.',
     language: 'Language', country: 'Country', countryHelp: 'International cities are prioritized; Turkey keeps a separate 81-city coverage mode.', locationLabel: 'City or current location', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Find places', current: 'Use current location',
-    bestNow: 'Best now', cityPick: 'City pick', score: 'score', demandTitle: 'Global family city radar', allCitiesTitle: 'Country & city', allCitiesHelp: 'US, Europe, Gulf and Asia cities are now first-class options. Live OSM is tried first, then richer city-aware fallback keeps more suggestions available.', citiesDefault: 'Pick a city', filtersTitle: 'Kid profile', intentTitle: 'Today’s mood', radius: 'Search radius', resultsTitle: 'Ranked family picks', searching: 'Searching…', ideas: 'ideas',
-    noticeLive: 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.', noticeFallback: 'Showing city-ready fallback + open-map data. The product flow stays usable when live OSM is slow.', noticeGeoNo: 'Browser geolocation is unavailable; city search stays active.', noticeGeoUse: 'Using current location. If live OSM is slow, fallback mode keeps the UI testable.', noticeGeoErr: 'Location permission was blocked or unavailable. Pick a city.', emptyTitle: 'No exact matches yet', emptyBody: 'Try a wider radius, All categories, or another global city.', loadingTitle: 'Finding kid-friendly options…', loadingBody: 'Checking city, filters, live OSM, Google Places and global fallback ranking.', map: 'Map', directions: 'Directions', google: 'Google', rainy: 'Rainy day', whyPick: 'Why this pick', confidence: 'Confidence', scoreMix: 'Score mix', liveGoogle: 'Live Google', openNow: 'Open now',
+    bestNow: 'Today’s pick', cityPick: 'City pick', score: 'score', demandTitle: 'Popular family plans', allCitiesTitle: 'Where are you going?', allCitiesHelp: 'Choose a country and city, then tune the list by age and mood. Launch mode uses curated popular-city data plus safe fallback.', citiesDefault: 'Pick a city', filtersTitle: 'Kid profile', intentTitle: 'Today’s mood', radius: 'Search radius', resultsTitle: 'Family picks ranked for today', searching: 'Planning…', ideas: 'ideas',
+    noticeLive: 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.', noticeFallback: 'Low-cost launch mode: curated/fallback city picks are shown; paid Google Places calls are off.', noticeGeoNo: 'Browser geolocation is unavailable; city search stays active.', noticeGeoUse: 'Using current location. If live OSM is slow, fallback mode keeps the UI testable.', noticeGeoErr: 'Location permission was blocked or unavailable. Pick a city.', emptyTitle: 'No exact matches yet', emptyBody: 'Try All categories or another global city.', loadingTitle: 'Preparing a family plan…', loadingBody: 'Ranking places by city, age, mood and category fit.', map: 'Map', directions: 'Directions', google: 'Google', rainy: 'Rainy day', whyPick: 'Why this pick', confidence: 'Confidence', scoreMix: 'Score', liveGoogle: 'Live Google', openNow: 'Open now',
   },
   ru: {
     eyebrow: 'Глобальный семейный geo-adviser → больше городов и вариантов', title: 'Куда пойти рядом с детьми?', hero: 'Мобильный сервис, который превращает семейные поисковые запросы в гео-рекомендации. Работает по всем городам Турции и готов к росту на английском, русском и немецком.',
@@ -133,7 +133,7 @@ function App() {
   return (
     <main className="app-shell">
       <div className="topbar">
-        <div className="brand-mark"><Globe2 size={17} /> Geo Adviser</div>
+        <div className="brand-mark"><Globe2 size={17} /> KidGo Nearby</div>
         <div className="language-switcher" aria-label={t.language}>
           {LANGUAGES.map((item) => <button key={item.id} className={item.id === lang ? 'active' : ''} onClick={() => setLang(item.id)}>{item.label}</button>)}
         </div>
