@@ -115,8 +115,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .category-illustration.zoo, .category-illustration.aquarium { background: linear-gradient(135deg, #e6fbff, #eaffe9); }
 .floating-rank, .floating-score, .floating-google { position: absolute; z-index: 2; top: 12px; border-radius: 999px; padding: 7px 9px; font-weight: 1000; background: rgba(255,255,255,.94); box-shadow: rgba(0,0,0,.08) 0 5px 14px; }
 .floating-rank { left: 12px; color: var(--accent); }
-.floating-score { right: 12px; color: var(--ink); }
-.floating-score::after { content: ' score'; color: var(--muted); font-size: .68rem; }
+.floating-score { right: 12px; color: var(--ink); display: inline-flex; align-items: baseline; gap: 4px; }
+.floating-score b { font: inherit; }
+.floating-score small { color: var(--muted); font-size: .68rem; }
 .floating-google { left: 12px; top: 50px; color: #684600; background: #fff8df; }
 .floating-google small { margin-left: 4px; color: #8a6a22; }
 .place-body { padding: 15px; }
