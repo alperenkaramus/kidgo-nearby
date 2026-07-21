@@ -95,11 +95,11 @@ function App() {
     return () => { cancelled = true; };
   }, [age, intent, category, coords, radiusKm, submittedLocation, t.noticeFallback, t.noticeLive, t.noticeGeoErr]);
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function submitSearch() {
     setCoords(null);
     setSubmittedLocation(location.trim() || selectedCountry.defaultCity || defaultCountry.defaultCity);
   }
+  function handleSubmit(event) { event.preventDefault(); submitSearch(); }
   function pickCity(city) { if (!city) return; setLocation(city); setSubmittedLocation(city); setCoords(null); }
   function changeCountry(nextCountryId) {
     const nextCountry = COUNTRIES.find((item) => item.id === nextCountryId) || COUNTRIES[0];
@@ -128,7 +128,6 @@ function App() {
   }
 
   const isLoading = status === 'loading';
-  const featured = places.slice(0, 3);
 
   return (
     <main className="app-shell">
@@ -139,54 +138,59 @@ function App() {
         </div>
       </div>
 
-      <section className="hero-grid">
-        <div className="hero-card">
+      <div className="mobile-action-dock" aria-label="Quick search action">
+        <span>{location || selectedCountry.defaultCity}</span>
+        <button type="button" onClick={submitSearch}>{t.search}</button>
+      </div>
+
+      <section className="planner-card">
+        <div className="planner-copy">
           <div className="eyebrow"><Sparkles size={16} /> {t.eyebrow}</div>
           <h1>{t.title}</h1>
           <p className="hero-copy">{t.hero}</p>
-          <form className="search-panel" onSubmit={handleSubmit}>
-            <label htmlFor="location">{t.locationLabel}</label>
-            <div className="location-row">
-              <div className="input-wrap"><Search size={18} /><input id="location" value={location} onChange={(event) => setLocation(event.target.value)} placeholder={t.placeholder} /></div>
-              <button className="primary-button" type="submit">{t.search}</button>
-            </div>
-            <button className="ghost-button" type="button" onClick={useCurrentLocation}><Navigation size={17} /> {t.current}</button>
-          </form>
         </div>
-        <aside className="map-art-card" aria-label="Product visual map">
-          <div className="orbit one">🛝</div><div className="orbit two">☔</div><div className="orbit three">🦁</div><div className="map-path" />
-          <div className="pin-card main-pin"><span>{t.bestNow}</span><strong>{featured[0]?.name || t.cityPick}</strong><small>{featured[0]?.distanceLabel || t.cityPick} · {featured[0]?.score || 0} {t.score}</small></div>
-          <div className="mini-stack">{featured.map((place, index) => <div className="mini-place" key={place.id}><b>#{index + 1}</b><span>{place.name}</span></div>)}</div>
-        </aside>
+        <form className="search-panel" onSubmit={handleSubmit}>
+          <label htmlFor="location">{t.locationLabel}</label>
+          <div className="input-wrap"><Search size={18} /><input id="location" value={location} onChange={(event) => setLocation(event.target.value)} placeholder={t.placeholder} /></div>
+          <div className="search-actions">
+            <button className="ghost-button" type="button" onClick={useCurrentLocation}><Navigation size={17} /> {t.current}</button>
+            <button className="primary-button" type="submit">{t.search}</button>
+          </div>
+        </form>
+      </section>
+
+      <section className="quick-layout">
+        <section className="cities-card">
+          <div className="section-heading"><MapPin size={20} /><div><h2>{t.allCitiesTitle}</h2><p>{t.allCitiesHelp}</p></div></div>
+          <div className="two-field-grid">
+            <div>
+              <label className="field-label" htmlFor="country">{t.country}</label>
+              <select id="country" className="city-select" value={country} onChange={(event) => changeCountry(event.target.value)}>
+                {COUNTRIES.map((item) => <option key={item.id} value={item.id}>{item.labels[lang] || item.labels.en}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="field-label" htmlFor="city-select">{selectedCountry.id === 'TR' ? t.allCitiesTitle : t.cityPick}</label>
+              <select id="city-select" className="city-select" value={countryCities.includes(location) ? location : ''} onChange={(event) => pickCity(event.target.value)}>
+                <option value="">{t.citiesDefault}</option>{countryCities.map((city) => <option key={city} value={city}>{city}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="city-rail">{(selectedCountry.id === 'TR' ? featuredCityNames : selectedCountry.cities).map((city) => <button key={city} type="button" onClick={() => pickCity(city)} className={submittedLocation === city ? 'active' : ''}>{city}</button>)}</div>
+        </section>
+
+        <section className="filter-card" aria-label="Search filters">
+          <div className="section-heading"><Baby size={20} /><div><h2>{t.filtersTitle}</h2><p>{selectedAge?.helpers[lang]} · {selectedIntent?.labels[lang]} · {selectedCategory?.labels[lang]}</p></div></div>
+          <div className="segmented-grid age-grid">{AGE_GROUPS.map((item) => <button key={item.id} type="button" className={item.id === age ? 'segment active' : 'segment'} onClick={() => setAge(item.id)}><strong>{item.label}</strong><span>{item.helpers[lang]}</span></button>)}</div>
+          <h3 className="subfilter-title">{t.intentTitle}</h3>
+          <div className="segmented-grid intent-grid">{INTENTS.map((item) => <button key={item.id} type="button" className={item.id === intent ? 'segment active' : 'segment'} onClick={() => setIntent(item.id)}><strong>{item.emoji} {item.labels[lang]}</strong><span>{item.helpers[lang]}</span></button>)}</div>
+          <div className="chips" aria-label="Categories">{CATEGORIES.map((item) => <button key={item.id} type="button" className={item.id === category ? 'chip active' : 'chip'} onClick={() => setCategory(item.id)}><span>{item.emoji}</span> {item.labels[lang]}</button>)}</div>
+        </section>
       </section>
 
       <section className="trend-card">
         <div className="section-heading"><TrendingUp size={20} /><div><h2>{t.demandTitle}</h2><p>{activeInsight}</p></div></div>
         <div className="trend-chips">{TRENDING_TURKEY_SEARCHES.map((item) => <button key={item.location + item.category} type="button" onClick={() => applyTrend(item)}>{item.labels[lang] || item.labels.en}</button>)}</div>
-      </section>
-
-      <section className="cities-card">
-        <div className="section-heading"><MapPin size={20} /><div><h2>{t.allCitiesTitle}</h2><p>{t.allCitiesHelp}</p></div></div>
-        <label className="field-label" htmlFor="country">{t.country}</label>
-        <select id="country" className="city-select" value={country} onChange={(event) => changeCountry(event.target.value)}>
-          {COUNTRIES.map((item) => <option key={item.id} value={item.id}>{item.labels[lang] || item.labels.en}</option>)}
-        </select>
-        <p className="select-help">{t.countryHelp}</p>
-        <label className="field-label" htmlFor="city-select">{selectedCountry.id === 'TR' ? t.allCitiesTitle : t.cityPick}</label>
-        <select id="city-select" className="city-select" value={countryCities.includes(location) ? location : ''} onChange={(event) => pickCity(event.target.value)}>
-          <option value="">{t.citiesDefault}</option>{countryCities.map((city) => <option key={city} value={city}>{city}</option>)}
-        </select>
-        <div className="city-rail">{(selectedCountry.id === 'TR' ? featuredCityNames : selectedCountry.cities).map((city) => <button key={city} type="button" onClick={() => pickCity(city)} className={submittedLocation === city ? 'active' : ''}>{city}</button>)}</div>
-      </section>
-
-      <section className="filter-card" aria-label="Search filters">
-        <div className="section-heading"><Baby size={20} /><div><h2>{t.filtersTitle}</h2><p>{selectedAge?.helpers[lang]} · {selectedIntent?.labels[lang]} · {selectedCategory?.labels[lang]}</p></div></div>
-        <div className="segmented-grid age-grid">{AGE_GROUPS.map((item) => <button key={item.id} type="button" className={item.id === age ? 'segment active' : 'segment'} onClick={() => setAge(item.id)}><strong>{item.label}</strong><span>{item.helpers[lang]}</span></button>)}</div>
-        <h3 className="subfilter-title">{t.intentTitle}</h3>
-        <div className="segmented-grid intent-grid">{INTENTS.map((item) => <button key={item.id} type="button" className={item.id === intent ? 'segment active' : 'segment'} onClick={() => setIntent(item.id)}><strong>{item.emoji} {item.labels[lang]}</strong><span>{item.helpers[lang]}</span></button>)}</div>
-        <div className="chips" aria-label="Categories">{CATEGORIES.map((item) => <button key={item.id} type="button" className={item.id === category ? 'chip active' : 'chip'} onClick={() => setCategory(item.id)}><span>{item.emoji}</span> {item.labels[lang]}</button>)}</div>
-        <label className="radius-label" htmlFor="radius">{t.radius}: <strong>{radiusKm} km</strong></label><input id="radius" type="range" min="2" max="20" step="1" value={radiusKm} onChange={(event) => setRadiusKm(Number(event.target.value))} />
-        <div className="radius-pills">{radiusOptions.map((radius) => <button key={radius} type="button" onClick={() => setRadiusKm(radius)} className={radius === radiusKm ? 'tiny active' : 'tiny'}>{radius} km</button>)}</div>
       </section>
 
       <section className="results-section">
@@ -232,3 +236,5 @@ function App() {
 }
 
 export default App;
+
+
