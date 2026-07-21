@@ -2,7 +2,7 @@ import { CATEGORY_LABELS } from './geodata/categories.js';
 import { searchFamilyPlaces } from './geodata/places.js';
 
 export const DEFAULT_LANGUAGE = 'en';
-export const DEFAULT_COUNTRY = 'TR';
+export const DEFAULT_COUNTRY = 'US';
 
 export const LANGUAGES = [
   { id: 'en', label: 'EN', name: 'English' },
@@ -12,10 +12,17 @@ export const LANGUAGES = [
 ];
 
 export const COUNTRIES = [
+  { id: 'US', labels: { en: 'United States', tr: 'ABD', ru: 'США', de: 'USA' }, defaultCity: 'New York', mode: 'global', cities: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco', 'Orlando', 'Boston', 'Washington DC', 'Seattle', 'Austin'] },
+  { id: 'GB', labels: { en: 'United Kingdom', tr: 'Birleşik Krallık', ru: 'Великобритания', de: 'Vereinigtes Königreich' }, defaultCity: 'London', mode: 'global', cities: ['London', 'Manchester', 'Edinburgh', 'Birmingham', 'Liverpool', 'Bristol', 'Cambridge', 'Oxford'] },
+  { id: 'DE', labels: { en: 'Germany', tr: 'Almanya', ru: 'Германия', de: 'Deutschland' }, defaultCity: 'Berlin', mode: 'global', cities: ['Berlin', 'Munich', 'Hamburg', 'Cologne', 'Frankfurt', 'Düsseldorf', 'Stuttgart', 'Nuremberg'] },
+  { id: 'FR', labels: { en: 'France', tr: 'Fransa', ru: 'Франция', de: 'Frankreich' }, defaultCity: 'Paris', mode: 'global', cities: ['Paris', 'Lyon', 'Nice', 'Marseille', 'Bordeaux', 'Toulouse', 'Strasbourg', 'Lille'] },
+  { id: 'IT', labels: { en: 'Italy', tr: 'İtalya', ru: 'Италия', de: 'Italien' }, defaultCity: 'Rome', mode: 'global', cities: ['Rome', 'Milan', 'Florence', 'Venice', 'Naples', 'Bologna', 'Turin', 'Verona'] },
+  { id: 'ES', labels: { en: 'Spain', tr: 'İspanya', ru: 'Испания', de: 'Spanien' }, defaultCity: 'Barcelona', mode: 'global', cities: ['Barcelona', 'Madrid', 'Valencia', 'Seville', 'Malaga', 'Palma', 'Bilbao', 'Granada'] },
+  { id: 'NL', labels: { en: 'Netherlands', tr: 'Hollanda', ru: 'Нидерланды', de: 'Niederlande' }, defaultCity: 'Amsterdam', mode: 'global', cities: ['Amsterdam', 'Rotterdam', 'The Hague', 'Utrecht', 'Eindhoven', 'Haarlem'] },
+  { id: 'AE', labels: { en: 'United Arab Emirates', tr: 'BAE', ru: 'ОАЭ', de: 'VAE' }, defaultCity: 'Dubai', mode: 'global', cities: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ras Al Khaimah'] },
+  { id: 'JP', labels: { en: 'Japan', tr: 'Japonya', ru: 'Япония', de: 'Japan' }, defaultCity: 'Tokyo', mode: 'global', cities: ['Tokyo', 'Osaka', 'Kyoto', 'Yokohama', 'Fukuoka', 'Sapporo'] },
+  { id: 'SG', labels: { en: 'Singapore', tr: 'Singapur', ru: 'Сингапур', de: 'Singapur' }, defaultCity: 'Singapore', mode: 'global', cities: ['Singapore'] },
   { id: 'TR', labels: { en: 'Turkey', tr: 'Türkiye', ru: 'Турция', de: 'Türkei' }, defaultCity: 'Istanbul', mode: 'turkey-81', cities: ['Istanbul', 'Ankara', 'Izmir', 'Bursa', 'Antalya', 'Muğla', 'Eskişehir', 'Gaziantep', 'Trabzon', 'Kayseri', 'Konya', 'Mersin'] },
-  { id: 'GB', labels: { en: 'United Kingdom', tr: 'Birleşik Krallık', ru: 'Великобритания', de: 'Vereinigtes Königreich' }, defaultCity: 'London', mode: 'global', cities: ['London', 'Manchester', 'Edinburgh', 'Birmingham', 'Liverpool', 'Bristol'] },
-  { id: 'US', labels: { en: 'United States', tr: 'ABD', ru: 'США', de: 'USA' }, defaultCity: 'New York', mode: 'global', cities: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco', 'Orlando'] },
-  { id: 'DE', labels: { en: 'Germany', tr: 'Almanya', ru: 'Германия', de: 'Deutschland' }, defaultCity: 'Berlin', mode: 'global', cities: ['Berlin', 'Munich', 'Hamburg', 'Cologne', 'Frankfurt', 'Düsseldorf'] },
   { id: 'RU', labels: { en: 'Russia', tr: 'Rusya', ru: 'Россия', de: 'Russland' }, defaultCity: 'Moscow', mode: 'global', cities: ['Moscow', 'Saint Petersburg', 'Kazan', 'Sochi', 'Yekaterinburg', 'Novosibirsk'] },
 ];
 
@@ -30,6 +37,8 @@ export const CATEGORIES = [
   { id: 'aquarium', emoji: '🐠', labels: { en: 'Aquariums', tr: 'Akvaryumlar', ru: 'Аквариумы', de: 'Aquarien' } },
   { id: 'library', emoji: '📚', labels: { en: 'Libraries', tr: 'Kütüphaneler', ru: 'Библиотеки', de: 'Bibliotheken' } },
   { id: 'family-cafe', emoji: '☕', labels: { en: 'Family cafés', tr: 'Çocuk dostu kafe', ru: 'Семейные кафе', de: 'Familiencafés' } },
+  { id: 'attraction', emoji: '🎡', labels: { en: 'Attractions', tr: 'Aktiviteler', ru: 'Аттракционы', de: 'Attraktionen' } },
+  { id: 'restaurant', emoji: '🍽️', labels: { en: 'Food stops', tr: 'Yemek molası', ru: 'Еда', de: 'Essensstopps' } },
   { id: 'indoor', emoji: '☔', labels: { en: 'Indoor / rainy day', tr: 'Kapalı alan', ru: 'В помещении', de: 'Drinnen' } },
 ];
 
@@ -40,14 +49,24 @@ export const AGE_GROUPS = [
   { id: '11', label: '10–12', helpers: { en: 'bigger adventures', tr: 'daha büyük macera', ru: 'больше приключений', de: 'größere Abenteuer' } },
 ];
 
+export const INTENTS = [
+  { id: 'quick', emoji: '⚡', labels: { en: 'Quick win', tr: 'Hızlı çözüm', ru: 'Быстро', de: 'Schnell' }, helpers: { en: 'near + low friction', tr: 'yakın + zahmetsiz', ru: 'рядом + просто', de: 'nah + einfach' } },
+  { id: 'rainy', emoji: '☔', labels: { en: 'Rainy / hot day', tr: 'Yağmur / sıcak', ru: 'Дождь / жара', de: 'Regen / Hitze' }, helpers: { en: 'indoor backup', tr: 'kapalı alan yedeği', ru: 'в помещении', de: 'Indoor-Plan' } },
+  { id: 'free', emoji: '₺0', labels: { en: 'Free / cheap', tr: 'Ücretsiz / ucuz', ru: 'Бесплатно', de: 'Kostenlos' }, helpers: { en: 'parks + libraries', tr: 'park + kütüphane', ru: 'парки + библиотеки', de: 'Parks + Bibliotheken' } },
+  { id: 'learning', emoji: '🧠', labels: { en: 'Learn something', tr: 'Bir şey öğrensin', ru: 'Учиться', de: 'Lernen' }, helpers: { en: 'museum + science', tr: 'müze + bilim', ru: 'музей + наука', de: 'Museum + Wissen' } },
+  { id: 'active', emoji: '🏃', labels: { en: 'Burn energy', tr: 'Enerji atsın', ru: 'Активно', de: 'Austoben' }, helpers: { en: 'play + outdoor', tr: 'oyun + açık alan', ru: 'игра + улица', de: 'Spiel + draußen' } },
+  { id: 'foodBreak', emoji: '☕', labels: { en: 'Snack break', tr: 'Mola / atıştırma', ru: 'Перекус', de: 'Snackpause' }, helpers: { en: 'parent reset', tr: 'ebeveyn reseti', ru: 'пауза родителям', de: 'Elternpause' } },
+];
+
 export const TRENDING_TURKEY_SEARCHES = [
-  { labels: { en: 'Istanbul with kids', tr: 'İstanbul çocukla gezilecek yerler', ru: 'Стамбул с детьми', de: 'Istanbul mit Kindern' }, location: 'Istanbul', category: 'all', insight: { en: 'Google Suggest: Istanbul, Asian/European side and school-break searches are strong.', tr: 'Google Suggest: İstanbul, Anadolu/Avrupa yakası ve ara tatil aramaları güçlü.', ru: 'Google Suggest: сильный спрос на Стамбул, районы и каникулы.', de: 'Google Suggest: Istanbul, Stadtseiten und Ferien-Suchen sind stark.' } },
-  { labels: { en: 'Ankara with kids', tr: 'Ankara çocukla gidilecek yerler', ru: 'Анкара с детьми', de: 'Ankara mit Kindern' }, location: 'Ankara', category: 'all', insight: { en: 'Google Suggest: Ankara appears in both “places to go” and “things to do” variants.', tr: 'Google Suggest: Ankara hem “gidilecek” hem “gezilecek” varyantıyla çıkıyor.', ru: 'Анкара появляется в вариантах “куда пойти” и “что посмотреть”.', de: 'Ankara erscheint bei “hingehen” und “Sehenswürdigkeiten” Varianten.' } },
-  { labels: { en: 'Izmir with kids', tr: 'İzmir çocukla gezilecek yerler', ru: 'Измир с детьми', de: 'Izmir mit Kindern' }, location: 'Izmir', category: 'all', insight: { en: 'Google Suggest: Izmir has kid-trip and breakfast venue intent.', tr: 'Google Suggest: İzmir + çocuk gezisi ve kahvaltı niyeti görünüyor.', ru: 'Измир показывает спрос на прогулки с детьми и завтраки.', de: 'Izmir zeigt Suchintention für Kinder-Ausflüge und Frühstücksorte.' } },
-  { labels: { en: 'Bursa with kids', tr: 'Bursa çocukla gezilecek yerler', ru: 'Бурса с детьми', de: 'Bursa mit Kindern' }, location: 'Bursa', category: 'all', insight: { en: 'Google Suggest: Bursa appears as a city-level family outing query.', tr: 'Google Suggest: Bursa şehir bazlı çocuk gezisi taleplerinde çıkıyor.', ru: 'Бурса появляется как городской запрос для семейных прогулок.', de: 'Bursa erscheint als Stadt-Suche für Familienausflüge.' } },
-  { labels: { en: 'Antalya with kids', tr: 'Antalya çocukla gezilecek yerler', ru: 'Анталья с детьми', de: 'Antalya mit Kindern' }, location: 'Antalya', category: 'all', insight: { en: 'Google Suggest: Antalya captures family trip and holiday intent.', tr: 'Google Suggest: Antalya çocukla gezi/tatil niyetinde yakalanıyor.', ru: 'Анталья ловит спрос на семейные поездки и отдых.', de: 'Antalya deckt Familienausflug- und Urlaubsintention ab.' } },
-  { labels: { en: 'Kid-friendly breakfast places', tr: 'Çocuk dostu kahvaltı mekanları', ru: 'Завтраки для семей', de: 'Kinderfreundliche Frühstücksorte' }, location: 'Istanbul', category: 'family-cafe', insight: { en: 'Google Suggest: kid-friendly breakfast places show booking/paid intent.', tr: 'Google Suggest: çocuk dostu kahvaltı mekanları ayrı bir para/rezervasyon niyeti.', ru: 'Запрос про семейные завтраки — отдельное намерение бронирования.', de: 'Kinderfreundliche Frühstücksorte zeigen eigene Buchungsintention.' } },
-  { labels: { en: 'Indoor / rainy day', tr: 'Kapalı alan / yağmurlu gün', ru: 'В помещении / дождь', de: 'Drinnen / Regentag' }, location: 'Istanbul', category: 'indoor', insight: { en: 'School-break and indoor searches are seasonal SEO opportunities.', tr: 'Ara tatil ve kapalı alan aramaları sezonluk SEO fırsatı.', ru: 'Каникулы и помещения — сезонная SEO-возможность.', de: 'Ferien- und Indoor-Suchen sind saisonale SEO-Chancen.' } },
+  { labels: { en: 'New York with kids', tr: 'New York çocukla', ru: 'Нью-Йорк с детьми', de: 'New York mit Kindern' }, location: 'New York', category: 'all', insight: { en: 'Global city mode: mix iconic attractions, parks and indoor backups for family trips.', tr: 'Global şehir modu: aile gezisi için ikon yerler, parklar ve kapalı alanları karıştır.', ru: 'Глобальный режим: достопримечательности, парки и запасные крытые варианты.', de: 'Globaler Stadtmodus: Highlights, Parks und Indoor-Backups kombinieren.' } },
+  { labels: { en: 'London rainy-day plan', tr: 'Londra yağmur planı', ru: 'Лондон в дождь', de: 'London Regentag' }, location: 'London', category: 'indoor', insight: { en: 'London is ideal for museum-heavy, rainy-day family planning.', tr: 'Londra müze ağırlıklı yağmurlu gün aile planı için güçlü.', ru: 'Лондон силён для музейных семейных планов в дождь.', de: 'London eignet sich stark für Museums- und Regentagspläne.' } },
+  { labels: { en: 'Paris family culture', tr: 'Paris aile kültür turu', ru: 'Париж семейная культура', de: 'Paris Familienkultur' }, location: 'Paris', category: 'museum', insight: { en: 'Paris demand is culture-first; mix big museums with parks and snack breaks.', tr: 'Paris kültür odaklı; müze, park ve mola seçeneklerini karıştır.', ru: 'Париж культурный: музеи, парки и паузы.', de: 'Paris ist kulturstark: Museen, Parks und Pausen mixen.' } },
+  { labels: { en: 'Barcelona outdoor day', tr: 'Barcelona açık hava', ru: 'Барселона на улице', de: 'Barcelona draußen' }, location: 'Barcelona', category: 'park', insight: { en: 'Barcelona works well for outdoor, beach-adjacent and architecture discovery days.', tr: 'Barcelona açık hava, sahil yakını ve mimari keşif için iyi.', ru: 'Барселона хороша для улицы, моря и архитектуры.', de: 'Barcelona passt zu Outdoor, Küste und Architektur.' } },
+  { labels: { en: 'Dubai heat-proof options', tr: 'Dubai sıcak havaya uygun', ru: 'Дубай в жару', de: 'Dubai hitzesicher' }, location: 'Dubai', category: 'indoor', insight: { en: 'Dubai needs heat-proof indoor, aquarium and mall-based family options.', tr: 'Dubai için sıcak havaya dayanıklı indoor, akvaryum ve AVM temelli seçenekler gerekir.', ru: 'Дубай требует крытых вариантов из-за жары.', de: 'Dubai braucht hitzesichere Indoor-Optionen.' } },
+  { labels: { en: 'Tokyo discovery day', tr: 'Tokyo keşif günü', ru: 'Токио день открытий', de: 'Tokyo Entdeckungstag' }, location: 'Tokyo', category: 'all', insight: { en: 'Tokyo benefits from compact transit-friendly clusters and themed discoveries.', tr: 'Tokyo toplu taşımaya uygun kompakt kümeler ve temalı keşiflerle güçlü.', ru: 'Токио силён компактными маршрутами и темами.', de: 'Tokyo funktioniert mit kompakten, transitnahen Clustern.' } },
+  { labels: { en: 'Singapore easy family day', tr: 'Singapur kolay aile günü', ru: 'Сингапур семейный день', de: 'Singapur einfacher Familientag' }, location: 'Singapore', category: 'all', insight: { en: 'Singapore is a strong benchmark for clean, safe, stroller-friendly family routing.', tr: 'Singapur temiz, güvenli, bebek arabası dostu rota için güçlü benchmark.', ru: 'Сингапур — эталон безопасного семейного маршрута.', de: 'Singapur ist ein starker Benchmark für saubere, sichere Familienrouten.' } },
+  { labels: { en: 'Istanbul with kids', tr: 'İstanbul çocukla', ru: 'Стамбул с детьми', de: 'Istanbul mit Kindern' }, location: 'Istanbul', category: 'all', insight: { en: 'Turkey remains covered, but the product now leads with international city advice.', tr: 'Türkiye kapsamı duruyor; ürün artık yurtdışı şehir danışmanı olarak öne çıkıyor.', ru: 'Турция остаётся, но фокус теперь международный.', de: 'Türkei bleibt abgedeckt, Fokus ist international.' } },
 ];
 
 export const TURKEY_CITIES = [
@@ -94,6 +113,7 @@ function evidenceVerdict(place) {
   const parts = place.scoreParts || {};
   const lines = [];
   if (place.googleRating) lines.push(`Google ${place.googleRating} (${formatReviewCount(place.googleReviewCount)} reviews)`);
+  if ((parts.intentFit || 0) >= 10) lines.push('matches today’s activity mood');
   if ((parts.familySignals || 0) >= 14) lines.push('strong family amenities');
   if ((parts.distance || 0) >= 15) lines.push('nearby enough for a low-friction trip');
   if ((parts.ageFit || 0) >= 5) lines.push('good age fit');
@@ -141,20 +161,21 @@ function timeoutFetch(url, options = {}) {
   return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timeout));
 }
 
-export async function searchPlaces({ location = 'Istanbul', coords = null, age = '4', category = 'all', radiusKm = 5 } = {}) {
+export async function searchPlaces({ location = 'Istanbul', coords = null, age = '4', category = 'all', radiusKm = 5, intent = 'quick' } = {}) {
   const places = await searchFamilyPlaces({
     location: coords ? { lat: coords.lat, lon: coords.lon, label: 'Current location' } : undefined,
     query: coords ? undefined : location,
     city: coords ? location : undefined,
     category: category === 'all' ? undefined : category,
     age: Number(age),
+    intent,
     radius: Number(radiusKm) * 1000,
-    limit: 24,
+    limit: 36,
     fetchImpl: timeoutFetch,
     useFallback: true,
   });
 
-  return places.map(toUiPlace).slice(0, 12);
+  return places.map(toUiPlace).slice(0, 18);
 }
 
 export function getMapUrl(place) {

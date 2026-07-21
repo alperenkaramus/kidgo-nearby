@@ -1,0 +1,80 @@
+# Geo Adviser / Kids Near Me
+
+Global, mobile-first family geo adviser for answering: “where can we go nearby with kids?”
+
+The app ranks kid-friendly parks, museums, indoor backups, aquariums, libraries, family cafés, attractions, and quick family stops across international cities, while keeping Turkey’s 81-city coverage mode.
+
+## Current product scope
+
+- English default UI with Turkish, Russian, and German switcher.
+- Abroad-first country selector: US, UK, Germany, France, Italy, Spain, Netherlands, UAE, Japan, Singapore, Turkey, Russia.
+- Turkey 81-city mode remains available.
+- Activity mood ranking: quick win, rainy/hot day, free/cheap, learning, active, snack break.
+- Result cards include distance, source/confidence, Google-style rating/review fields for curated data, score breakdown, rationale, map, Google, and directions links.
+- Live OpenStreetMap/Overpass is attempted first; deterministic city-aware fallback keeps demos and production UX usable when live APIs are slow.
+
+## Tech stack
+
+- React 19
+- Vite 8
+- Node built-in test runner
+- Static hosting friendly: Netlify, Vercel, Cloudflare Pages, S3/CDN
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Default dev server binds to `0.0.0.0` for remote preview/tunnel workflows.
+
+## Verification
+
+Run the full publish-readiness gate:
+
+```bash
+npm run check
+```
+
+Equivalent individual checks:
+
+```bash
+npm test
+npm run smoke
+npm run smoke:geodata
+npm run build
+```
+
+## Deployment
+
+### Netlify
+
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Config file: `netlify.toml`
+
+### Vercel
+
+- Framework preset: Vite
+- Build command: `npm run build`
+- Output directory: `dist`
+- Config file: `vercel.json`
+
+### Cloudflare Pages
+
+- Build command: `npm run build`
+- Build output directory: `dist`
+
+## Environment variables
+
+None required for the current MVP.
+
+Future live Google Places ratings would require a backend proxy and provider API key. Do not expose map/places API keys directly in this frontend.
+
+## Release checklist
+
+1. `npm run check` passes.
+2. Browser smoke: load app, change language, change country, select a city, change activity mood, verify cards update.
+3. Deploy static `dist` to Netlify/Vercel/Cloudflare Pages.
+4. Verify public URL returns `200 OK` and the page body contains `Geo Adviser`.

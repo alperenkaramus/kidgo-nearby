@@ -128,6 +128,9 @@ button:active { transform: translateY(1px) scale(.99); }
 .city-rail button { white-space: nowrap; border: 0; border-radius: 999px; padding: 10px 12px; background: #fff; border: 1px solid #eee; color: var(--ink); font-weight: 1000; box-shadow: rgba(0,0,0,.04) 0 4px 12px; }
 .city-rail button.active { background: var(--teal); color: #fff; }
 .segmented-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 16px 0; }
+.subfilter-title { margin: 4px 0 10px; font-size: .86rem; color: var(--ink); text-transform: uppercase; letter-spacing: .04em; }
+.intent-grid { margin-top: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.intent-grid .segment strong { font-size: .94rem; }
 .segment { background: #f7f7f7; color: var(--ink); padding: 13px 11px; text-align: left; border: 1px solid transparent; }
 .segment strong { display: block; font-size: 1.08rem; }
 .segment span { color: var(--muted); font-size: .76rem; }

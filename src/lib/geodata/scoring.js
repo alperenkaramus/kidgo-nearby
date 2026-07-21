@@ -26,6 +26,15 @@ const TAG_WEIGHTS = Object.freeze({
   'treat stop': 2,
 });
 
+const INTENT_WEIGHTS = Object.freeze({
+  quick: { playground: 8, park: 7, 'family-cafe': 6, library: 4 },
+  rainy: { museum: 8, aquarium: 9, library: 7, indoor: 10, 'family-cafe': 5 },
+  free: { park: 8, playground: 8, library: 8, museum: 3 },
+  learning: { museum: 10, aquarium: 7, zoo: 7, library: 8, attraction: 5 },
+  active: { playground: 10, park: 8, zoo: 5, attraction: 6 },
+  foodBreak: { 'family-cafe': 10, restaurant: 8, park: 3 },
+});
+
 function distanceScore(distanceM = 5000) {
   if (distanceM <= 300) return 25;
   if (distanceM <= 800) return 20;
@@ -52,6 +61,7 @@ export function evidenceBreakdown(place = {}, filters = {}) {
     familySignals: (place.familyTags || []).reduce((sum, tag) => sum + (TAG_WEIGHTS[tag] || 1), 0),
     distance: distanceScore(place.distanceM),
     ageFit: ageScore(place, filters.age),
+    intentFit: intentScore(place, filters.intent),
     google: ratingScore(place),
   };
 }
@@ -64,6 +74,20 @@ function ageScore(place, age) {
   if (['museum', 'library', 'indoor'].includes(place.category) && years >= 4) return 5;
   if (['family-cafe', 'restaurant'].includes(place.category) && years <= 8) return 4;
   return 1;
+}
+
+function intentScore(place = {}, intent) {
+  if (!intent || !INTENT_WEIGHTS[intent]) return 0;
+  const categoryBoost = INTENT_WEIGHTS[intent][place.category] || 0;
+  const tags = place.familyTags || [];
+  const tagBoost = [
+    intent === 'rainy' && tags.includes('rainy-day') ? 6 : 0,
+    intent === 'free' && tags.includes('free') ? 6 : 0,
+    intent === 'active' && tags.includes('playground') ? 5 : 0,
+    intent === 'quick' && Number(place.distanceM) <= 1500 ? 4 : 0,
+    intent === 'foodBreak' && (tags.includes('high chairs') || tags.includes('outdoor seating')) ? 4 : 0,
+  ].reduce((sum, value) => sum + value, 0);
+  return categoryBoost + tagBoost;
 }
 
 export function scorePlace(place, filters = {}) {

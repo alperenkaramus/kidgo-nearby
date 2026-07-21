@@ -4,6 +4,7 @@ import {
   COUNTRIES,
   DEFAULT_COUNTRY,
   DEFAULT_LANGUAGE,
+  INTENTS,
   LANGUAGES,
   TURKEY_CITIES,
   TRENDING_TURKEY_SEARCHES,
@@ -15,16 +16,18 @@ import {
 import { getFallbackPlaces } from '../src/lib/geodata/index.js';
 
 assert.equal(DEFAULT_LANGUAGE, 'en', 'app default language is English');
-assert.equal(DEFAULT_COUNTRY, 'TR', 'Turkey remains the default coverage country');
+assert.equal(DEFAULT_COUNTRY, 'US', 'default country is abroad-first/global');
 assert.deepEqual(LANGUAGES.map((item) => item.id), ['en', 'tr', 'ru', 'de'], 'English default + Turkish/Russian/German switch exists');
+assert.deepEqual(INTENTS.map((item) => item.id), ['quick', 'rainy', 'free', 'learning', 'active', 'foodBreak'], 'activity mood selector covers practical parent contexts');
+assert.ok(INTENTS.every((item) => item.labels.en && item.labels.tr && item.helpers.en && item.helpers.tr), 'activity moods have translated labels and helper copy');
 assert.ok(LANGUAGES.every((item) => item.label && item.name), 'all languages have UI labels');
 assert.equal(TURKEY_CITIES.length, 81, 'all 81 Turkish cities are available');
-assert.ok(COUNTRIES.length >= 5, 'country selector has Turkey plus global options');
-assert.deepEqual(COUNTRIES.map((item) => item.id), ['TR', 'GB', 'US', 'DE', 'RU'], 'country selector exposes expected countries');
+assert.ok(COUNTRIES.length >= 10, 'country selector has broad abroad-first coverage plus Turkey');
+assert.deepEqual(COUNTRIES.map((item) => item.id), ['US', 'GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'AE', 'JP', 'SG', 'TR', 'RU'], 'country selector exposes abroad-first countries before Turkey');
 assert.ok(COUNTRIES.every((item) => item.labels.en && item.labels.tr && item.labels.ru && item.labels.de && item.defaultCity), 'countries have coherent four-language labels and default cities');
 assert.equal(COUNTRIES.find((item) => item.id === 'TR')?.mode, 'turkey-81', 'Turkey keeps 81-city mode');
-assert.ok(TRENDING_TURKEY_SEARCHES.length >= 7, 'Turkey search radar includes researched demand chips');
-assert.ok(TRENDING_TURKEY_SEARCHES.every((item) => item.labels.tr && item.labels.en && item.labels.ru && item.labels.de), 'trend chips have four-language labels');
+assert.ok(TRENDING_TURKEY_SEARCHES.length >= 8, 'global city radar includes international demand chips');
+assert.ok(TRENDING_TURKEY_SEARCHES.every((item) => item.labels.tr && item.labels.en && item.labels.ru && item.labels.de), 'global trend chips have four-language labels');
 
 const appSource = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8');
 assert.match(appSource, /useState\(DEFAULT_LANGUAGE\)/, 'React app initializes language from English default constant');
@@ -42,6 +45,7 @@ assert.ok(Array.isArray(results), 'searchPlaces returns an array');
 assert.ok(results.length > 0, 'any Turkey city search returns live or fallback places');
 assert.ok(results.every((place) => place.name && place.category && typeof place.score === 'number'), 'places include card data');
 assert.ok(results.every((place) => place.scoreParts && typeof place.scoreParts.familySignals === 'number'), 'places include score breakdown for deeper analysis');
+assert.ok(results.every((place) => typeof place.scoreParts.intentFit === 'number'), 'places include activity mood fit in score breakdown');
 const fallbackResults = getFallbackPlaces('Diyarbakır');
 assert.ok(fallbackResults.some((place) => /diyarbak/i.test(place.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))), 'non-Istanbul Turkish city fallback is city-labeled');
 assert.ok(fallbackResults.every((place) => !/istanbul/i.test(place.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))), 'non-Istanbul fallback does not silently show Istanbul');
@@ -54,8 +58,12 @@ const istanbulRated = await searchPlaces({ location: 'Istanbul', age: '4', categ
 assert.ok(istanbulRated.some((place) => place.googleRating && place.googleReviewCount), 'curated major-city fallback cards include Google ratings/review counts');
 assert.ok(istanbulRated.some((place) => place.evidence?.length), 'cards include recommendation rationale');
 
-const globalResults = await searchPlaces({ location: 'Berlin', age: '7', category: 'all', radiusKm: 10 });
-assert.ok(globalResults.length > 0, 'non-Turkey country city fallback/search returns places');
-assert.ok(globalResults.some((place) => /berlin/i.test(place.name)), 'global country seed data is city-relevant');
+const globalResults = await searchPlaces({ location: 'Paris', age: '7', category: 'all', radiusKm: 10 });
+assert.ok(globalResults.length >= 5, 'international seed cities return more than a thin 3-card demo');
+assert.ok(globalResults.some((place) => /paris|luxembourg|sciences|acclimatation/i.test(place.name)), 'global country seed data is city-relevant');
 
-console.log(`ui-smoke ok: ${results.length} Diyarbakır places, ${globalResults.length} Berlin places, ${TURKEY_CITIES.length} cities, ${LANGUAGES.length} languages, ${COUNTRIES.length} countries`);
+const genericGlobal = getFallbackPlaces('Lisbon');
+assert.ok(genericGlobal.length >= 8, 'generic abroad fallback produces a richer option set');
+assert.ok(genericGlobal.every((place) => /lisbon/i.test(place.name)), 'generic global fallback is city-labeled');
+
+console.log(`ui-smoke ok: ${results.length} Diyarbakır places, ${globalResults.length} Paris places, ${genericGlobal.length} Lisbon fallback places, ${TURKEY_CITIES.length} TR cities, ${LANGUAGES.length} languages, ${COUNTRIES.length} countries`);

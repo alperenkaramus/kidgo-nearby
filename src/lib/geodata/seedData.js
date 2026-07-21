@@ -20,6 +20,10 @@ const SEEDS = Object.freeze({
     { name: 'Central Park', category: 'park', lat: 40.7829, lon: -73.9654, familyTags: ['stroller-friendly', 'free'] },
     { name: 'American Museum of Natural History', category: 'museum', lat: 40.7813, lon: -73.9739, familyTags: ['rainy-day', 'toilets'] },
     { name: 'New York Aquarium', category: 'aquarium', lat: 40.5743, lon: -73.9757, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Brooklyn Children’s Museum', category: 'museum', lat: 40.6745, lon: -73.9442, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Bronx Zoo', category: 'zoo', lat: 40.8506, lon: -73.8769, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Bryant Park', category: 'park', lat: 40.7536, lon: -73.9832, familyTags: ['free', 'stroller-friendly'] },
+    { name: 'Children’s Museum of Manhattan', category: 'museum', lat: 40.7859, lon: -73.9778, familyTags: ['rainy-day', 'toilets'] },
   ],
   ankara: [
     { name: 'Anıtkabir ve Barış Parkı', category: 'attraction', lat: 39.925, lon: 32.8369, familyTags: ['free', 'stroller-friendly'] },
@@ -51,6 +55,55 @@ const SEEDS = Object.freeze({
     { name: 'Deutsches Technikmuseum', category: 'museum', lat: 52.4986, lon: 13.3777, familyTags: ['rainy-day', 'toilets'] },
     { name: 'Volkspark Friedrichshain', category: 'park', lat: 52.5281, lon: 13.4316, familyTags: ['playground', 'free'] },
   ],
+  paris: [
+    { name: 'Jardin du Luxembourg', category: 'park', lat: 48.8462, lon: 2.3372, familyTags: ['playground', 'free', 'stroller-friendly'] },
+    { name: 'Cité des Sciences et de l’Industrie', category: 'museum', lat: 48.8956, lon: 2.3879, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Jardin d’Acclimatation', category: 'attraction', lat: 48.8781, lon: 2.2635, familyTags: ['playground', 'toilets'] },
+    { name: 'Aquarium de Paris', category: 'aquarium', lat: 48.8629, lon: 2.2873, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Parc des Buttes-Chaumont', category: 'park', lat: 48.8809, lon: 2.3829, familyTags: ['free', 'playground'] },
+    { name: 'Musée en Herbe', category: 'museum', lat: 48.8625, lon: 2.3426, familyTags: ['rainy-day'] },
+  ],
+  rome: [
+    { name: 'Villa Borghese Gardens', category: 'park', lat: 41.9142, lon: 12.4922, familyTags: ['free', 'stroller-friendly', 'playground'] },
+    { name: 'Explora Children’s Museum Rome', category: 'museum', lat: 41.9125, lon: 12.4766, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Bioparco di Roma', category: 'zoo', lat: 41.9175, lon: 12.4861, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Time Elevator Rome', category: 'indoor', lat: 41.8985, lon: 12.4828, familyTags: ['rainy-day'] },
+    { name: 'Parco degli Acquedotti', category: 'park', lat: 41.8509, lon: 12.5612, familyTags: ['free', 'outdoor seating'] },
+  ],
+  barcelona: [
+    { name: 'Parc Güell', category: 'park', lat: 41.4145, lon: 2.1527, familyTags: ['stroller-friendly', 'outdoor seating'] },
+    { name: 'CosmoCaixa Barcelona', category: 'museum', lat: 41.4136, lon: 2.1313, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Barcelona Aquarium', category: 'aquarium', lat: 41.3769, lon: 2.1842, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Parc de la Ciutadella', category: 'park', lat: 41.3881, lon: 2.1876, familyTags: ['free', 'playground'] },
+    { name: 'Tibidabo Amusement Park', category: 'attraction', lat: 41.4217, lon: 2.1193, familyTags: ['toilets'] },
+  ],
+  dubai: [
+    { name: 'Dubai Aquarium & Underwater Zoo', category: 'aquarium', lat: 25.1974, lon: 55.2790, familyTags: ['rainy-day', 'toilets', 'stroller-friendly'] },
+    { name: 'OliOli Children’s Museum', category: 'museum', lat: 25.1667, lon: 55.2464, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Kite Beach Play Area', category: 'playground', lat: 25.1612, lon: 55.2098, familyTags: ['playground', 'outdoor seating'] },
+    { name: 'The Green Planet Dubai', category: 'indoor', lat: 25.2075, lon: 55.2608, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Zabeel Park', category: 'park', lat: 25.2354, lon: 55.3003, familyTags: ['playground', 'stroller-friendly'] },
+  ],
+  tokyo: [
+    { name: 'Ueno Zoo', category: 'zoo', lat: 35.7164, lon: 139.7713, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'Tokyo Toy Museum', category: 'museum', lat: 35.6897, lon: 139.7211, familyTags: ['rainy-day'] },
+    { name: 'Shinjuku Gyoen National Garden', category: 'park', lat: 35.6852, lon: 139.7100, familyTags: ['stroller-friendly'] },
+    { name: 'Sumida Aquarium', category: 'aquarium', lat: 35.7101, lon: 139.8107, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'KidZania Tokyo', category: 'indoor', lat: 35.6556, lon: 139.7929, familyTags: ['rainy-day', 'toilets'] },
+  ],
+  singapore: [
+    { name: 'Gardens by the Bay Children’s Garden', category: 'playground', lat: 1.2816, lon: 103.8636, familyTags: ['playground', 'free', 'stroller-friendly'] },
+    { name: 'Singapore Zoo', category: 'zoo', lat: 1.4043, lon: 103.7930, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'ArtScience Museum', category: 'museum', lat: 1.2863, lon: 103.8593, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'S.E.A. Aquarium Singapore', category: 'aquarium', lat: 1.2588, lon: 103.8205, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Jacob Ballas Children’s Garden', category: 'park', lat: 1.3239, lon: 103.8160, familyTags: ['playground', 'free'] },
+  ],
+  amsterdam: [
+    { name: 'NEMO Science Museum', category: 'museum', lat: 52.3742, lon: 4.9123, familyTags: ['rainy-day', 'toilets'] },
+    { name: 'Vondelpark', category: 'park', lat: 52.3579, lon: 4.8686, familyTags: ['playground', 'free', 'stroller-friendly'] },
+    { name: 'ARTIS Amsterdam Royal Zoo', category: 'zoo', lat: 52.3663, lon: 4.9155, familyTags: ['toilets', 'stroller-friendly'] },
+    { name: 'TunFun Amsterdam', category: 'indoor', lat: 52.3680, lon: 4.9040, familyTags: ['rainy-day', 'playground'] },
+  ],
   moscow: [
     { name: 'Moscow Zoo', category: 'zoo', lat: 55.7616, lon: 37.578, familyTags: ['toilets', 'stroller-friendly'] },
     { name: 'Gorky Park', category: 'park', lat: 55.7298, lon: 37.601, familyTags: ['free', 'stroller-friendly'] },
@@ -79,6 +132,10 @@ const GOOGLE_RATINGS = Object.freeze({
   'Central Park': { googleRating: 4.8, googleReviewCount: 280000 },
   'American Museum of Natural History': { googleRating: 4.6, googleReviewCount: 22000 },
   'New York Aquarium': { googleRating: 4.1, googleReviewCount: 18000 },
+  'Brooklyn Children’s Museum': { googleRating: 4.5, googleReviewCount: 5200 },
+  'Bronx Zoo': { googleRating: 4.6, googleReviewCount: 36000 },
+  'Bryant Park': { googleRating: 4.7, googleReviewCount: 92000 },
+  'Children’s Museum of Manhattan': { googleRating: 4.4, googleReviewCount: 3900 },
   'Anıtkabir ve Barış Parkı': { googleRating: 4.9, googleReviewCount: 126000 },
   'MTA Şehit Cuma Dağ Tabiat Tarihi Müzesi': { googleRating: 4.7, googleReviewCount: 6100 },
   'Eymir Gölü': { googleRating: 4.5, googleReviewCount: 16800 },
@@ -121,10 +178,14 @@ function genericPlaces(cityKey, origin) {
   const base = origin || { lat: 39.0, lon: 35.0 };
   const city = titleCaseCity(cityKey);
   return [
-    { name: `${city} çocuk dostu park`, category: 'park', lat: base.lat + 0.006, lon: base.lon + 0.006, familyTags: ['free', 'stroller-friendly'] },
-    { name: `${city} oyun alanı`, category: 'playground', lat: base.lat - 0.005, lon: base.lon + 0.004, familyTags: ['playground', 'free'] },
-    { name: `${city} müze / kapalı alan`, category: 'museum', lat: base.lat + 0.004, lon: base.lon - 0.006, familyTags: ['rainy-day', 'toilets'] },
-    { name: `${city} çocuk dostu kafe`, category: 'family-cafe', lat: base.lat - 0.004, lon: base.lon - 0.004, familyTags: ['rainy-day', 'high chairs'] },
+    { name: `${city} family park`, category: 'park', lat: base.lat + 0.006, lon: base.lon + 0.006, familyTags: ['free', 'stroller-friendly'] },
+    { name: `${city} playground`, category: 'playground', lat: base.lat - 0.005, lon: base.lon + 0.004, familyTags: ['playground', 'free'] },
+    { name: `${city} children’s museum / indoor`, category: 'museum', lat: base.lat + 0.004, lon: base.lon - 0.006, familyTags: ['rainy-day', 'toilets'] },
+    { name: `${city} family café`, category: 'family-cafe', lat: base.lat - 0.004, lon: base.lon - 0.004, familyTags: ['rainy-day', 'high chairs'] },
+    { name: `${city} science centre`, category: 'museum', lat: base.lat + 0.011, lon: base.lon + 0.002, familyTags: ['rainy-day', 'toilets'] },
+    { name: `${city} aquarium / animal experience`, category: 'aquarium', lat: base.lat - 0.010, lon: base.lon + 0.009, familyTags: ['rainy-day', 'toilets'] },
+    { name: `${city} stroller-friendly garden`, category: 'park', lat: base.lat + 0.014, lon: base.lon - 0.010, familyTags: ['stroller-friendly', 'free'] },
+    { name: `${city} active kids attraction`, category: 'attraction', lat: base.lat - 0.012, lon: base.lon - 0.012, familyTags: ['playground', 'toilets'] },
   ];
 }
 

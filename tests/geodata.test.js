@@ -68,6 +68,21 @@ test('rankPlaces prefers close places with family tags and category match', () =
   assert.ok(ranked[0].familyScore > ranked[1].familyScore);
 });
 
+test('rankPlaces uses activity mood intent as a real recommendation signal', () => {
+  const rainyRanked = rankPlaces(
+    [
+      { id: 'outdoor', name: 'Sunny Park', category: 'park', distanceM: 350, familyTags: ['free', 'stroller-friendly'], tags: {} },
+      { id: 'indoor', name: 'Indoor Museum', category: 'museum', distanceM: 1800, familyTags: ['rainy-day', 'toilets'], tags: {} },
+    ],
+    { intent: 'rainy', age: 4 },
+  );
+  assert.equal(rainyRanked[0].id, 'indoor');
+  assert.ok(rainyRanked[0].scoreParts.intentFit > rainyRanked[1].scoreParts.intentFit);
+
+  const activeRanked = rankPlaces(rainyRanked, { intent: 'active', age: 4 });
+  assert.equal(activeRanked[0].id, 'outdoor');
+});
+
 test('fallback data covers required demo cities and categories', () => {
   assert.ok(CATEGORIES.includes('indoor'));
   assert.ok(CATEGORIES.includes('attraction'));

@@ -19,12 +19,13 @@ export async function searchFamilyPlaces({
   city,
   category,
   age,
+  intent,
   radius = 2500,
   limit = 30,
   fetchImpl = globalThis.fetch,
   useFallback = true,
 } = {}) {
-  const filters = { category: normalizeCategory(category), age };
+  const filters = { category: normalizeCategory(category), age, intent };
   try {
     const origin = await resolveLocation({ location, query: query || city, fetchImpl });
     const elements = await fetchOverpassPlaces({ location: origin, radius, category: filters.category, fetchImpl });
