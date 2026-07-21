@@ -12,27 +12,29 @@ const COPY = {
     title: 'Çocukla gidilecek güzel yerleri 30 saniyede bul.',
     hero: 'Şehir, yaş ve bugünkü moda göre park, oyun alanı, müze, akvaryum, indoor alternatif ve aile molalarını daha keyifli bir rota listesine çevirir.',
     language: 'Dil', country: 'Ülke', countryHelp: 'Öncelik yurtdışı şehirler; Türkiye 81 şehir modu ayrı kapsam olarak duruyor.', locationLabel: 'Şehir veya mevcut konum', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Yerleri bul', current: 'Mevcut konumu kullan',
-    bestNow: 'Bugünün seçimi', cityPick: 'Şehir önerisi', score: 'puan', demandTitle: 'Popüler aile planları', allCitiesTitle: 'Nereye gidiyorsunuz?', allCitiesHelp: 'Önce ülke ve şehir seç, sonra yaş ve ruh haline göre listeyi daralt. Başlangıçta gerçek popüler şehir verileri + güvenli fallback kullanılır.', citiesDefault: 'Şehir seç',
+    pageTitle: 'KidGo Nearby — Çocuk Dostu Yerleri Bul', mobileDockLabel: 'Hızlı arama', filtersLabel: 'Arama filtreleri', categoriesLabel: 'Kategoriler',
+    bestNow: 'Bugünün seçimi', cityPick: 'Şehir önerisi', score: 'puan', demandTitle: 'Popüler aile planları', allCitiesTitle: 'Nereye gidiyorsunuz?', allCitiesHelp: 'Önce ülke ve şehir seç, sonra yaş ve ruh haline göre listeyi daralt. Başlangıçta popüler şehir önerileri ve güvenli yedek liste kullanılır.', citiesDefault: 'Şehir seç',
     filtersTitle: 'Çocuk profili', intentTitle: 'Bugünkü mod', radius: 'Arama yarıçapı', resultsTitle: 'Sıralı aile önerileri', searching: 'Aranıyor…', ideas: 'öneri',
     noticeLive: 'Canlı OpenStreetMap sonuçları çocuk uyumu, mesafe ve aile sinyallerine göre sıralandı.',
     noticeFallback: 'Seçili şehir için hazırlanmış güvenli aile önerileri gösteriliyor. Harita linkinden son kontrolü yapabilirsin.',
-    noticeGeoNo: 'Tarayıcı konumu yok; şehir araması aktif kalıyor.', noticeGeoUse: 'Mevcut konum kullanılıyor. Canlı OSM yavaşsa fallback mod arayüzü test edilebilir tutar.',
-    noticeGeoErr: 'Konum alınamadı; şehir yazarak devam edebilirsin.', emptyTitle: 'Net eşleşme yok', emptyBody: 'Tümü seç veya başka bir global şehir dene.', loadingTitle: 'Aile planı hazırlanıyor…', loadingBody: 'Şehir, yaş, mod ve kategori sinyallerine göre en uygun duraklar sıralanıyor.', map: 'Haritada aç', directions: 'Yol tarifi al', google: 'Google’da aç', rainy: 'Kapalı alan', whyPick: 'Neden uygun', confidence: 'Güven', scoreMix: 'Skor', liveGoogle: 'Canlı Google', openNow: 'Şu an açık', showResults: 'öneriyi göster', practical: 'Pratik notlar', ratingPending: 'Google puanı bekleniyor', reviews: 'yorum', points: 'puan', checkMap: 'Konumu haritada kontrol et', currentLocationLabel: 'Mevcut konum', confidenceHigh: 'yüksek', confidenceMedium: 'orta', confidenceStarter: 'başlangıç',
+    noticeGeoNo: 'Tarayıcı konumu yok; şehir araması aktif kalıyor.', noticeGeoUse: 'Konum izni bekleniyor… Yakınındaki öneriler izin verilirse hazırlanacak.',
+    noticeGeoErr: 'Konum alınamadı; şehir yazarak devam edebilirsin.', emptyTitle: 'Net eşleşme yok', emptyBody: 'Tümü seç veya başka bir şehir dene.', loadingTitle: 'Aile planı hazırlanıyor…', loadingBody: 'Şehir, yaş, mod ve kategori sinyallerine göre en uygun duraklar sıralanıyor.', map: 'Haritada aç', directions: 'Yol tarifi al', google: 'Google’da aç', rainy: 'Kapalı alan', whyPick: 'Neden uygun', confidence: 'Güven', scoreMix: 'Skor', liveGoogle: 'Canlı Google', openNow: 'Şu an açık', showResults: 'öneriyi göster', practical: 'Pratik notlar', ratingPending: 'Google puanı bekleniyor', reviews: 'yorum', points: 'puan', checkMap: 'Konumu haritada kontrol et', currentLocationLabel: 'Mevcut konum', confidenceHigh: 'yüksek', confidenceMedium: 'orta', confidenceStarter: 'başlangıç',
   },
   en: {
     eyebrow: 'KidGo Nearby · family day-out assistant', title: 'Find better kid-friendly places in 30 seconds.', hero: 'Pick a city, age and mood. KidGo turns parks, playgrounds, museums, aquariums, indoor backups and snack stops into a clearer family plan.',
     language: 'Language', country: 'Country', countryHelp: 'International cities are prioritized; Turkey keeps a separate 81-city coverage mode.', locationLabel: 'City or current location', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Find places', current: 'Use current location',
+    pageTitle: 'KidGo Nearby — Kid-Friendly Places Near You', mobileDockLabel: 'Quick search', filtersLabel: 'Search filters', categoriesLabel: 'Categories',
     bestNow: 'Today’s pick', cityPick: 'City pick', score: 'score', demandTitle: 'Popular family plans', allCitiesTitle: 'Where are you going?', allCitiesHelp: 'Choose a country and city, then tune the list by age and mood. Launch mode uses curated popular-city data plus safe fallback.', citiesDefault: 'Pick a city', filtersTitle: 'Kid profile', intentTitle: 'Today’s mood', radius: 'Search radius', resultsTitle: 'Family picks ranked for today', searching: 'Planning…', ideas: 'ideas',
     noticeLive: 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.', noticeFallback: 'Showing prepared family-safe city picks. Open the map link for the final local check.', noticeGeoNo: 'Browser geolocation is unavailable; city search stays active.', noticeGeoUse: 'Waiting for location permission… nearby picks will load if access is allowed.', noticeGeoErr: 'Location was unavailable; type a city to continue.', emptyTitle: 'No exact matches yet', emptyBody: 'Try All categories or another global city.', loadingTitle: 'Preparing a family plan…', loadingBody: 'Ranking places by city, age, mood and category fit.', map: 'Open map', directions: 'Get directions', google: 'Open in Google', rainy: 'Rainy day', whyPick: 'Why it fits', confidence: 'Confidence', scoreMix: 'Score', liveGoogle: 'Live Google', openNow: 'Open now', showResults: 'show picks', practical: 'Practical notes', ratingPending: 'Google rating pending', reviews: 'reviews', points: 'pts', checkMap: 'Check location on map', currentLocationLabel: 'Current location', confidenceHigh: 'high', confidenceMedium: 'medium', confidenceStarter: 'starter',
   },
   ru: {
     eyebrow: 'Глобальный семейный geo-adviser → больше городов и вариантов', title: 'Куда пойти рядом с детьми?', hero: 'Мобильный сервис, который превращает семейные поисковые запросы в гео-рекомендации. Работает по всем городам Турции и готов к росту на английском, русском и немецком.',
-    language: 'Язык', country: 'Страна', countryHelp: 'Для Турции доступен режим 81 города; другие страны используют глобальные подборки городов.', locationLabel: 'Город или текущее место', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Найти места', current: 'Моя геолокация', bestNow: 'Лучшее сейчас', cityPick: 'Выбор города', score: 'балл', demandTitle: 'Глобальный радар семейных городов', allCitiesTitle: 'Страна и город', allCitiesHelp: 'Турция покрывает 81 город; другие страны используют стартовые глобальные города. Сначала пробуем OSM, затем городской fallback.', citiesDefault: 'Выберите город', filtersTitle: 'Профиль ребёнка', intentTitle: 'Настроение дня', radius: 'Радиус поиска', resultsTitle: 'Семейные места по рейтингу', searching: 'Поиск…', ideas: 'идеи',
+    language: 'Язык', country: 'Страна', countryHelp: 'Для Турции доступен режим 81 города; другие страны используют глобальные подборки городов.', locationLabel: 'Город или текущее место', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Найти места', current: 'Моя геолокация', pageTitle: 'KidGo Nearby — места для детей рядом', mobileDockLabel: 'Быстрый поиск', filtersLabel: 'Фильтры поиска', categoriesLabel: 'Категории', bestNow: 'Лучшее сейчас', cityPick: 'Выбор города', score: 'балл', demandTitle: 'Глобальный радар семейных городов', allCitiesTitle: 'Страна и город', allCitiesHelp: 'Турция покрывает 81 город; другие страны используют стартовые глобальные города. Сначала пробуем OSM, затем городской fallback.', citiesDefault: 'Выберите город', filtersTitle: 'Профиль ребёнка', intentTitle: 'Настроение дня', radius: 'Радиус поиска', resultsTitle: 'Семейные места по рейтингу', searching: 'Поиск…', ideas: 'идеи',
     noticeLive: 'Результаты OpenStreetMap ранжированы по возрасту, расстоянию и семейным сигналам.', noticeFallback: 'Показаны подготовленные семейные варианты для выбранного города. Финально проверьте точку на карте.', noticeGeoNo: 'Геолокация недоступна; используйте поиск по городу.', noticeGeoUse: 'Ожидаем разрешение на геолокацию…', noticeGeoErr: 'Геолокация недоступна. Введите город.', emptyTitle: 'Точных совпадений нет', emptyBody: 'Увеличьте радиус, выберите Все или город из списка.', loadingTitle: 'Ищем места для детей…', loadingBody: 'Проверяем город, фильтры и локальные варианты.', map: 'Открыть карту', directions: 'Маршрут', google: 'Открыть в Google', rainy: 'В помещении', whyPick: 'Почему подходит', confidence: 'Надёжность', scoreMix: 'Оценка', liveGoogle: 'Live Google', openNow: 'Открыто сейчас', showResults: 'показать', practical: 'Практично', ratingPending: 'Рейтинг Google ожидается', reviews: 'отзывов', points: 'балл', checkMap: 'Проверьте место на карте', currentLocationLabel: 'Текущее место', confidenceHigh: 'высокая', confidenceMedium: 'средняя', confidenceStarter: 'стартовая',
   },
   de: {
     eyebrow: 'Globaler Familien-Geo-Adviser → mehr Städte, mehr Optionen', title: 'Wohin in der Nähe mit Kindern?', hero: 'Eine mobile Entscheidungs-App, die Familiensuchen in Geo-Empfehlungen verwandelt. Funktioniert in allen türkischen Städten und ist mit Englisch, Russisch und Deutsch global skalierbar.',
-    language: 'Sprache', country: 'Land', countryHelp: 'Für die Türkei bleibt der 81-Städte-Modus aktiv; andere Länder nutzen globale Stadtvorschläge.', locationLabel: 'Stadt oder aktueller Standort', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Orte finden', current: 'Aktuellen Standort nutzen', bestNow: 'Jetzt am besten', cityPick: 'Stadt-Tipp', score: 'Score', demandTitle: 'Globaler Familienstadt-Radar', allCitiesTitle: 'Land und Stadt', allCitiesHelp: 'Die Türkei hat 81-Städte-Abdeckung; andere Länder nutzen globale Startstädte. Zuerst OSM, dann Stadt-Fallback.', citiesDefault: 'Stadt wählen', filtersTitle: 'Kinderprofil', intentTitle: 'Stimmung heute', radius: 'Suchradius', resultsTitle: 'Sortierte Familien-Tipps', searching: 'Suche…', ideas: 'Ideen',
+    language: 'Sprache', country: 'Land', countryHelp: 'Für die Türkei bleibt der 81-Städte-Modus aktiv; andere Länder nutzen globale Stadtvorschläge.', locationLabel: 'Stadt oder aktueller Standort', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Orte finden', current: 'Aktuellen Standort nutzen', pageTitle: 'KidGo Nearby — kinderfreundliche Orte finden', mobileDockLabel: 'Schnellsuche', filtersLabel: 'Suchfilter', categoriesLabel: 'Kategorien', bestNow: 'Jetzt am besten', cityPick: 'Stadt-Tipp', score: 'Score', demandTitle: 'Globaler Familienstadt-Radar', allCitiesTitle: 'Land und Stadt', allCitiesHelp: 'Die Türkei hat 81-Städte-Abdeckung; andere Länder nutzen globale Startstädte. Zuerst OSM, dann Stadt-Fallback.', citiesDefault: 'Stadt wählen', filtersTitle: 'Kinderprofil', intentTitle: 'Stimmung heute', radius: 'Suchradius', resultsTitle: 'Sortierte Familien-Tipps', searching: 'Suche…', ideas: 'Ideen',
     noticeLive: 'Live-OpenStreetMap-Ergebnisse nach Kinderfit, Entfernung und Familiensignalen sortiert.', noticeFallback: 'Vorbereitete familienfreundliche Tipps für die gewählte Stadt. Bitte den Standort final auf der Karte prüfen.', noticeGeoNo: 'Browser-Geolocation nicht verfügbar; Stadtsuche bleibt aktiv.', noticeGeoUse: 'Warten auf Standortfreigabe…', noticeGeoErr: 'Standort nicht verfügbar. Bitte Stadt eingeben.', emptyTitle: 'Noch keine genauen Treffer', emptyBody: 'Radius erweitern, Alle wählen oder eine Stadt nutzen.', loadingTitle: 'Kinderfreundliche Orte werden gesucht…', loadingBody: 'Stadt, Filter und lokale Vorschläge werden geprüft.', map: 'Karte öffnen', directions: 'Route starten', google: 'In Google öffnen', rainy: 'Drinnen', whyPick: 'Warum passend', confidence: 'Vertrauen', scoreMix: 'Score', liveGoogle: 'Live Google', openNow: 'Jetzt geöffnet', showResults: 'Tipps zeigen', practical: 'Praktische Hinweise', ratingPending: 'Google-Bewertung ausstehend', reviews: 'Bewertungen', points: 'Pkt.', checkMap: 'Standort auf Karte prüfen', currentLocationLabel: 'Aktueller Standort', confidenceHigh: 'hoch', confidenceMedium: 'mittel', confidenceStarter: 'Startwert',
   },
 };
@@ -76,12 +78,21 @@ function App() {
 
   useEffect(() => {
     document.documentElement.lang = lang;
-  }, [lang]);
+    document.title = t.pageTitle;
+  }, [lang, t.pageTitle]);
   const selectedCategory = useMemo(() => CATEGORIES.find((item) => item.id === category), [category]);
   const activeInsight = TRENDING_TURKEY_SEARCHES[activeTrendIndex]?.insight[lang] || TRENDING_TURKEY_SEARCHES[0].insight.en;
-  const practicalNotes = lang === 'tr'
-    ? [selectedAge?.helpers.tr || 'yaş uyumu', selectedIntent?.helpers.tr || 'bugünkü moda uygun', selectedCategory?.labels.tr || 'aileye uygun']
-    : [selectedAge?.helpers.en || 'age fit', selectedIntent?.helpers.en || 'today’s mood fit', selectedCategory?.labels.en || 'family fit'];
+  const practicalNotes = [
+    selectedAge?.helpers[lang] || selectedAge?.helpers.en,
+    selectedIntent?.helpers[lang] || selectedIntent?.helpers.en,
+    selectedCategory?.labels[lang] || selectedCategory?.labels.en,
+  ];
+  const tagLabels = {
+    tr: { Playground: 'Oyun alanı', Toilets: 'Tuvalet', Free: 'Ücretsiz', 'Google rated': 'Google puanlı', 'Stroller friendly': 'Bebek arabasına uygun', 'Rainy day': 'Kapalı alan', Website: 'Web sitesi', 'Hours listed': 'Saat bilgisi', 'High chairs': 'Mama sandalyesi', 'Outdoor seating': 'Dış oturma' },
+    ru: { Playground: 'Площадка', Toilets: 'Туалет', Free: 'Бесплатно', 'Google rated': 'С рейтингом Google', 'Stroller friendly': 'Для коляски', 'Rainy day': 'В помещении', Website: 'Сайт', 'Hours listed': 'Есть часы', 'High chairs': 'Детские стулья', 'Outdoor seating': 'На улице' },
+    de: { Playground: 'Spielplatz', Toilets: 'Toilette', Free: 'Kostenlos', 'Google rated': 'Google-bewertet', 'Stroller friendly': 'Kinderwagenfreundlich', 'Rainy day': 'Drinnen', Website: 'Website', 'Hours listed': 'Öffnungszeiten', 'High chairs': 'Hochstühle', 'Outdoor seating': 'Außenplätze' },
+  };
+  const tagLabel = (tag) => tagLabels[lang]?.[tag] || tag;
 
   const evidenceCopy = {
     'matches today’s activity mood': lang === 'tr' ? 'bugünkü ihtiyaca uyuyor' : (lang === 'ru' ? 'подходит под сегодняшнюю задачу' : (lang === 'de' ? 'passt zur heutigen Stimmung' : 'matches today’s activity mood')),
@@ -166,7 +177,7 @@ function App() {
         </div>
       </div>
 
-      <div className="mobile-action-dock" aria-label="Quick search action">
+      <div className="mobile-action-dock" aria-label={t.mobileDockLabel}>
         <span>{location || selectedCountry.defaultCity}</span>
         <button type="button" onClick={submitSearch}>{places.length} {t.showResults || t.search}</button>
       </div>
@@ -207,18 +218,18 @@ function App() {
           <div className="city-rail">{(selectedCountry.id === 'TR' ? featuredCityNames : selectedCountry.cities).map((city) => <button key={city} type="button" onClick={() => pickCity(city)} className={submittedLocation === city ? 'active' : ''}>{city}</button>)}</div>
         </section>
 
-        <section className="filter-card" aria-label="Search filters">
+        <section className="filter-card" aria-label={t.filtersLabel}>
           <div className="section-heading"><Baby size={20} /><div><h2>{t.filtersTitle}</h2><p>{selectedAge?.helpers[lang]} · {selectedIntent?.labels[lang]} · {selectedCategory?.labels[lang]}</p></div></div>
           <div className="segmented-grid age-grid">{AGE_GROUPS.map((item) => <button key={item.id} type="button" className={item.id === age ? 'segment active' : 'segment'} onClick={() => setAge(item.id)}><strong>{item.label}</strong><span>{item.helpers[lang]}</span></button>)}</div>
           <h3 className="subfilter-title">{t.intentTitle}</h3>
           <div className="segmented-grid intent-grid">{INTENTS.map((item) => <button key={item.id} type="button" className={item.id === intent ? 'segment active' : 'segment'} onClick={() => setIntent(item.id)}><strong>{item.emoji} {item.labels[lang]}</strong><span>{item.helpers[lang]}</span></button>)}</div>
-          <div className="chips" aria-label="Categories">{CATEGORIES.map((item) => <button key={item.id} type="button" className={item.id === category ? 'chip active' : 'chip'} onClick={() => setCategory(item.id)}><span>{item.emoji}</span> {item.labels[lang]}</button>)}</div>
+          <div className="chips" aria-label={t.categoriesLabel}>{CATEGORIES.map((item) => <button key={item.id} type="button" aria-pressed={item.id === category} className={item.id === category ? 'chip active' : 'chip'} onClick={() => setCategory(item.id)}><span>{item.emoji}</span> {item.labels[lang]}</button>)}</div>
         </section>
       </section>
 
       <section className="trend-card">
         <div className="section-heading"><TrendingUp size={20} /><div><h2>{t.demandTitle}</h2><p>{activeInsight}</p></div></div>
-        <div className="trend-chips">{TRENDING_TURKEY_SEARCHES.map((item) => <button key={item.location + item.category} type="button" onClick={() => applyTrend(item)}>{item.labels[lang] || item.labels.en}</button>)}</div>
+        <div className="trend-chips">{TRENDING_TURKEY_SEARCHES.map((item, index) => <button key={item.location + item.category} type="button" aria-pressed={index === activeTrendIndex} className={index === activeTrendIndex ? 'active' : ''} onClick={() => applyTrend(item)}>{item.labels[lang] || item.labels.en}</button>)}</div>
       </section>
 
       <section className="results-section" ref={resultsRef}>
@@ -251,7 +262,7 @@ function App() {
                   <ul>{place.evidence.map((item) => <li key={item}>{renderEvidence(item)}</li>)}</ul>
                   <p>{t.practical}: {practicalNotes.filter(Boolean).slice(0, 3).join(' · ')}</p>
                 </div>
-                <div className="tag-row">{place.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                <div className="tag-row">{place.tags.map((tag) => <span key={tag}>{tagLabel(tag)}</span>)}</div>
                 <div className="card-actions"><a className="directions-primary" href={getDirectionsUrl(place)} target="_blank" rel="noreferrer">{t.directions} <Navigation size={15} /></a><a href={getMapUrl(place)} target="_blank" rel="noreferrer">{t.map} <ExternalLink size={15} /></a><a href={getGoogleSearchUrl(place)} target="_blank" rel="noreferrer">{t.google} <ExternalLink size={15} /></a></div>
               </div>
             </article>

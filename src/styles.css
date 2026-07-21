@@ -35,11 +35,11 @@ a { color: inherit; }
 .topbar { position: sticky; top: 8px; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; padding: 8px; border: 1px solid rgba(255,255,255,.75); border-radius: 24px; background: rgba(255,255,255,.88); backdrop-filter: blur(18px); box-shadow: rgba(0,0,0,.06) 0 8px 28px; }
 .brand-mark { min-height: 42px; display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; background: var(--ink); color: #fff; padding: 0 14px; font-weight: 950; letter-spacing: -.02em; white-space: nowrap; }
 .language-switcher { display: flex; align-items: center; gap: 3px; border-radius: 999px; background: var(--soft); padding: 3px; }
-.language-switcher button { border: 0; min-width: 38px; min-height: 38px; border-radius: 999px; background: transparent; color: var(--muted); font-weight: 950; }
+.language-switcher button { border: 0; min-width: 44px; min-height: 44px; border-radius: 999px; background: transparent; color: var(--muted); font-weight: 950; }
 .language-switcher button.active { background: #fff; color: var(--ink); box-shadow: rgba(0,0,0,.08) 0 3px 12px; }
-.mobile-action-dock { position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 30; min-height: 58px; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 22px; background: rgba(33,31,31,.94); color: #fff; box-shadow: rgba(0,0,0,.22) 0 18px 44px; backdrop-filter: blur(18px); }
+.mobile-action-dock { position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 30; min-height: 64px; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 22px; background: rgba(33,31,31,.94); color: #fff; box-shadow: rgba(0,0,0,.22) 0 18px 44px; backdrop-filter: blur(18px); }
 .mobile-action-dock span { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-left: 8px; font-weight: 900; }
-.mobile-action-dock button { flex: 0 0 auto; min-height: 42px; padding: 0 17px; border: 0; border-radius: 16px; background: var(--accent); color: #fff; font-weight: 1000; }
+.mobile-action-dock button { flex: 0 0 auto; min-height: 48px; padding: 0 18px; border: 0; border-radius: 16px; background: var(--accent); color: #fff; font-weight: 1000; }
 
 .planner-card, .cities-card, .filter-card, .trend-card, .place-card, .state-card { background: var(--surface); border: 1px solid var(--line); border-radius: 26px; box-shadow: var(--shadow); }
 .planner-card { display: grid; gap: 18px; padding: 18px; margin-bottom: 12px; }
@@ -77,6 +77,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .trend-chips::-webkit-scrollbar, .chips::-webkit-scrollbar, .city-rail::-webkit-scrollbar { display: none; }
 .trend-chips button, .city-rail button { scroll-snap-align: start; white-space: nowrap; min-height: 44px; padding: 0 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--ink); font-weight: 950; }
 .trend-chips button:hover, .city-rail button:hover { background: var(--ink); color: #fff; }
+.trend-chips button.active { background: var(--green); border-color: var(--green); color: #fff; }
 .city-rail button.active { background: var(--green); border-color: var(--green); color: #fff; }
 .segmented-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 14px 0; }
 .subfilter-title { margin: 2px 0 9px; font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
@@ -140,20 +141,22 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
 .tag-row span { border-radius: 999px; background: #f4f1ee; color: #51484c; padding: 6px 8px; font-size: .72rem; font-weight: 850; }
 .card-actions { gap: 7px; flex-wrap: wrap; }
-.card-actions a { flex: 1; min-height: 43px; display: inline-flex; justify-content: center; align-items: center; gap: 5px; border-radius: 14px; text-decoration: none; font-weight: 1000; background: #f1eeeb; color: var(--ink); font-size: .82rem; }
+.card-actions a { flex: 1; min-height: 48px; display: inline-flex; justify-content: center; align-items: center; gap: 5px; border-radius: 14px; text-decoration: none; font-weight: 1000; background: #f1eeeb; color: var(--ink); font-size: .82rem; }
 .card-actions .directions-primary { flex-basis: 100%; background: var(--ink); color: #fff; }
 
 @media (max-width: 430px) {
   .app-shell { padding-left: 10px; padding-right: 10px; }
   .topbar { top: 6px; }
-  .brand-mark { font-size: .9rem; padding: 0 12px; }
-  .language-switcher button { min-width: 34px; }
+  .brand-mark { font-size: .82rem; padding: 0 10px; }
+  .language-switcher button { min-width: 40px; min-height: 44px; }
   .planner-card { padding: 16px; border-radius: 24px; }
   .search-actions { display: flex; flex-direction: column; }
   .primary-button { min-height: 58px; }
   .chips { flex-wrap: wrap; overflow: visible; }
   .chips .chip { flex: 1 1 calc(50% - 8px); justify-content: center; }
-  .card-actions { flex-direction: column; }
+  .card-actions { flex-direction: column; align-items: stretch; }
+  .card-actions a { width: 100%; font-size: .9rem; }
+  .card-actions .directions-primary { order: -1; }
 }
 
 @media (min-width: 720px) {
