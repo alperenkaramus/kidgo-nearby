@@ -5,6 +5,11 @@ import { fetchOverpassPlaces } from './overpass.js';
 import { filterPlacesByCategory, rankPlaces } from './scoring.js';
 import { getFallbackPlaces } from './seedData.js';
 
+function shouldUseLiveOsm() {
+  if (typeof window === 'undefined') return true;
+  return import.meta.env?.VITE_ENABLE_LIVE_OSM === 'true';
+}
+
 export async function resolveLocation({ location, query, fetchImpl } = {}) {
   if (location?.lat && location?.lon) return { lat: Number(location.lat), lon: Number(location.lon), label: location.label };
   if (!query) throw new Error('Provide location coordinates or a query/city string');
@@ -26,6 +31,10 @@ export async function searchFamilyPlaces({
   useFallback = true,
 } = {}) {
   const filters = { category: normalizeCategory(category), age, intent };
+  if (!shouldUseLiveOsm()) {
+    const fallbackOrigin = location?.lat && location?.lon ? { lat: Number(location.lat), lon: Number(location.lon) } : undefined;
+    return getFallbackPlaces(city || query || 'istanbul', fallbackOrigin, filters).slice(0, limit);
+  }
   try {
     const origin = await resolveLocation({ location, query: query || city, fetchImpl });
     const elements = await fetchOverpassPlaces({ location: origin, radius, category: filters.category, fetchImpl });

@@ -88,6 +88,12 @@ VITE_ENABLE_GOOGLE_PLACES=true
 
 For the first low-cost launch, leave both enable flags unset/false. The app will use OpenStreetMap + curated/city fallback data with zero Google Places calls.
 
+Live browser Overpass/OpenStreetMap calls are also off by default on production to avoid third-party CORS noise and flaky public API dependency during launch. Enable only if you intentionally want direct browser OSM calls:
+
+```bash
+VITE_ENABLE_LIVE_OSM=true
+```
+
 The key is read only by the serverless proxy:
 
 - Vercel: `/api/google-places`
