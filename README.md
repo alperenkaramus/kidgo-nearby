@@ -70,7 +70,7 @@ npm run build
 
 ## Environment variables
 
-Live Google Places enrichment is optional but supported through serverless proxy functions.
+Live Google Places enrichment is optional but supported through serverless proxy functions. It is deliberately off by default so launch traffic cannot create accidental Google API spend.
 
 Set one of these on the deploy platform, preferably `GOOGLE_PLACES_API_KEY`:
 
@@ -79,12 +79,21 @@ GOOGLE_PLACES_API_KEY=your_google_places_api_key
 # also accepted: GOOGLE_MAPS_API_KEY or GOOGLE_API_KEY
 ```
 
+Then enable it explicitly only when you want paid Google Places calls:
+
+```bash
+GOOGLE_PLACES_ENABLED=true
+VITE_ENABLE_GOOGLE_PLACES=true
+```
+
+For the first low-cost launch, leave both enable flags unset/false. The app will use OpenStreetMap + curated/city fallback data with zero Google Places calls.
+
 The key is read only by the serverless proxy:
 
 - Vercel: `/api/google-places`
 - Netlify: `/.netlify/functions/google-places`, with `/api/google-places` redirected there
 
-The browser never receives the API key. If no key is configured, the app silently keeps using OpenStreetMap + curated/city fallback ratings.
+The browser never receives the API key. If no key is configured or the enable flags are not true, the app silently keeps using OpenStreetMap + curated/city fallback ratings.
 
 Google Cloud requirements:
 

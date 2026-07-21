@@ -29,6 +29,10 @@ function getGooglePlacesKey() {
   return process.env.GOOGLE_PLACES_API_KEY || process.env.GOOGLE_MAPS_API_KEY || process.env.GOOGLE_API_KEY || '';
 }
 
+function isGooglePlacesEnabled() {
+  return process.env.GOOGLE_PLACES_ENABLED === 'true';
+}
+
 function jsonResponse(statusCode, body, headers = {}) {
   return {
     statusCode,
@@ -115,6 +119,7 @@ async function searchOnePlace(place, apiKey, fetchImpl) {
 }
 
 export async function enrichPlacesWithGoogle({ places = [], fetchImpl = globalThis.fetch, apiKey = getGooglePlacesKey() } = {}) {
+  if (!isGooglePlacesEnabled()) return { enabled: false, places: [], reason: 'GOOGLE_PLACES_ENABLED is not true' };
   if (!apiKey) return { enabled: false, places: [], reason: 'missing GOOGLE_PLACES_API_KEY' };
   const candidates = places
     .filter((place) => place?.name && Number.isFinite(Number(place.lat)) && Number.isFinite(Number(place.lon)))

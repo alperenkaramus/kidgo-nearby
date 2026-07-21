@@ -64,9 +64,7 @@ function mergeGooglePlace(place, googlePlace) {
 
 function shouldAttemptGooglePlaces() {
   if (typeof window === 'undefined') return true;
-  const host = window.location?.hostname || '';
-  const isLocal = ['localhost', '127.0.0.1', '0.0.0.0'].includes(host);
-  return !isLocal || import.meta.env?.VITE_ENABLE_GOOGLE_PLACES === 'true';
+  return import.meta.env?.VITE_ENABLE_GOOGLE_PLACES === 'true';
 }
 
 export async function enrichUiPlacesWithGoogle(places = []) {
