@@ -1,6 +1,8 @@
-# Geo Adviser / Kids Near Me
+# KidGo Nearby / Geo Adviser
 
 Global, mobile-first family geo adviser for answering: “where can we go nearby with kids?”
+
+Recommended public domain: `kidgonearby.com`.
 
 The app ranks kid-friendly parks, museums, indoor backups, aquariums, libraries, family cafés, attractions, and quick family stops across international cities, while keeping Turkey’s 81-city coverage mode.
 
