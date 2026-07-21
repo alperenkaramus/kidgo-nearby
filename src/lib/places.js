@@ -1,5 +1,6 @@
 import { CATEGORY_LABELS } from './geodata/categories.js';
 import { searchFamilyPlaces } from './geodata/places.js';
+import { enrichUiPlacesWithGoogle } from './googlePlaces.js';
 
 export const DEFAULT_LANGUAGE = 'en';
 export const DEFAULT_COUNTRY = 'US';
@@ -143,10 +144,13 @@ function toUiPlace(place) {
     tags: prettyTags(place),
     rainyDay: place.familyTags?.includes('rainy-day') || place.category === 'indoor',
     summary: SUMMARY_BY_CATEGORY[place.category] || 'Family-friendly candidate ranked from open map signals.',
-    source: place.source === 'osm' ? 'Live OpenStreetMap' : (place.source === 'seed-google-rated' ? 'Curated + Google rating seed' : 'fallback seed'),
+    source: place.source === 'google-live' ? 'Live Google Places' : (place.source === 'osm' ? 'Live OpenStreetMap' : (place.source === 'seed-google-rated' ? 'Curated + Google rating seed' : 'fallback seed')),
     googleRating: place.googleRating || null,
     googleReviewCount: place.googleReviewCount || null,
     googleReviewLabel: formatReviewCount(place.googleReviewCount),
+    googleMapsUri: place.googleMapsUri || null,
+    googlePlaceId: place.googlePlaceId || null,
+    googleLive: place.source === 'google-live' || Boolean(place.googleLive),
     confidence: confidenceLevel(place),
     scoreParts: place.scoreParts || {},
     evidence: evidenceVerdict(place),
@@ -175,7 +179,8 @@ export async function searchPlaces({ location = 'Istanbul', coords = null, age =
     useFallback: true,
   });
 
-  return places.map(toUiPlace).slice(0, 18);
+  const uiPlaces = places.map(toUiPlace).slice(0, 18);
+  return enrichUiPlacesWithGoogle(uiPlaces);
 }
 
 export function getMapUrl(place) {
@@ -187,6 +192,7 @@ export function getDirectionsUrl(place) {
 }
 
 export function getGoogleSearchUrl(place) {
+  if (place.googleMapsUri) return place.googleMapsUri;
   const query = encodeURIComponent(`${place.name} ${place.address || ''} Google Maps`);
   return `https://www.google.com/maps/search/?api=1&query=${query}`;
 }

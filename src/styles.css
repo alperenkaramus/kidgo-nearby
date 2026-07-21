@@ -170,9 +170,11 @@ input[type="range"] { width: 100%; accent-color: var(--coral); margin: 12px 0 8p
 .floating-google { left: 14px; top: 58px; color: #7a4b00; background: rgba(255,248,223,.94); }
 .floating-google small { margin-left: 4px; color: #8a6a22; }
 .place-body { padding: 16px; }
-.card-topline { justify-content: space-between; gap: 8px; margin-bottom: 8px; }
-.category-tag, .rain-tag { border-radius: 999px; padding: 7px 9px; font-size: .74rem; font-weight: 1000; }
+.card-topline { justify-content: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.category-tag, .rain-tag, .google-live-tag, .open-tag { border-radius: 999px; padding: 7px 9px; font-size: .74rem; font-weight: 1000; }
 .category-tag { color: #005c55; background: #e7fffb; }
+.google-live-tag { color: #1a4d23; background: #dcfce7; }
+.open-tag { color: #7c2d12; background: #ffedd5; }
 .rain-tag { color: #432070; background: #f0e7ff; }
 .place-card h3 { font-size: 1.32rem; line-height: 1.08; letter-spacing: -.035em; margin-bottom: 8px; }
 .summary { color: var(--muted); line-height: 1.42; font-size: .94rem; margin-bottom: 12px; }

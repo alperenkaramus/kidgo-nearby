@@ -68,9 +68,28 @@ npm run build
 
 ## Environment variables
 
-None required for the current MVP.
+Live Google Places enrichment is optional but supported through serverless proxy functions.
 
-Future live Google Places ratings would require a backend proxy and provider API key. Do not expose map/places API keys directly in this frontend.
+Set one of these on the deploy platform, preferably `GOOGLE_PLACES_API_KEY`:
+
+```bash
+GOOGLE_PLACES_API_KEY=your_google_places_api_key
+# also accepted: GOOGLE_MAPS_API_KEY or GOOGLE_API_KEY
+```
+
+The key is read only by the serverless proxy:
+
+- Vercel: `/api/google-places`
+- Netlify: `/.netlify/functions/google-places`, with `/api/google-places` redirected there
+
+The browser never receives the API key. If no key is configured, the app silently keeps using OpenStreetMap + curated/city fallback ratings.
+
+Google Cloud requirements:
+
+1. Enable Places API / Places API (New) for the project.
+2. Add billing as required by Google.
+3. Restrict the API key by server/platform where possible.
+4. Do not put the key in Vite `VITE_*` variables; that would expose it to users.
 
 ## Release checklist
 
