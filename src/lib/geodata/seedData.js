@@ -267,7 +267,7 @@ export function normalizeCityKey(city = '') {
 
 export function getFallbackPlaces(city = 'istanbul', originOrFilters = {}, maybeFilters = {}) {
   const origin = originOrFilters?.lat ? originOrFilters : originOrFilters?.origin;
-  const filters = originOrFilters?.lat ? maybeFilters : originOrFilters;
+  const filters = originOrFilters?.lat || arguments.length >= 3 ? maybeFilters : originOrFilters;
   const cityKey = normalizeCityKey(city);
   const seedPlaces = SEEDS[cityKey] || genericPlaces(cityKey, origin);
   const enriched = seedPlaces.map((rawPlace, index) => {

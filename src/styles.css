@@ -116,7 +116,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .floating-rank, .floating-score, .floating-google { position: absolute; z-index: 2; top: 12px; border-radius: 999px; padding: 7px 9px; font-weight: 1000; background: rgba(255,255,255,.94); box-shadow: rgba(0,0,0,.08) 0 5px 14px; }
 .floating-rank { left: 12px; color: var(--accent); }
 .floating-score { right: 12px; color: var(--ink); }
-.floating-score::after { content: ' fit'; color: var(--muted); font-size: .68rem; }
+.floating-score::after { content: ' score'; color: var(--muted); font-size: .68rem; }
 .floating-google { left: 12px; top: 50px; color: #684600; background: #fff8df; }
 .floating-google small { margin-left: 4px; color: #8a6a22; }
 .place-body { padding: 15px; }
@@ -138,9 +138,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .meta-row svg { flex: 0 0 auto; color: var(--accent); }
 .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
 .tag-row span { border-radius: 999px; background: #f4f1ee; color: #51484c; padding: 6px 8px; font-size: .72rem; font-weight: 850; }
-.card-actions { gap: 7px; }
-.card-actions a { flex: 1; min-height: 43px; display: inline-flex; justify-content: center; align-items: center; gap: 5px; border-radius: 14px; text-decoration: none; font-weight: 1000; background: var(--ink); color: #fff; font-size: .82rem; }
-.card-actions a:first-child { background: #f1eeeb; color: var(--ink); }
+.card-actions { gap: 7px; flex-wrap: wrap; }
+.card-actions a { flex: 1; min-height: 43px; display: inline-flex; justify-content: center; align-items: center; gap: 5px; border-radius: 14px; text-decoration: none; font-weight: 1000; background: #f1eeeb; color: var(--ink); font-size: .82rem; }
+.card-actions .directions-primary { flex-basis: 100%; background: var(--ink); color: #fff; }
 
 @media (max-width: 430px) {
   .app-shell { padding-left: 10px; padding-right: 10px; }
@@ -150,6 +150,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .planner-card { padding: 16px; border-radius: 24px; }
   .search-actions { display: flex; flex-direction: column; }
   .primary-button { min-height: 58px; }
+  .chips { flex-wrap: wrap; overflow: visible; }
+  .chips .chip { flex: 1 1 calc(50% - 8px); justify-content: center; }
   .card-actions { flex-direction: column; }
 }
 
