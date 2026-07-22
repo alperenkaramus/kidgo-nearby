@@ -1,3 +1,4 @@
+import { getFallbackPlaces } from '../src/lib/geodata/seedData.js';
 import { searchFamilyPlaces } from '../src/lib/geodata/places.js';
 
 const DEFAULT_RADIUS_M = 5000;
@@ -53,6 +54,20 @@ function parseCoordinate(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+function isGeneratedOsmName(name = '') {
+  return /^(playground|park|museum|family cafe|family restaurant|kid-friendly attraction|indoor place|family place) nearby$/i.test(String(name).trim());
+}
+
+function mergeByLocationAndName(primary = [], secondary = []) {
+  const seen = new Set();
+  return [...primary, ...secondary].filter((place) => {
+    const key = `${String(place.name || '').toLowerCase()}|${Number(place.lat).toFixed(4)}|${Number(place.lon).toFixed(4)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export async function searchNearbyOsmPlaces({ lat, lon, city = 'nearby', category = 'all', age = '4', intent = 'quick', radiusKm = 5, limit = 18, fetchImpl = globalThis.fetch } = {}) {
   const latitude = parseCoordinate(lat);
   const longitude = parseCoordinate(lon);
@@ -71,7 +86,13 @@ export async function searchNearbyOsmPlaces({ lat, lon, city = 'nearby', categor
     useFallback: true,
   });
 
-  return places;
+  const namedLivePlaces = places.filter((place) => place.source === 'osm' && !isGeneratedOsmName(place.name));
+  const cityFallbackPlaces = city && city !== 'nearby'
+    ? getFallbackPlaces(city, { lat: latitude, lon: longitude }, { category: category === 'all' ? undefined : category, age: Number(age), intent })
+    : [];
+  const curatedResult = mergeByLocationAndName(namedLivePlaces, cityFallbackPlaces);
+
+  return (curatedResult.length >= 4 ? curatedResult : places).slice(0, Math.min(Number(limit) || 18, 36));
 }
 
 export async function handleOsmPlacesRequest(event = {}, { fetchImpl = globalThis.fetch } = {}) {
