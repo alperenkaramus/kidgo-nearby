@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Baby, Compass, ExternalLink, Globe2, Loader2, MapPin, Navigation, Search, Sparkles, Telescope, TrendingUp, Umbrella } from 'lucide-react';
+import useDebounce from './hooks/useDebounce';
+import SkeletonLoader from './components/SkeletonLoader';
 import { AGE_GROUPS, CATEGORIES, COUNTRIES, DEFAULT_COUNTRY, DEFAULT_LANGUAGE, INTENTS, LANGUAGES, TRENDING_TURKEY_SEARCHES, TURKEY_CITIES, getDirectionsUrl, getGoogleSearchUrl, getMapUrl, nearestSupportedCityForCoords, searchPlaces } from './lib/places.js';
 import './styles.css';
 
@@ -60,6 +61,7 @@ function App() {
   const [country, setCountry] = useState(defaultCountry.id);
   const [location, setLocation] = useState(defaultCountry.defaultCity);
   const [submittedLocation, setSubmittedLocation] = useState(defaultCountry.defaultCity);
+  const [debouncedLocation, setDebouncedLocation] = useState(defaultCountry.defaultCity);
   const [coords, setCoords] = useState(null);
   const [age, setAge] = useState('4');
   const [intent, setIntent] = useState('quick');
@@ -112,11 +114,15 @@ function App() {
   const distanceLabel = (place) => (place.distanceKm === null ? t.cityPick : place.distanceLabel);
 
   useEffect(() => {
+    setDebouncedLocation(location);
+  }, [location]);
+
+  useEffect(() => {
     let cancelled = false;
     async function runSearch() {
       setStatus('loading');
       try {
-        const results = await searchPlaces({ location: submittedLocation, coords, age, intent, category, radiusKm });
+        const results = await searchPlaces({ location: debouncedLocation, coords, age, intent, category, radiusKm });
         if (cancelled) return;
         setPlaces(results);
         setStatus(results.length ? 'success' : 'empty');
@@ -130,12 +136,13 @@ function App() {
     }
     runSearch();
     return () => { cancelled = true; };
-  }, [age, intent, category, coords, radiusKm, submittedLocation, geoNoticeOverride, t.noticeFallback, t.noticeLive, t.noticeGeoReady, t.noticeGeoErr]);
+  }, [age, intent, category, coords, radiusKm, debouncedLocation, geoNoticeOverride, t.noticeFallback, t.noticeLive, t.noticeGeoReady, t.noticeGeoErr]);
 
   function submitSearch() {
     const nextLocation = location.trim() || selectedCountry.defaultCity || defaultCountry.defaultCity;
     const matchedCountry = COUNTRIES.find((item) => item.cities.some((city) => city.toLowerCase() === nextLocation.toLowerCase()) || item.defaultCity.toLowerCase() === nextLocation.toLowerCase());
     if (matchedCountry) setCountry(matchedCountry.id);
+    setDebouncedLocation(nextLocation);
     setGeoNoticeOverride('');
     setCoords(null);
     setSubmittedLocation(nextLocation);
@@ -261,7 +268,7 @@ function App() {
       <section className="results-section" ref={resultsRef}>
         <div className="results-heading"><div><p className="kicker">{coords ? `${coords.lat}, ${coords.lon}${coords.accuracy ? ` · ±${coords.accuracy} m` : ''}` : submittedLocation}</p><h2>{t.resultsTitle}</h2></div><span className="result-count">{isLoading ? t.searching : `${places.length} ${t.ideas}`}</span></div>
         <div className="notice" role={status === 'error' ? 'alert' : 'status'}>{status === 'error' ? <Umbrella size={18} /> : <Compass size={18} />}<span>{notice}</span></div>
-        {isLoading && <div className="state-card"><Loader2 className="spin" size={28} /><h3>{t.loadingTitle}</h3><p>{t.loadingBody}</p></div>}
+        {isLoading && <SkeletonLoader />}
         {status === 'empty' && <div className="state-card"><Telescope size={28} /><h3>{t.emptyTitle}</h3><p>{t.emptyBody}</p></div>}
         {!isLoading && places.length > 0 && <div className="cards-grid">{places.map((place, index) => {
           const cat = CATEGORIES.find((item) => item.id === place.category);
