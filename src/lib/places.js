@@ -51,6 +51,8 @@ export const CATEGORIES = [
   { id: 'playground', emoji: '🛝', labels: { en: 'Playgrounds', tr: 'Oyun alanları', ru: 'Площадки', de: 'Spielplätze' } },
   { id: 'park', emoji: '🌳', labels: { en: 'Parks', tr: 'Parklar', ru: 'Парки', de: 'Parks' } },
   { id: 'museum', emoji: '🏛️', labels: { en: 'Museums', tr: 'Müzeler', ru: 'Музеи', de: 'Museen' } },
+  { id: 'art-gallery', emoji: '🎨', labels: { en: 'Art & galleries', tr: 'Sanat ve galeriler', ru: 'Искусство и галереи', de: 'Kunst & Galerien' } },
+  { id: 'science-center', emoji: '🔬', labels: { en: 'Science centres', tr: 'Bilim merkezleri', ru: 'Научные центры', de: 'Wissenschaftszentren' } },
   { id: 'zoo', emoji: '🦁', labels: { en: 'Zoos', tr: 'Hayvanat bahçeleri', ru: 'Зоопарки', de: 'Zoos' } },
   { id: 'aquarium', emoji: '🐠', labels: { en: 'Aquariums', tr: 'Akvaryumlar', ru: 'Аквариумы', de: 'Aquarien' } },
   { id: 'library', emoji: '📚', labels: { en: 'Libraries', tr: 'Kütüphaneler', ru: 'Библиотеки', de: 'Bibliotheken' } },
@@ -95,6 +97,8 @@ const SUMMARY_BY_CATEGORY = {
   playground: 'High-energy play stop. Best when you need an easy win nearby.',
   park: 'Low-pressure outdoor option for walks, snacks and flexible play.',
   museum: 'Good discovery option, especially when weather or heat makes indoor time easier.',
+  'art-gallery': 'Visual culture stop; check for family workshops, free-entry hours and stroller access.',
+  'science-center': 'Hands-on learning option with strong school-age appeal and rainy-day value.',
   zoo: 'Animal-focused outing with strong kid appeal and clear structure.',
   aquarium: 'Reliable indoor animal experience for curious kids and rainy days.',
   library: 'Quiet, low-cost reset spot for reading, toilets and calmer time.',
@@ -131,6 +135,7 @@ function evidenceVerdict(place) {
   const parts = place.scoreParts || {};
   const lines = [];
   if (place.googleRating) lines.push(`Google ${place.googleRating} (${formatReviewCount(place.googleReviewCount)} reviews)`);
+  if (place.guideMention) lines.push('mentioned in a current city guide');
   if ((parts.intentFit || 0) >= 10) lines.push('matches today’s activity mood');
   if ((parts.familySignals || 0) >= 14) lines.push('strong family amenities');
   if ((parts.distance || 0) >= 15) lines.push('nearby enough for a low-friction trip');
@@ -141,7 +146,7 @@ function evidenceVerdict(place) {
 
 function confidenceLevel(place) {
   if (place.googleRating && place.googleReviewCount >= 10000) return 'high';
-  if (place.googleRating || place.source === 'osm') return 'medium';
+  if (place.googleRating || place.source === 'osm' || place.guideMention) return 'medium';
   return 'starter';
 }
 
@@ -161,7 +166,7 @@ function toUiPlace(place) {
     tags: prettyTags(place),
     rainyDay: place.familyTags?.includes('rainy-day') || place.category === 'indoor',
     summary: SUMMARY_BY_CATEGORY[place.category] || 'Family-friendly candidate ranked from open map signals.',
-    source: place.source === 'google-live' ? 'Live Google Places' : (place.source === 'osm' ? 'Live OpenStreetMap' : (place.source === 'seed-google-rated' ? 'Curated + Google rating seed' : 'fallback seed')),
+    source: place.source === 'google-live' ? 'Live Google Places' : (place.source === 'osm' ? 'Live OpenStreetMap' : (place.source === 'wikipedia-guide' ? 'Wikipedia city reference' : (place.source === 'seed-google-rated' ? 'Curated + Google rating seed' : 'fallback seed'))),
     googleRating: place.googleRating || null,
     googleReviewCount: place.googleReviewCount || null,
     googleReviewLabel: formatReviewCount(place.googleReviewCount),
@@ -171,6 +176,11 @@ function toUiPlace(place) {
     confidence: confidenceLevel(place),
     scoreParts: place.scoreParts || {},
     evidence: evidenceVerdict(place),
+    guideMention: Boolean(place.guideMention),
+    guideSource: place.guideSource || null,
+    guideSection: place.guideSection || null,
+    guideUrl: place.guideUrl || null,
+    guideUpdatedAt: place.guideUpdatedAt || null,
     mapsUrl: place.mapsUrl,
     directionsUrl: place.directionsUrl,
   };
@@ -205,7 +215,7 @@ export function nearestSupportedCityForCoords(coords) {
 
 export async function searchPlaces({ location = 'Istanbul', coords = null, age = '4', category = 'all', radiusKm = 5, intent = 'quick' } = {}) {
   const fallbackCity = coords ? nearestSupportedCityForCoords(coords) : location;
-  const liveNearbyPlaces = coords ? await fetchNearbyOsmPlaces({ coords, city: fallbackCity, age, intent, category, radiusKm }) : [];
+  const liveNearbyPlaces = await fetchNearbyOsmPlaces({ coords, city: fallbackCity, age, intent, category, radiusKm });
   const places = liveNearbyPlaces.length ? liveNearbyPlaces : await searchFamilyPlaces({
     location: coords ? { lat: coords.lat, lon: coords.lon, label: 'Current location' } : undefined,
     query: coords ? undefined : location,

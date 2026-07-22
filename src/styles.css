@@ -125,8 +125,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .floating-google small { margin-left: 4px; color: #8a6a22; }
 .place-body { padding: 15px; flex: 1; display: flex; flex-direction: column; }
 .card-topline { justify-content: flex-start; flex-wrap: wrap; gap: 6px; margin-bottom: 9px; }
-.category-tag, .rain-tag, .google-live-tag, .open-tag { border-radius: 999px; padding: 6px 8px; font-size: .71rem; font-weight: 1000; }
+.category-tag, .rain-tag, .google-live-tag, .open-tag, .guide-tag { border-radius: 999px; padding: 6px 8px; font-size: .71rem; font-weight: 1000; }
 .category-tag { color: #005c55; background: #e7fffb; }
+.guide-tag { color: #153d73; background: #e8f2ff; text-decoration: none; }
+.guide-tag:hover { background: #d8eaff; }
 .google-live-tag { color: #1a4d23; background: #dcfce7; }
 .open-tag { color: #7c2d12; background: #ffedd5; }
 .rain-tag { color: #432070; background: #f0e7ff; }

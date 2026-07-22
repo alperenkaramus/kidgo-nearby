@@ -45,6 +45,35 @@ test('OSM proxy returns real named nearby Bursa places with map coordinates', as
   assert.ok(places.every((place) => Number.isFinite(place.distanceM)));
 });
 
+test('OSM proxy geocodes a selected city and returns a richer named set without GPS', async () => {
+  const fetchImpl = async (url, options = {}) => {
+    if (String(url).startsWith('https://nominatim.openstreetmap.org/search')) {
+      assert.match(String(url), /q=Berlin/);
+      return { ok: true, async json() { return [{ lat: '52.5200', lon: '13.4050', display_name: 'Berlin, Deutschland' }]; } };
+    }
+    assert.match(String(url), /^https:\/\/overpass/);
+    assert.equal(options.method, 'POST');
+    return {
+      ok: true,
+      async json() {
+        return { elements: Array.from({ length: 9 }, (_, index) => ({
+          type: 'node', id: 100 + index, lat: 52.52 + index * 0.001, lon: 13.405 + index * 0.001,
+          tags: index % 3 === 0
+            ? { name: `Berlin Playground ${index}`, leisure: 'playground' }
+            : index % 3 === 1
+              ? { name: `Berlin Art Space ${index}`, tourism: 'gallery' }
+              : { name: `Berlin Family Cafe ${index}`, amenity: 'cafe', highchair: 'yes' },
+        })) };
+      },
+    };
+  };
+
+  const places = await searchNearbyOsmPlaces({ city: 'Berlin', limit: 30, fetchImpl });
+  assert.ok(places.length >= 9);
+  assert.ok(places.some((place) => place.category === 'art-gallery'));
+  assert.ok(places.some((place) => place.category === 'family-cafe'));
+});
+
 test('OSM serverless handler validates coordinates and emits JSON', async () => {
   const response = await handleOsmPlacesRequest({
     httpMethod: 'POST',

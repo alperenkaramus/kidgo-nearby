@@ -87,6 +87,12 @@ test('rankPlaces uses activity mood intent as a real recommendation signal', () 
 test('fallback data covers required demo cities and categories', () => {
   assert.ok(CATEGORIES.includes('indoor'));
   assert.ok(CATEGORIES.includes('attraction'));
+  assert.ok(CATEGORIES.includes('art-gallery'));
+  assert.ok(CATEGORIES.includes('science-center'));
+  const generic = getFallbackPlaces('Lisbon');
+  assert.ok(generic.length >= 12);
+  assert.ok(generic.some((place) => place.category === 'art-gallery'));
+  assert.ok(generic.some((place) => place.category === 'science-center'));
   for (const city of ['istanbul', 'london', 'new-york']) {
     const places = getFallbackPlaces(city, { lat: 41.0082, lon: 28.9784 });
     assert.ok(places.length >= 3, `${city} should have seed places`);

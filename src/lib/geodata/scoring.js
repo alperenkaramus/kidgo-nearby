@@ -4,6 +4,8 @@ const CATEGORY_BASE = Object.freeze({
   playground: 38,
   park: 32,
   museum: 30,
+  'art-gallery': 27,
+  'science-center': 34,
   zoo: 35,
   aquarium: 35,
   library: 28,
@@ -24,13 +26,14 @@ const TAG_WEIGHTS = Object.freeze({
   'high chairs': 5,
   'outdoor seating': 3,
   'treat stop': 2,
+  learning: 7,
 });
 
 const INTENT_WEIGHTS = Object.freeze({
   quick: { playground: 8, park: 7, 'family-cafe': 6, library: 4 },
-  rainy: { museum: 8, aquarium: 9, library: 7, indoor: 10, 'family-cafe': 5 },
-  free: { park: 8, playground: 8, library: 8, museum: 3 },
-  learning: { museum: 10, aquarium: 7, zoo: 7, library: 8, attraction: 5 },
+  rainy: { museum: 8, 'art-gallery': 7, 'science-center': 10, aquarium: 9, library: 7, indoor: 10, 'family-cafe': 5 },
+  free: { park: 8, playground: 8, library: 8, museum: 3, 'art-gallery': 3 },
+  learning: { museum: 10, 'art-gallery': 9, 'science-center': 12, aquarium: 7, zoo: 7, library: 8, attraction: 5 },
   active: { playground: 10, park: 8, zoo: 5, attraction: 6 },
   foodBreak: { 'family-cafe': 10, restaurant: 8, park: 3 },
 });
@@ -71,7 +74,7 @@ function ageScore(place, age) {
   const years = Number(age);
   if (place.category === 'playground' && years <= 10) return 8;
   if (['zoo', 'aquarium', 'park'].includes(place.category) && years <= 12) return 6;
-  if (['museum', 'library', 'indoor'].includes(place.category) && years >= 4) return 5;
+  if (['museum', 'art-gallery', 'science-center', 'library', 'indoor'].includes(place.category) && years >= 4) return 5;
   if (['family-cafe', 'restaurant'].includes(place.category) && years <= 8) return 4;
   return 1;
 }

@@ -1,4 +1,4 @@
-import { CATEGORY_OVERPASS_FILTERS, CATEGORIES, normalizeCategory } from './categories.js';
+import { CATEGORY_OVERPASS_FILTERS, normalizeCategory } from './categories.js';
 
 const OVERPASS_ENDPOINTS = Object.freeze([
   'https://overpass-api.de/api/interpreter',
@@ -6,12 +6,28 @@ const OVERPASS_ENDPOINTS = Object.freeze([
 ]);
 
 export function buildOverpassQuery({ lat, lon, radius = 2500, category } = {}) {
-  const categories = normalizeCategory(category) ? [normalizeCategory(category)] : CATEGORIES;
-  const filters = categories.flatMap((item) => CATEGORY_OVERPASS_FILTERS[item] || []);
+  const normalizedCategory = normalizeCategory(category);
   const around = `(around:${Math.min(Number(radius) || 2500, 10000)},${lat},${lon})`;
-  const body = filters
-    .flatMap((filter) => [`node${filter}${around};`, `way${filter}${around};`, `relation${filter}${around};`])
-    .join('\n  ');
+  let body;
+
+  if (!normalizedCategory) {
+    body = [
+      `nwr["leisure"~"^(playground|park|garden|water_park|sports_centre)$"]${around};`,
+      `nwr["tourism"~"^(museum|gallery|zoo|aquarium|attraction|theme_park)$"]${around};`,
+      `nwr["amenity"~"^(library|arts_centre|planetarium|science_centre|cinema|food_court|ice_cream)$"]${around};`,
+      `nwr["amenity"="cafe"]["kids_area"="yes"]${around};`,
+      `nwr["amenity"="cafe"]["playground"="yes"]${around};`,
+      `nwr["amenity"="cafe"]["highchair"="yes"]${around};`,
+      `nwr["amenity"="restaurant"]["kids_area"="yes"]${around};`,
+      `nwr["amenity"="restaurant"]["playground"="yes"]${around};`,
+      `nwr["amenity"="restaurant"]["highchair"="yes"]${around};`,
+    ].join('\n  ');
+  } else {
+    const filters = CATEGORY_OVERPASS_FILTERS[normalizedCategory] || [];
+    body = filters
+      .flatMap((filter) => [`node${filter}${around};`, `way${filter}${around};`, `relation${filter}${around};`])
+      .join('\n  ');
+  }
 
   return `[out:json][timeout:20];\n(\n  ${body}\n);\nout center tags;`;
 }

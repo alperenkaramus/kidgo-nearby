@@ -1,5 +1,8 @@
 import { getFallbackPlaces } from '../src/lib/geodata/seedData.js';
 import { searchFamilyPlaces } from '../src/lib/geodata/places.js';
+import { geocodeLocation } from '../src/lib/geodata/nominatim.js';
+import { applyCityGuideSignals, fetchCityGuide } from './cityGuide.mjs';
+import { fetchWikipediaFamilyPlaces } from './wikipediaNearby.mjs';
 
 const DEFAULT_RADIUS_M = 5000;
 const MAX_RADIUS_M = 20000;
@@ -29,10 +32,10 @@ function clampRadius(radiusKm) {
   return Math.min(Math.round(km * 1000), MAX_RADIUS_M);
 }
 
-function makeOverpassFetch(fetchImpl) {
+function makeOverpassFetch(fetchImpl, timeoutMs = 6000) {
   return async (url, options = {}) => {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
       return await fetchImpl(url, {
         ...options,
@@ -68,31 +71,48 @@ function mergeByLocationAndName(primary = [], secondary = []) {
   });
 }
 
-export async function searchNearbyOsmPlaces({ lat, lon, city = 'nearby', category = 'all', age = '4', intent = 'quick', radiusKm = 5, limit = 18, fetchImpl = globalThis.fetch } = {}) {
+export async function searchNearbyOsmPlaces({ lat, lon, city = 'nearby', category = 'all', age = '4', intent = 'quick', radiusKm = 5, limit = 30, fetchImpl = globalThis.fetch } = {}) {
   const latitude = parseCoordinate(lat);
   const longitude = parseCoordinate(lon);
-  if (latitude === null || longitude === null) throw new Error('Expected numeric lat and lon');
-  if (Math.abs(latitude) > 90 || Math.abs(longitude) > 180) throw new Error('Invalid coordinates');
+  const hasCoordinates = latitude !== null && longitude !== null;
+  if (!hasCoordinates && (!city || city === 'nearby')) throw new Error('Expected coordinates or a city');
+  if (hasCoordinates && (Math.abs(latitude) > 90 || Math.abs(longitude) > 180)) throw new Error('Invalid coordinates');
 
+  let origin = hasCoordinates ? { lat: latitude, lon: longitude, label: city || 'nearby' } : undefined;
+  const requestedRadius = clampRadius(radiusKm);
+  const overpassTimeoutMs = !hasCoordinates && category === 'all' ? 2500 : 6000;
+  const safeFetch = makeOverpassFetch(fetchImpl, overpassTimeoutMs);
+  if (!origin) {
+    const [geocoded] = await geocodeLocation(city, { fetchImpl: safeFetch });
+    if (!geocoded) throw new Error(`Could not geocode city: ${city}`);
+    origin = { lat: geocoded.lat, lon: geocoded.lon, label: geocoded.displayName || city };
+  }
+  const filters = { category: category === 'all' ? undefined : category, age: Number(age), intent };
+  const guidePromise = fetchCityGuide(city, { fetchImpl });
+  const wikipediaPromise = fetchWikipediaFamilyPlaces({ city, origin, radiusM: Math.max(requestedRadius, 10000), fetchImpl, filters });
   const places = await searchFamilyPlaces({
-    location: { lat: latitude, lon: longitude, label: city || 'nearby' },
+    location: origin,
     city: city || 'nearby',
-    category: category === 'all' ? undefined : category,
-    age: Number(age),
+    category: filters.category,
+    age: filters.age,
     intent,
-    radius: clampRadius(radiusKm),
-    limit: Math.min(Number(limit) || 18, 36),
-    fetchImpl: makeOverpassFetch(fetchImpl),
+    radius: hasCoordinates ? requestedRadius : Math.max(requestedRadius, 10000),
+    limit: Math.min(Number(limit) || 30, 36),
+    fetchImpl: safeFetch,
     useFallback: true,
   });
 
   const namedLivePlaces = places.filter((place) => place.source === 'osm' && !isGeneratedOsmName(place.name));
+  const [guideListings, wikipediaPlaces] = await Promise.all([guidePromise, wikipediaPromise]);
   const cityFallbackPlaces = city && city !== 'nearby'
-    ? getFallbackPlaces(city, { lat: latitude, lon: longitude }, { category: category === 'all' ? undefined : category, age: Number(age), intent })
+    ? getFallbackPlaces(city, origin, filters)
     : [];
-  const curatedResult = mergeByLocationAndName(namedLivePlaces, cityFallbackPlaces);
+  const sourcedResult = mergeByLocationAndName(namedLivePlaces, wikipediaPlaces);
+  const curatedResult = mergeByLocationAndName(sourcedResult, cityFallbackPlaces);
+  const maxResults = Math.min(Number(limit) || 30, 36);
+  const selectedPlaces = (curatedResult.length >= 4 ? curatedResult : places).slice(0, maxResults);
 
-  return (curatedResult.length >= 4 ? curatedResult : places).slice(0, Math.min(Number(limit) || 18, 36));
+  return applyCityGuideSignals(selectedPlaces, guideListings);
 }
 
 export async function handleOsmPlacesRequest(event = {}, { fetchImpl = globalThis.fetch } = {}) {

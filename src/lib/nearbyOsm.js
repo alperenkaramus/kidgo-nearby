@@ -7,17 +7,16 @@ function shouldAttemptNearbyOsm() {
 
 export async function fetchNearbyOsmPlaces({ coords, city = 'nearby', age = '4', intent = 'quick', category = 'all', radiusKm = 5 } = {}) {
   if (!shouldAttemptNearbyOsm()) return [];
-  if (!coords?.lat || !coords?.lon) return [];
+  if ((!coords?.lat || !coords?.lon) && (!city || city === 'nearby')) return [];
 
   const payload = {
-    lat: coords.lat,
-    lon: coords.lon,
+    ...(coords?.lat && coords?.lon ? { lat: coords.lat, lon: coords.lon } : {}),
     city,
     age,
     intent,
     category,
     radiusKm,
-    limit: 18,
+    limit: 30,
   };
 
   for (const endpoint of OSM_ENDPOINTS) {

@@ -5,6 +5,8 @@ const CATEGORY_FRIENDLY_NAME = Object.freeze({
   playground: 'Playground',
   park: 'Park',
   museum: 'Museum',
+  'art-gallery': 'Art gallery',
+  'science-center': 'Science centre',
   zoo: 'Zoo',
   aquarium: 'Aquarium',
   library: 'Library',
@@ -29,6 +31,8 @@ function center(element) {
 export function inferCategory(tags = {}) {
   if (tags.leisure === 'playground') return 'playground';
   if (tags.leisure === 'park' || tags.leisure === 'garden') return 'park';
+  if (tags.tourism === 'gallery' || tags.amenity === 'arts_centre') return 'art-gallery';
+  if ((tags.tourism === 'museum' && ['science', 'technology', 'children'].includes(tags.museum)) || ['planetarium', 'science_centre'].includes(tags.amenity)) return 'science-center';
   if (tags.tourism === 'museum') return 'museum';
   if (tags.tourism === 'zoo') return 'zoo';
   if (tags.tourism === 'aquarium') return 'aquarium';
@@ -43,7 +47,8 @@ export function inferCategory(tags = {}) {
 export function familyTagsFromOsm(tags = {}, category) {
   const familyTags = new Set();
   if (category === 'playground') familyTags.add('playground');
-  if (['museum', 'library', 'aquarium', 'indoor', 'family-cafe'].includes(category)) familyTags.add('rainy-day');
+  if (['museum', 'art-gallery', 'science-center', 'library', 'aquarium', 'indoor', 'family-cafe'].includes(category)) familyTags.add('rainy-day');
+  if (['art-gallery', 'science-center'].includes(category)) familyTags.add('learning');
   if (tags.changing_table === 'yes') familyTags.add('changing table');
   if (tags.toilets === 'yes' || tags.amenity === 'toilets') familyTags.add('toilets');
   if (tags.wheelchair === 'yes' || tags.stroller === 'yes') familyTags.add('stroller-friendly');

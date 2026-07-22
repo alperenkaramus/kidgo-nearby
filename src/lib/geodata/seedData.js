@@ -245,10 +245,14 @@ function genericPlaces(cityKey, origin) {
     { name: `${city} playground`, category: 'playground', lat: base.lat - 0.005, lon: base.lon + 0.004, familyTags: ['playground', 'free'] },
     { name: `${city} children’s museum / indoor`, category: 'museum', lat: base.lat + 0.004, lon: base.lon - 0.006, familyTags: ['rainy-day', 'toilets'] },
     { name: `${city} family café`, category: 'family-cafe', lat: base.lat - 0.004, lon: base.lon - 0.004, familyTags: ['rainy-day', 'high chairs'] },
-    { name: `${city} science centre`, category: 'museum', lat: base.lat + 0.011, lon: base.lon + 0.002, familyTags: ['rainy-day', 'toilets'] },
+    { name: `${city} science centre`, category: 'science-center', lat: base.lat + 0.011, lon: base.lon + 0.002, familyTags: ['rainy-day', 'toilets', 'learning'] },
+    { name: `${city} family art gallery`, category: 'art-gallery', lat: base.lat + 0.009, lon: base.lon - 0.012, familyTags: ['rainy-day', 'learning', 'stroller-friendly'] },
     { name: `${city} aquarium / animal experience`, category: 'aquarium', lat: base.lat - 0.010, lon: base.lon + 0.009, familyTags: ['rainy-day', 'toilets'] },
     { name: `${city} stroller-friendly garden`, category: 'park', lat: base.lat + 0.014, lon: base.lon - 0.010, familyTags: ['stroller-friendly', 'free'] },
     { name: `${city} active kids attraction`, category: 'attraction', lat: base.lat - 0.012, lon: base.lon - 0.012, familyTags: ['playground', 'toilets'] },
+    { name: `${city} public library kids corner`, category: 'library', lat: base.lat + 0.017, lon: base.lon + 0.006, familyTags: ['rainy-day', 'free', 'toilets'] },
+    { name: `${city} indoor activity centre`, category: 'indoor', lat: base.lat - 0.016, lon: base.lon + 0.003, familyTags: ['rainy-day', 'toilets'] },
+    { name: `${city} family food stop`, category: 'restaurant', lat: base.lat + 0.002, lon: base.lon + 0.016, familyTags: ['high chairs', 'toilets'] },
   ];
 }
 
