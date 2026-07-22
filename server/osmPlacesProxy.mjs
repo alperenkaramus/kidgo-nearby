@@ -71,6 +71,28 @@ function mergeByLocationAndName(primary = [], secondary = []) {
   });
 }
 
+function diversifyRankedPlaces(places = [], category = 'all', limit = 30) {
+  const ranked = [...places].sort((a, b) =>
+    Number(b.familyScore || 0) - Number(a.familyScore || 0)
+    || Number(Boolean(b.guideMention)) - Number(Boolean(a.guideMention))
+    || Number(a.distanceM ?? Infinity) - Number(b.distanceM ?? Infinity));
+  if (category !== 'all') return ranked.slice(0, limit);
+
+  const groups = new Map();
+  ranked.forEach((place) => {
+    const key = place.category || 'other';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(place);
+  });
+  const diversified = [];
+  while (diversified.length < limit && [...groups.values()].some((items) => items.length)) {
+    [...groups.values()].forEach((items) => {
+      if (items.length && diversified.length < limit) diversified.push(items.shift());
+    });
+  }
+  return diversified;
+}
+
 export async function searchNearbyOsmPlaces({ lat, lon, city = 'nearby', category = 'all', age = '4', intent = 'quick', radiusKm = 5, limit = 30, fetchImpl = globalThis.fetch } = {}) {
   const latitude = parseCoordinate(lat);
   const longitude = parseCoordinate(lon);
@@ -110,9 +132,10 @@ export async function searchNearbyOsmPlaces({ lat, lon, city = 'nearby', categor
   const sourcedResult = mergeByLocationAndName(namedLivePlaces, wikipediaPlaces);
   const curatedResult = mergeByLocationAndName(sourcedResult, cityFallbackPlaces);
   const maxResults = Math.min(Number(limit) || 30, 36);
-  const selectedPlaces = (curatedResult.length >= 4 ? curatedResult : places).slice(0, maxResults);
+  const selectedPlaces = (curatedResult.length >= 4 ? curatedResult : places);
+  const guideEnriched = applyCityGuideSignals(selectedPlaces, guideListings);
 
-  return applyCityGuideSignals(selectedPlaces, guideListings);
+  return diversifyRankedPlaces(guideEnriched, category, maxResults);
 }
 
 export async function handleOsmPlacesRequest(event = {}, { fetchImpl = globalThis.fetch } = {}) {

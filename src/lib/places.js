@@ -117,7 +117,8 @@ function prettyTags(place) {
   const extras = [];
   if (place.tags?.openingHours) extras.push('hours listed');
   if (place.tags?.website) extras.push('website');
-  if (place.googleRating) extras.push('google-rated');
+  const hasLiveGoogle = place.source === 'google-live' || Boolean(place.googleLive);
+  if (hasLiveGoogle && place.googleRating) extras.push('google-rated');
   return [...tags, ...extras]
     .map((tag) => String(tag).replace(/-/g, ' '))
     .map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1))
@@ -134,7 +135,8 @@ function formatReviewCount(count) {
 function evidenceVerdict(place) {
   const parts = place.scoreParts || {};
   const lines = [];
-  if (place.googleRating) lines.push(`Google ${place.googleRating} (${formatReviewCount(place.googleReviewCount)} reviews)`);
+  const hasLiveGoogle = place.source === 'google-live' || Boolean(place.googleLive);
+  if (hasLiveGoogle && place.googleRating) lines.push(`Live Google ${place.googleRating} (${formatReviewCount(place.googleReviewCount)} reviews)`);
   if (place.guideMention) lines.push('mentioned in a current city guide');
   if ((parts.intentFit || 0) >= 10) lines.push('matches today’s activity mood');
   if ((parts.familySignals || 0) >= 14) lines.push('strong family amenities');
@@ -145,13 +147,15 @@ function evidenceVerdict(place) {
 }
 
 function confidenceLevel(place) {
-  if (place.googleRating && place.googleReviewCount >= 10000) return 'high';
-  if (place.googleRating || place.source === 'osm' || place.guideMention) return 'medium';
+  const hasLiveGoogle = place.source === 'google-live' || Boolean(place.googleLive);
+  if (hasLiveGoogle && place.googleRating && place.googleReviewCount >= 10000) return 'high';
+  if (hasLiveGoogle || place.source === 'osm' || place.guideMention) return 'medium';
   return 'starter';
 }
 
 function toUiPlace(place) {
   const score = Math.min(100, place.familyScore || place.score || 50);
+  const hasLiveGoogle = place.source === 'google-live' || Boolean(place.googleLive);
   return {
     id: place.id,
     name: place.name,
@@ -166,10 +170,10 @@ function toUiPlace(place) {
     tags: prettyTags(place),
     rainyDay: place.familyTags?.includes('rainy-day') || place.category === 'indoor',
     summary: SUMMARY_BY_CATEGORY[place.category] || 'Family-friendly candidate ranked from open map signals.',
-    source: place.source === 'google-live' ? 'Live Google Places' : (place.source === 'osm' ? 'Live OpenStreetMap' : (place.source === 'wikipedia-guide' ? 'Wikipedia city reference' : (place.source === 'seed-google-rated' ? 'Curated + Google rating seed' : 'fallback seed'))),
-    googleRating: place.googleRating || null,
-    googleReviewCount: place.googleReviewCount || null,
-    googleReviewLabel: formatReviewCount(place.googleReviewCount),
+    source: place.source === 'google-live' ? 'Live Google Places' : (place.source === 'osm' ? 'Live OpenStreetMap' : (place.source === 'wikipedia-guide' ? 'Wikipedia city reference' : (place.source === 'editorial-seed' ? 'Editorial candidate · verify before visiting' : 'Unverified source'))),
+    googleRating: hasLiveGoogle ? (place.googleRating || null) : null,
+    googleReviewCount: hasLiveGoogle ? (place.googleReviewCount || null) : null,
+    googleReviewLabel: hasLiveGoogle ? formatReviewCount(place.googleReviewCount) : null,
     googleMapsUri: place.googleMapsUri || null,
     googlePlaceId: place.googlePlaceId || null,
     googleLive: place.source === 'google-live' || Boolean(place.googleLive),

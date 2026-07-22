@@ -89,10 +89,8 @@ test('fallback data covers required demo cities and categories', () => {
   assert.ok(CATEGORIES.includes('attraction'));
   assert.ok(CATEGORIES.includes('art-gallery'));
   assert.ok(CATEGORIES.includes('science-center'));
-  const generic = getFallbackPlaces('Lisbon');
-  assert.ok(generic.length >= 12);
-  assert.ok(generic.some((place) => place.category === 'art-gallery'));
-  assert.ok(generic.some((place) => place.category === 'science-center'));
+  const unverifiedCity = getFallbackPlaces('Lisbon', { lat: 38.72, lon: -9.14 }, { age: 7, intent: 'learning' });
+  assert.equal(unverifiedCity.length, 0, 'cities without sourced data must not generate fictional place cards');
   for (const city of ['istanbul', 'london', 'new-york']) {
     const places = getFallbackPlaces(city, { lat: 41.0082, lon: 28.9784 });
     assert.ok(places.length >= 3, `${city} should have seed places`);
@@ -128,8 +126,8 @@ test('searchFamilyPlaces falls back to local seed data when fetch fails', async 
   });
 
   assert.ok(places.length > 0);
-  assert.equal(places[0].source, 'seed-google-rated');
-  assert.ok(places[0].googleRating > 0);
-  assert.ok(places[0].scoreParts.google > 0);
+  assert.equal(places[0].source, 'editorial-seed');
+  assert.equal(places.some((place) => place.googleRating || place.googleReviewCount), false, 'editorial seeds must not masquerade as live Google ratings');
+  assert.equal(places[0].scoreParts.google, 0);
   assert.ok(places[0].familyScore >= places.at(-1).familyScore);
 });

@@ -181,81 +181,6 @@ const SEEDS = Object.freeze({
   ],
 });
 
-const GOOGLE_RATINGS = Object.freeze({
-  'Gülhane Parkı': { googleRating: 4.7, googleReviewCount: 61500 },
-  'Maçka Demokrasi Parkı Playground': { googleRating: 4.5, googleReviewCount: 2100 },
-  'Rahmi M. Koç Müzesi': { googleRating: 4.8, googleReviewCount: 26000 },
-  'İstanbul Akvaryum': { googleRating: 4.4, googleReviewCount: 37000 },
-  'Atatürk Kitaplığı': { googleRating: 4.6, googleReviewCount: 1900 },
-  'Diana Memorial Playground': { googleRating: 4.7, googleReviewCount: 7400 },
-  'Hyde Park': { googleRating: 4.7, googleReviewCount: 134000 },
-  'Natural History Museum': { googleRating: 4.7, googleReviewCount: 29000 },
-  'ZSL London Zoo': { googleRating: 4.3, googleReviewCount: 31000 },
-  'Heckscher Playground': { googleRating: 4.7, googleReviewCount: 1200 },
-  'Central Park': { googleRating: 4.8, googleReviewCount: 280000 },
-  'American Museum of Natural History': { googleRating: 4.6, googleReviewCount: 22000 },
-  'New York Aquarium': { googleRating: 4.1, googleReviewCount: 18000 },
-  'Brooklyn Children’s Museum': { googleRating: 4.5, googleReviewCount: 5200 },
-  'Bronx Zoo': { googleRating: 4.6, googleReviewCount: 36000 },
-  'Bryant Park': { googleRating: 4.7, googleReviewCount: 92000 },
-  'Children’s Museum of Manhattan': { googleRating: 4.4, googleReviewCount: 3900 },
-  'Anıtkabir ve Barış Parkı': { googleRating: 4.9, googleReviewCount: 126000 },
-  'MTA Şehit Cuma Dağ Tabiat Tarihi Müzesi': { googleRating: 4.7, googleReviewCount: 6100 },
-  'Eymir Gölü': { googleRating: 4.5, googleReviewCount: 16800 },
-  'Harikalar Diyarı': { googleRating: 4.2, googleReviewCount: 19000 },
-  'İzmir Doğal Yaşam Parkı': { googleRating: 4.5, googleReviewCount: 23000 },
-  'Kültürpark': { googleRating: 4.4, googleReviewCount: 27000 },
-  'Key Museum': { googleRating: 4.8, googleReviewCount: 5800 },
-  'Sasalı Kent Ormanı': { googleRating: 4.4, googleReviewCount: 2500 },
-  'Bursa Hayvanat Bahçesi': { googleRating: 4.4, googleReviewCount: 16000 },
-  'Hüdavendigar Kent Parkı': { googleRating: 4.5, googleReviewCount: 12200 },
-  'Bursa Bilim ve Teknoloji Merkezi': { googleRating: 4.6, googleReviewCount: 5400 },
-  'Botanik Park': { googleRating: 4.4, googleReviewCount: 10300 },
-  'Antalya Aquarium': { googleRating: 4.2, googleReviewCount: 31000 },
-  'Karaalioğlu Parkı': { googleRating: 4.6, googleReviewCount: 21000 },
-  'Aktur Park': { googleRating: 4.3, googleReviewCount: 7700 },
-  'Oyuncak Müzesi': { googleRating: 4.4, googleReviewCount: 1700 },
-  'FEZ-Berlin': { googleRating: 4.4, googleReviewCount: 5300 },
-  'Tierpark Berlin': { googleRating: 4.6, googleReviewCount: 35000 },
-  'Deutsches Technikmuseum': { googleRating: 4.6, googleReviewCount: 25000 },
-  'Volkspark Friedrichshain': { googleRating: 4.5, googleReviewCount: 17000 },
-  'Moscow Zoo': { googleRating: 4.7, googleReviewCount: 89000 },
-  'Gorky Park': { googleRating: 4.7, googleReviewCount: 108000 },
-  'Darwin Museum': { googleRating: 4.7, googleReviewCount: 7700 },
-  'KidZania Moscow': { googleRating: 4.4, googleReviewCount: 9500 },
-  'Göreme Açık Hava Müzesi': { googleRating: 4.7, googleReviewCount: 19000 },
-  'Paşabağları': { googleRating: 4.7, googleReviewCount: 22000 },
-  'Zelve Açık Hava Müzesi': { googleRating: 4.7, googleReviewCount: 10000 },
-  'Avanos Kızılırmak Kenarı': { googleRating: 4.5, googleReviewCount: 2200 },
-});
-
-function attachGoogleRating(place) {
-  return { ...place, ...(GOOGLE_RATINGS[place.name] || {}) };
-}
-
-function titleCaseCity(city = 'City') {
-  return String(city).replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
-}
-
-function genericPlaces(cityKey, origin) {
-  const base = origin || { lat: 39.0, lon: 35.0 };
-  const city = titleCaseCity(cityKey);
-  return [
-    { name: `${city} family park`, category: 'park', lat: base.lat + 0.006, lon: base.lon + 0.006, familyTags: ['free', 'stroller-friendly'] },
-    { name: `${city} playground`, category: 'playground', lat: base.lat - 0.005, lon: base.lon + 0.004, familyTags: ['playground', 'free'] },
-    { name: `${city} children’s museum / indoor`, category: 'museum', lat: base.lat + 0.004, lon: base.lon - 0.006, familyTags: ['rainy-day', 'toilets'] },
-    { name: `${city} family café`, category: 'family-cafe', lat: base.lat - 0.004, lon: base.lon - 0.004, familyTags: ['rainy-day', 'high chairs'] },
-    { name: `${city} science centre`, category: 'science-center', lat: base.lat + 0.011, lon: base.lon + 0.002, familyTags: ['rainy-day', 'toilets', 'learning'] },
-    { name: `${city} family art gallery`, category: 'art-gallery', lat: base.lat + 0.009, lon: base.lon - 0.012, familyTags: ['rainy-day', 'learning', 'stroller-friendly'] },
-    { name: `${city} aquarium / animal experience`, category: 'aquarium', lat: base.lat - 0.010, lon: base.lon + 0.009, familyTags: ['rainy-day', 'toilets'] },
-    { name: `${city} stroller-friendly garden`, category: 'park', lat: base.lat + 0.014, lon: base.lon - 0.010, familyTags: ['stroller-friendly', 'free'] },
-    { name: `${city} active kids attraction`, category: 'attraction', lat: base.lat - 0.012, lon: base.lon - 0.012, familyTags: ['playground', 'toilets'] },
-    { name: `${city} public library kids corner`, category: 'library', lat: base.lat + 0.017, lon: base.lon + 0.006, familyTags: ['rainy-day', 'free', 'toilets'] },
-    { name: `${city} indoor activity centre`, category: 'indoor', lat: base.lat - 0.016, lon: base.lon + 0.003, familyTags: ['rainy-day', 'toilets'] },
-    { name: `${city} family food stop`, category: 'restaurant', lat: base.lat + 0.002, lon: base.lon + 0.016, familyTags: ['high chairs', 'toilets'] },
-  ];
-}
-
 export function normalizeCityKey(city = '') {
   return String(city)
     .trim()
@@ -288,19 +213,17 @@ export function getFallbackPlaces(city = 'istanbul', originOrFilters = {}, maybe
   const origin = originOrFilters?.lat ? originOrFilters : originOrFilters?.origin;
   const filters = originOrFilters?.lat || arguments.length >= 3 ? maybeFilters : originOrFilters;
   const cityKey = normalizeCityKey(city);
-  const seedPlaces = SEEDS[cityKey] || genericPlaces(cityKey, origin);
-  const enriched = seedPlaces.map((rawPlace, index) => {
-    const place = attachGoogleRating(rawPlace);
-    return withDistanceAndUrls(
-      {
-        id: `seed/${cityKey}/${index + 1}`,
-        ...place,
-        tags: {},
-        source: SEEDS[cityKey] ? 'seed-google-rated' : 'generic-city-seed',
-      },
-      origin,
-    );
-  });
+  const seedPlaces = SEEDS[cityKey] || [];
+  const enriched = seedPlaces.map((rawPlace, index) => withDistanceAndUrls(
+    {
+      id: `seed/${cityKey}/${index + 1}`,
+      ...rawPlace,
+      tags: {},
+      source: 'editorial-seed',
+      needsVerification: true,
+    },
+    origin,
+  ));
   return rankPlaces(filterPlacesByCategory(enriched, filters.category), filters);
 }
 

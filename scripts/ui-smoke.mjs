@@ -38,7 +38,7 @@ assert.match(appSource, /<select id="country"/, 'React app renders a country sel
 assert.ok(!appSource.includes("useState('en')") && !appSource.includes("useState('tr')"), 'React app does not hardcode language state');
 
 const results = await searchPlaces({
-  location: 'Diyarbakır',
+  location: 'Istanbul',
   age: '4',
   category: 'all',
   radiusKm: 20,
@@ -49,25 +49,23 @@ assert.ok(results.length > 0, 'any Turkey city search returns live or fallback p
 assert.ok(results.every((place) => place.name && place.category && typeof place.score === 'number'), 'places include card data');
 assert.ok(results.every((place) => place.scoreParts && typeof place.scoreParts.familySignals === 'number'), 'places include score breakdown for deeper analysis');
 assert.ok(results.every((place) => typeof place.scoreParts.intentFit === 'number'), 'places include activity mood fit in score breakdown');
-const fallbackResults = getFallbackPlaces('Diyarbakır');
-assert.ok(fallbackResults.some((place) => /diyarbak/i.test(place.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))), 'non-Istanbul Turkish city fallback is city-labeled');
-assert.ok(fallbackResults.every((place) => !/istanbul/i.test(place.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))), 'non-Istanbul fallback does not silently show Istanbul');
+const unsupportedTurkeyFallback = getFallbackPlaces('Diyarbakır');
+assert.equal(unsupportedTurkeyFallback.length, 0, 'uncurated Turkish cities must not silently generate fictional place cards');
 assert.ok(results[0].score >= results.at(-1).score, 'places are ranked by family score');
 assert.match(getMapUrl(results[0]), /^https:\/\/www\.openstreetmap\.org\//, 'map link uses OSM');
 assert.match(getDirectionsUrl(results[0]), /^https:\/\/www\.google\.com\/maps\/dir\//, 'directions link uses Google Maps');
 assert.match(getGoogleSearchUrl(results[0]), /^https:\/\/www\.google\.com\/maps\/search\//, 'Google rating/search CTA opens Google Maps search');
 
-const istanbulRated = await searchPlaces({ location: 'Istanbul', age: '4', category: 'all', radiusKm: 20 });
-assert.ok(istanbulRated.some((place) => place.googleRating && place.googleReviewCount), 'curated major-city fallback cards include Google ratings/review counts');
-assert.ok(istanbulRated.some((place) => place.evidence?.length), 'cards include recommendation rationale');
+const istanbulEditorial = await searchPlaces({ location: 'Istanbul', age: '4', category: 'all', radiusKm: 20 });
+assert.equal(istanbulEditorial.some((place) => place.googleRating && !place.googleLive), false, 'editorial cards never expose stale Google ratings');
+assert.ok(istanbulEditorial.some((place) => place.evidence?.length), 'cards include recommendation rationale');
 
 const globalResults = await searchPlaces({ location: 'Paris', age: '7', category: 'all', radiusKm: 10 });
 assert.ok(globalResults.length >= 5, 'international seed cities return more than a thin 3-card demo');
 assert.ok(globalResults.some((place) => /paris|luxembourg|sciences|acclimatation/i.test(place.name)), 'global country seed data is city-relevant');
 
-const genericGlobal = getFallbackPlaces('Lisbon');
-assert.ok(genericGlobal.length >= 8, 'generic abroad fallback produces a richer option set');
-assert.ok(genericGlobal.every((place) => /lisbon/i.test(place.name)), 'generic global fallback is city-labeled');
+const unsupportedFallback = getFallbackPlaces('Lisbon');
+assert.equal(unsupportedFallback.length, 0, 'unsupported cities do not generate fictional place names');
 
 const currentLocationFallback = getFallbackPlaces('Bursa', { lat: 40.1885, lon: 29.0610 });
 assert.ok(currentLocationFallback.length >= 4, 'Bursa current-location fallback uses curated Bursa cards around browser coordinates');
@@ -77,4 +75,4 @@ assert.match(placesSource, /nearestSupportedCityForCoords/, 'browser geolocation
 assert.match(placesSource, /fetchNearbyOsmPlaces/, 'browser geolocation attempts live nearby OSM through the serverless proxy before fallback');
 assert.match(appSource, /noticeGeoReady/, 'browser geolocation success has a clear ready notice instead of staying on permission-waiting copy');
 
-console.log(`ui-smoke ok: ${results.length} Diyarbakır places, ${globalResults.length} Paris places, ${genericGlobal.length} Lisbon fallback places, ${currentLocationFallback.length} Bursa current-location fallback places, ${TURKEY_CITIES.length} TR cities, ${LANGUAGES.length} languages, ${COUNTRIES.length} countries`);
+console.log(`ui-smoke ok: ${results.length} Istanbul places, ${globalResults.length} Paris places, no fictional Lisbon/Diyarbakır fallback, ${currentLocationFallback.length} Bursa current-location fallback places, ${TURKEY_CITIES.length} TR cities, ${LANGUAGES.length} languages, ${COUNTRIES.length} countries`);
