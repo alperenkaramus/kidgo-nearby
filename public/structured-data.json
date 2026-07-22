@@ -1,0 +1,23 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TouristAttraction",
+  "name": "KidGo Nearby",
+  "description": "Çocuklarla birlikte ziyaret edilecek park, müze, akvaryum ve indoor mekanları öneren bir konum tabanlı rehber.",
+  "url": "https://kidgo-nearby.vercel.app/",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://kidgo-nearby.vercel.app/logo.png",
+    "width": 256,
+    "height": 256
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Turkey"
+  },
+  "availableLanguage": [
+    "Turkish",
+    "English",
+    "Russian",
+    "German"
+  ]
+}
