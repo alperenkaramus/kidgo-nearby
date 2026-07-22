@@ -6,6 +6,7 @@ import {
   buildGoogleMapsUrl,
   buildDirectionsUrl,
   distanceMeters,
+  fallbackCityForCoords,
   getFallbackPlaces,
   normalizeOsmElement,
   rankPlaces,
@@ -91,6 +92,23 @@ test('fallback data covers required demo cities and categories', () => {
     assert.ok(places.length >= 3, `${city} should have seed places`);
     assert.ok(places.every((place) => place.mapsUrl && Number.isFinite(place.distanceM)));
   }
+});
+
+test('current coordinates select the nearest credible curated city instead of a translated display label', async () => {
+  const bursaCoords = { lat: 40.1885, lon: 29.0610 };
+  assert.equal(fallbackCityForCoords(bursaCoords), 'bursa');
+
+  const places = await searchFamilyPlaces({
+    location: { ...bursaCoords, label: 'Mevcut konum' },
+    city: 'Mevcut konum',
+    age: 4,
+    fetchImpl: async () => { throw new Error('offline'); },
+  });
+
+  assert.ok(places.length >= 4);
+  assert.ok(places.some((place) => /bursa|hüdavendigar|botanik|bilim/i.test(place.name)));
+  assert.ok(places.every((place) => Number.isFinite(place.distanceM)));
+  assert.ok(places.every((place) => place.directionsUrl?.includes('origin=40.1885%2C29.061')));
 });
 
 test('searchFamilyPlaces falls back to local seed data when fetch fails', async () => {

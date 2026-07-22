@@ -3,7 +3,7 @@ import { geocodeLocation } from './nominatim.js';
 import { normalizeOsmElements } from './normalize.js';
 import { fetchOverpassPlaces } from './overpass.js';
 import { filterPlacesByCategory, rankPlaces } from './scoring.js';
-import { getFallbackPlaces } from './seedData.js';
+import { fallbackCityForCoords, getFallbackPlaces } from './seedData.js';
 
 function shouldUseLiveOsm() {
   if (typeof window === 'undefined') return true;
@@ -31,9 +31,10 @@ export async function searchFamilyPlaces({
   useFallback = true,
 } = {}) {
   const filters = { category: normalizeCategory(category), age, intent };
+  const fallbackOrigin = location?.lat && location?.lon ? { lat: Number(location.lat), lon: Number(location.lon) } : undefined;
+  const fallbackCity = fallbackOrigin ? fallbackCityForCoords(fallbackOrigin) : (city || query || 'istanbul');
   if (!shouldUseLiveOsm()) {
-    const fallbackOrigin = location?.lat && location?.lon ? { lat: Number(location.lat), lon: Number(location.lon) } : undefined;
-    return getFallbackPlaces(city || query || 'istanbul', fallbackOrigin, filters).slice(0, limit);
+    return getFallbackPlaces(fallbackCity, fallbackOrigin, filters).slice(0, limit);
   }
   try {
     const origin = await resolveLocation({ location, query: query || city, fetchImpl });
@@ -42,10 +43,9 @@ export async function searchFamilyPlaces({
     const ranked = rankPlaces(normalized, filters).slice(0, limit);
     if (ranked.length > 0) return ranked;
     if (!useFallback) return [];
-    return getFallbackPlaces(city || query || 'istanbul', origin, filters).slice(0, limit);
+    return getFallbackPlaces(fallbackCity, origin, filters).slice(0, limit);
   } catch (error) {
     if (!useFallback) throw error;
-    const fallbackOrigin = location?.lat && location?.lon ? { lat: Number(location.lat), lon: Number(location.lon) } : undefined;
-    return getFallbackPlaces(city || query || 'istanbul', fallbackOrigin, filters).slice(0, limit);
+    return getFallbackPlaces(fallbackCity, fallbackOrigin, filters).slice(0, limit);
   }
 }

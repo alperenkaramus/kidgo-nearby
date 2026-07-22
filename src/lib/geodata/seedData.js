@@ -1,4 +1,4 @@
-import { withDistanceAndUrls } from './geo.js';
+import { distanceMeters, withDistanceAndUrls } from './geo.js';
 import { filterPlacesByCategory, rankPlaces } from './scoring.js';
 
 const SEEDS = Object.freeze({
@@ -263,6 +263,21 @@ export function normalizeCityKey(city = '') {
     .replace(/\s+/g, '-')
     .replace(/^nyc$/, 'new-york')
     .replace(/^cappadocia$/, 'kapadokya');
+}
+
+export function fallbackCityForCoords(coords = {}) {
+  const lat = Number(coords.lat);
+  const lon = Number(coords.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return 'istanbul';
+
+  return Object.entries(SEEDS)
+    .map(([city, places]) => {
+      const center = places.reduce((acc, place) => ({ lat: acc.lat + place.lat, lon: acc.lon + place.lon }), { lat: 0, lon: 0 });
+      center.lat /= places.length;
+      center.lon /= places.length;
+      return { city, distanceM: distanceMeters(lat, lon, center.lat, center.lon) };
+    })
+    .sort((a, b) => a.distanceM - b.distanceM)[0]?.city || 'istanbul';
 }
 
 export function getFallbackPlaces(city = 'istanbul', originOrFilters = {}, maybeFilters = {}) {
