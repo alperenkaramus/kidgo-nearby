@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Baby, Compass, ExternalLink, Globe2, Loader2, MapPin, Navigation, Search, Sparkles, Telescope, TrendingUp, Umbrella } from 'lucide-react';
-import { AGE_GROUPS, CATEGORIES, COUNTRIES, DEFAULT_COUNTRY, DEFAULT_LANGUAGE, INTENTS, LANGUAGES, TRENDING_TURKEY_SEARCHES, TURKEY_CITIES, getDirectionsUrl, getGoogleSearchUrl, getMapUrl, searchPlaces } from './lib/places.js';
+import { AGE_GROUPS, CATEGORIES, COUNTRIES, DEFAULT_COUNTRY, DEFAULT_LANGUAGE, INTENTS, LANGUAGES, TRENDING_TURKEY_SEARCHES, TURKEY_CITIES, getDirectionsUrl, getGoogleSearchUrl, getMapUrl, nearestSupportedCityForCoords, searchPlaces } from './lib/places.js';
 import './styles.css';
 
 const radiusOptions = [2, 5, 10, 20];
-const featuredCityNames = ['New York', 'London', 'Paris', 'Barcelona', 'Dubai', 'Tokyo', 'Singapore', 'Amsterdam', 'Rome', 'Berlin', 'Los Angeles', 'Istanbul'];
+const MAX_TRUSTED_LOCATION_ACCURACY_M = 1500;
+const featuredCityNames = ['Istanbul', 'Bursa', 'Ankara', 'Izmir', 'Antalya', 'Muğla', 'Eskişehir', 'Gaziantep', 'Trabzon', 'New York', 'London', 'Paris', 'Dubai', 'Tokyo'];
 
 const COPY = {
   tr: {
@@ -17,7 +18,7 @@ const COPY = {
     filtersTitle: 'Çocuk profili', intentTitle: 'Bugünkü mod', radius: 'Arama yarıçapı', resultsTitle: 'Sıralı aile önerileri', searching: 'Aranıyor…', ideas: 'öneri',
     noticeLive: 'Canlı OpenStreetMap sonuçları çocuk uyumu, mesafe ve aile sinyallerine göre sıralandı.',
     noticeFallback: 'Seçili şehir için hazırlanmış güvenli aile önerileri gösteriliyor. Harita linkinden son kontrolü yapabilirsin.',
-    noticeGeoNo: 'Tarayıcı konumu yok; şehir araması aktif kalıyor.', noticeGeoUse: 'Konum izni bekleniyor… Yakınındaki öneriler izin verilirse hazırlanacak.', noticeGeoReady: 'Konum alındı. Yakın çevren için tahmini aile önerileri hazırlanıyor; gitmeden haritadan son kontrolü yap.',
+    noticeGeoNo: 'Tarayıcı konumu yok; şehir araması aktif kalıyor.', noticeGeoUse: 'Konum izni bekleniyor… Yakınındaki öneriler izin verilirse hazırlanacak.', noticeGeoReady: 'Konum alındı. Yakın çevren için gerçek isimli yerler ve şehir yedekleri hazırlanıyor.', noticeGeoLowAccuracy: 'Tarayıcı konumu yeterince hassas değil. Precise Location aç veya şehir seçerek daha doğru sonuç al.',
     noticeGeoErr: 'Konum alınamadı; şehir yazarak devam edebilirsin.', emptyTitle: 'Net eşleşme yok', emptyBody: 'Tümü seç veya başka bir şehir dene.', loadingTitle: 'Aile planı hazırlanıyor…', loadingBody: 'Şehir, yaş, mod ve kategori sinyallerine göre en uygun duraklar sıralanıyor.', map: 'Haritada aç', directions: 'Yol tarifi al', google: 'Google’da aç', rainy: 'Kapalı alan', whyPick: 'Neden uygun', confidence: 'Güven', scoreMix: 'Skor', liveGoogle: 'Canlı Google', openNow: 'Şu an açık', showResults: 'öneriyi göster', practical: 'Pratik notlar', ratingPending: 'Google puanı bekleniyor', reviews: 'yorum', points: 'puan', checkMap: 'Konumu haritada kontrol et', currentLocationLabel: 'Mevcut konum', confidenceHigh: 'yüksek', confidenceMedium: 'orta', confidenceStarter: 'başlangıç',
   },
   en: {
@@ -25,17 +26,17 @@ const COPY = {
     language: 'Language', country: 'Country', countryHelp: 'International cities are prioritized; Turkey keeps a separate 81-city coverage mode.', locationLabel: 'City or current location', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Find places', current: 'Use current location',
     pageTitle: 'KidGo Nearby — Kid-Friendly Places Near You', mobileDockLabel: 'Quick search', filtersLabel: 'Search filters', categoriesLabel: 'Categories',
     bestNow: 'Today’s pick', cityPick: 'City pick', score: 'score', demandTitle: 'Popular family plans', allCitiesTitle: 'Where are you going?', allCitiesHelp: 'Choose a country and city, then tune the list by age and mood. Launch mode uses curated popular-city data plus safe fallback.', citiesDefault: 'Pick a city', filtersTitle: 'Kid profile', intentTitle: 'Today’s mood', radius: 'Search radius', resultsTitle: 'Family picks ranked for today', searching: 'Planning…', ideas: 'ideas',
-    noticeLive: 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.', noticeFallback: 'Showing prepared family-safe city picks. Open the map link for the final local check.', noticeGeoNo: 'Browser geolocation is unavailable; city search stays active.', noticeGeoUse: 'Waiting for location permission… nearby picks will load if access is allowed.', noticeGeoReady: 'Location received. Preparing estimated nearby family picks; check the map before you go.', noticeGeoErr: 'Location was unavailable; type a city to continue.', emptyTitle: 'No exact matches yet', emptyBody: 'Try All categories or another global city.', loadingTitle: 'Preparing a family plan…', loadingBody: 'Ranking places by city, age, mood and category fit.', map: 'Open map', directions: 'Get directions', google: 'Open in Google', rainy: 'Rainy day', whyPick: 'Why it fits', confidence: 'Confidence', scoreMix: 'Score', liveGoogle: 'Live Google', openNow: 'Open now', showResults: 'show picks', practical: 'Practical notes', ratingPending: 'Google rating pending', reviews: 'reviews', points: 'pts', checkMap: 'Check location on map', currentLocationLabel: 'Current location', confidenceHigh: 'high', confidenceMedium: 'medium', confidenceStarter: 'starter',
+    noticeLive: 'Live OpenStreetMap results ranked by kid fit, distance and family-friendly signals.', noticeFallback: 'Showing prepared family-safe city picks. Open the map link for the final local check.', noticeGeoNo: 'Browser geolocation is unavailable; city search stays active.', noticeGeoUse: 'Waiting for location permission… nearby picks will load if access is allowed.', noticeGeoReady: 'Location received. Preparing named nearby places and city backups.', noticeGeoLowAccuracy: 'Browser location is not precise enough. Turn on Precise Location or choose a city for better results.', noticeGeoErr: 'Location was unavailable; type a city to continue.', emptyTitle: 'No exact matches yet', emptyBody: 'Try All categories or another global city.', loadingTitle: 'Preparing a family plan…', loadingBody: 'Ranking places by city, age, mood and category fit.', map: 'Open map', directions: 'Get directions', google: 'Open in Google', rainy: 'Rainy day', whyPick: 'Why it fits', confidence: 'Confidence', scoreMix: 'Score', liveGoogle: 'Live Google', openNow: 'Open now', showResults: 'show picks', practical: 'Practical notes', ratingPending: 'Google rating pending', reviews: 'reviews', points: 'pts', checkMap: 'Check location on map', currentLocationLabel: 'Current location', confidenceHigh: 'high', confidenceMedium: 'medium', confidenceStarter: 'starter',
   },
   ru: {
     eyebrow: 'Глобальный семейный geo-adviser → больше городов и вариантов', title: 'Куда пойти рядом с детьми?', hero: 'Мобильный сервис, который превращает семейные поисковые запросы в гео-рекомендации. Работает по всем городам Турции и готов к росту на английском, русском и немецком.',
     language: 'Язык', country: 'Страна', countryHelp: 'Для Турции доступен режим 81 города; другие страны используют глобальные подборки городов.', locationLabel: 'Город или текущее место', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Найти места', current: 'Моя геолокация', pageTitle: 'KidGo Nearby — места для детей рядом', mobileDockLabel: 'Быстрый поиск', filtersLabel: 'Фильтры поиска', categoriesLabel: 'Категории', bestNow: 'Лучшее сейчас', cityPick: 'Выбор города', score: 'балл', demandTitle: 'Глобальный радар семейных городов', allCitiesTitle: 'Страна и город', allCitiesHelp: 'Турция покрывает 81 город; другие страны используют стартовые глобальные города. Сначала пробуем OSM, затем городской fallback.', citiesDefault: 'Выберите город', filtersTitle: 'Профиль ребёнка', intentTitle: 'Настроение дня', radius: 'Радиус поиска', resultsTitle: 'Семейные места по рейтингу', searching: 'Поиск…', ideas: 'идеи',
-    noticeLive: 'Результаты OpenStreetMap ранжированы по возрасту, расстоянию и семейным сигналам.', noticeFallback: 'Показаны подготовленные семейные варианты для выбранного города. Финально проверьте точку на карте.', noticeGeoNo: 'Геолокация недоступна; используйте поиск по городу.', noticeGeoUse: 'Ожидаем разрешение на геолокацию…', noticeGeoReady: 'Геолокация получена. Готовим примерные семейные варианты рядом; перед выходом проверьте карту.', noticeGeoErr: 'Геолокация недоступна. Введите город.', emptyTitle: 'Точных совпадений нет', emptyBody: 'Увеличьте радиус, выберите Все или город из списка.', loadingTitle: 'Ищем места для детей…', loadingBody: 'Проверяем город, фильтры и локальные варианты.', map: 'Открыть карту', directions: 'Маршрут', google: 'Открыть в Google', rainy: 'В помещении', whyPick: 'Почему подходит', confidence: 'Надёжность', scoreMix: 'Оценка', liveGoogle: 'Live Google', openNow: 'Открыто сейчас', showResults: 'показать', practical: 'Практично', ratingPending: 'Рейтинг Google ожидается', reviews: 'отзывов', points: 'балл', checkMap: 'Проверьте место на карте', currentLocationLabel: 'Текущее место', confidenceHigh: 'высокая', confidenceMedium: 'средняя', confidenceStarter: 'стартовая',
+    noticeLive: 'Результаты OpenStreetMap ранжированы по возрасту, расстоянию и семейным сигналам.', noticeFallback: 'Показаны подготовленные семейные варианты для выбранного города. Финально проверьте точку на карте.', noticeGeoNo: 'Геолокация недоступна; используйте поиск по городу.', noticeGeoUse: 'Ожидаем разрешение на геолокацию…', noticeGeoReady: 'Геолокация получена. Готовим именованные места рядом и городские запасные варианты.', noticeGeoLowAccuracy: 'Геолокация недостаточно точная. Включите точное местоположение или выберите город.', noticeGeoErr: 'Геолокация недоступна. Введите город.', emptyTitle: 'Точных совпадений нет', emptyBody: 'Увеличьте радиус, выберите Все или город из списка.', loadingTitle: 'Ищем места для детей…', loadingBody: 'Проверяем город, фильтры и локальные варианты.', map: 'Открыть карту', directions: 'Маршрут', google: 'Открыть в Google', rainy: 'В помещении', whyPick: 'Почему подходит', confidence: 'Надёжность', scoreMix: 'Оценка', liveGoogle: 'Live Google', openNow: 'Открыто сейчас', showResults: 'показать', practical: 'Практично', ratingPending: 'Рейтинг Google ожидается', reviews: 'отзывов', points: 'балл', checkMap: 'Проверьте место на карте', currentLocationLabel: 'Текущее место', confidenceHigh: 'высокая', confidenceMedium: 'средняя', confidenceStarter: 'стартовая',
   },
   de: {
     eyebrow: 'Globaler Familien-Geo-Adviser → mehr Städte, mehr Optionen', title: 'Wohin in der Nähe mit Kindern?', hero: 'Eine mobile Entscheidungs-App, die Familiensuchen in Geo-Empfehlungen verwandelt. Funktioniert in allen türkischen Städten und ist mit Englisch, Russisch und Deutsch global skalierbar.',
     language: 'Sprache', country: 'Land', countryHelp: 'Für die Türkei bleibt der 81-Städte-Modus aktiv; andere Länder nutzen globale Stadtvorschläge.', locationLabel: 'Stadt oder aktueller Standort', placeholder: 'New York, London, Paris, Dubai, Tokyo...', search: 'Orte finden', current: 'Aktuellen Standort nutzen', pageTitle: 'KidGo Nearby — kinderfreundliche Orte finden', mobileDockLabel: 'Schnellsuche', filtersLabel: 'Suchfilter', categoriesLabel: 'Kategorien', bestNow: 'Jetzt am besten', cityPick: 'Stadt-Tipp', score: 'Score', demandTitle: 'Globaler Familienstadt-Radar', allCitiesTitle: 'Land und Stadt', allCitiesHelp: 'Die Türkei hat 81-Städte-Abdeckung; andere Länder nutzen globale Startstädte. Zuerst OSM, dann Stadt-Fallback.', citiesDefault: 'Stadt wählen', filtersTitle: 'Kinderprofil', intentTitle: 'Stimmung heute', radius: 'Suchradius', resultsTitle: 'Sortierte Familien-Tipps', searching: 'Suche…', ideas: 'Ideen',
-    noticeLive: 'Live-OpenStreetMap-Ergebnisse nach Kinderfit, Entfernung und Familiensignalen sortiert.', noticeFallback: 'Vorbereitete familienfreundliche Tipps für die gewählte Stadt. Bitte den Standort final auf der Karte prüfen.', noticeGeoNo: 'Browser-Geolocation nicht verfügbar; Stadtsuche bleibt aktiv.', noticeGeoUse: 'Warten auf Standortfreigabe…', noticeGeoReady: 'Standort erhalten. Geschätzte Familien-Tipps in der Nähe werden vorbereitet; bitte vor dem Losgehen die Karte prüfen.', noticeGeoErr: 'Standort nicht verfügbar. Bitte Stadt eingeben.', emptyTitle: 'Noch keine genauen Treffer', emptyBody: 'Radius erweitern, Alle wählen oder eine Stadt nutzen.', loadingTitle: 'Kinderfreundliche Orte werden gesucht…', loadingBody: 'Stadt, Filter und lokale Vorschläge werden geprüft.', map: 'Karte öffnen', directions: 'Route starten', google: 'In Google öffnen', rainy: 'Drinnen', whyPick: 'Warum passend', confidence: 'Vertrauen', scoreMix: 'Score', liveGoogle: 'Live Google', openNow: 'Jetzt geöffnet', showResults: 'Tipps zeigen', practical: 'Praktische Hinweise', ratingPending: 'Google-Bewertung ausstehend', reviews: 'Bewertungen', points: 'Pkt.', checkMap: 'Standort auf Karte prüfen', currentLocationLabel: 'Aktueller Standort', confidenceHigh: 'hoch', confidenceMedium: 'mittel', confidenceStarter: 'Startwert',
+    noticeLive: 'Live-OpenStreetMap-Ergebnisse nach Kinderfit, Entfernung und Familiensignalen sortiert.', noticeFallback: 'Vorbereitete familienfreundliche Tipps für die gewählte Stadt. Bitte den Standort final auf der Karte prüfen.', noticeGeoNo: 'Browser-Geolocation nicht verfügbar; Stadtsuche bleibt aktiv.', noticeGeoUse: 'Warten auf Standortfreigabe…', noticeGeoReady: 'Standort erhalten. Benannte Orte in der Nähe und Stadt-Backups werden vorbereitet.', noticeGeoLowAccuracy: 'Browser-Standort ist nicht genau genug. Präzisen Standort aktivieren oder Stadt wählen.', noticeGeoErr: 'Standort nicht verfügbar. Bitte Stadt eingeben.', emptyTitle: 'Noch keine genauen Treffer', emptyBody: 'Radius erweitern, Alle wählen oder eine Stadt nutzen.', loadingTitle: 'Kinderfreundliche Orte werden gesucht…', loadingBody: 'Stadt, Filter und lokale Vorschläge werden geprüft.', map: 'Karte öffnen', directions: 'Route starten', google: 'In Google öffnen', rainy: 'Drinnen', whyPick: 'Warum passend', confidence: 'Vertrauen', scoreMix: 'Score', liveGoogle: 'Live Google', openNow: 'Jetzt geöffnet', showResults: 'Tipps zeigen', practical: 'Praktische Hinweise', ratingPending: 'Google-Bewertung ausstehend', reviews: 'Bewertungen', points: 'Pkt.', checkMap: 'Standort auf Karte prüfen', currentLocationLabel: 'Aktueller Standort', confidenceHigh: 'hoch', confidenceMedium: 'mittel', confidenceStarter: 'Startwert',
   },
 };
 
@@ -68,6 +69,7 @@ function App() {
   const [status, setStatus] = useState('idle');
   const [activeTrendIndex, setActiveTrendIndex] = useState(0);
   const [notice, setNotice] = useState(COPY[DEFAULT_LANGUAGE].noticeFallback);
+  const [geoNoticeOverride, setGeoNoticeOverride] = useState('');
 
   const t = COPY[lang];
   const selectedCountry = useMemo(() => COUNTRIES.find((item) => item.id === country) || COUNTRIES[0], [country]);
@@ -118,7 +120,8 @@ function App() {
         if (cancelled) return;
         setPlaces(results);
         setStatus(results.length ? 'success' : 'empty');
-        setNotice(coords ? t.noticeGeoReady : (results.some((place) => place.source?.toLowerCase().includes('fallback') || place.source?.toLowerCase().includes('seed')) ? t.noticeFallback : t.noticeLive));
+        if (geoNoticeOverride) setNotice(geoNoticeOverride);
+        else setNotice(coords ? t.noticeGeoReady : (results.some((place) => place.source?.toLowerCase().includes('fallback') || place.source?.toLowerCase().includes('seed')) ? t.noticeFallback : t.noticeLive));
       } catch (error) {
         if (cancelled) return;
         setStatus('error');
@@ -127,18 +130,19 @@ function App() {
     }
     runSearch();
     return () => { cancelled = true; };
-  }, [age, intent, category, coords, radiusKm, submittedLocation, t.noticeFallback, t.noticeLive, t.noticeGeoReady, t.noticeGeoErr]);
+  }, [age, intent, category, coords, radiusKm, submittedLocation, geoNoticeOverride, t.noticeFallback, t.noticeLive, t.noticeGeoReady, t.noticeGeoErr]);
 
   function submitSearch() {
     const nextLocation = location.trim() || selectedCountry.defaultCity || defaultCountry.defaultCity;
     const matchedCountry = COUNTRIES.find((item) => item.cities.some((city) => city.toLowerCase() === nextLocation.toLowerCase()) || item.defaultCity.toLowerCase() === nextLocation.toLowerCase());
     if (matchedCountry) setCountry(matchedCountry.id);
+    setGeoNoticeOverride('');
     setCoords(null);
     setSubmittedLocation(nextLocation);
     window.setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
   }
   function handleSubmit(event) { event.preventDefault(); submitSearch(); }
-  function pickCity(city) { if (!city) return; setLocation(city); setSubmittedLocation(city); setCoords(null); }
+  function pickCity(city) { if (!city) return; setGeoNoticeOverride(''); setLocation(city); setSubmittedLocation(city); setCoords(null); }
   function changeCountry(nextCountryId) {
     const nextCountry = COUNTRIES.find((item) => item.id === nextCountryId) || COUNTRIES[0];
     setCountry(nextCountry.id);
@@ -155,10 +159,32 @@ function App() {
   function useCurrentLocation() {
     if (!navigator.geolocation) { setNotice(t.noticeGeoNo); return; }
     setStatus('loading');
+    setGeoNoticeOverride('');
     setNotice(t.noticeGeoUse);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const nextCoords = { lat: Number(position.coords.latitude.toFixed(5)), lon: Number(position.coords.longitude.toFixed(5)) };
+        const accuracy = Number(position.coords.accuracy);
+        if (Number.isFinite(accuracy) && accuracy > MAX_TRUSTED_LOCATION_ACCURACY_M) {
+          const approximateCoords = { lat: Number(position.coords.latitude.toFixed(5)), lon: Number(position.coords.longitude.toFixed(5)) };
+          const cityFallback = nearestSupportedCityForCoords(approximateCoords);
+          setStatus('loading');
+          setCoords(null);
+          if (cityFallback !== 'nearby') {
+            setLocation(cityFallback);
+            setSubmittedLocation(cityFallback);
+            const matchedCountry = COUNTRIES.find((item) => item.cities.includes(cityFallback) || item.defaultCity === cityFallback);
+            if (matchedCountry) setCountry(matchedCountry.id);
+          }
+          const lowAccuracyNotice = `${t.noticeGeoLowAccuracy} (±${Math.round(accuracy)} m${cityFallback !== 'nearby' ? ` · ${cityFallback}` : ''})`;
+          setGeoNoticeOverride(lowAccuracyNotice);
+          setNotice(lowAccuracyNotice);
+          return;
+        }
+        const nextCoords = {
+          lat: Number(position.coords.latitude.toFixed(5)),
+          lon: Number(position.coords.longitude.toFixed(5)),
+          accuracy: Number.isFinite(accuracy) ? Math.round(accuracy) : null,
+        };
         setCoords(nextCoords); setSubmittedLocation(t.currentLocationLabel); setLocation(t.currentLocationLabel); setNotice(t.noticeGeoReady);
       },
       () => { setStatus('error'); setNotice(t.noticeGeoErr); },
@@ -233,7 +259,7 @@ function App() {
       </section>
 
       <section className="results-section" ref={resultsRef}>
-        <div className="results-heading"><div><p className="kicker">{coords ? `${coords.lat}, ${coords.lon}` : submittedLocation}</p><h2>{t.resultsTitle}</h2></div><span className="result-count">{isLoading ? t.searching : `${places.length} ${t.ideas}`}</span></div>
+        <div className="results-heading"><div><p className="kicker">{coords ? `${coords.lat}, ${coords.lon}${coords.accuracy ? ` · ±${coords.accuracy} m` : ''}` : submittedLocation}</p><h2>{t.resultsTitle}</h2></div><span className="result-count">{isLoading ? t.searching : `${places.length} ${t.ideas}`}</span></div>
         <div className="notice" role={status === 'error' ? 'alert' : 'status'}>{status === 'error' ? <Umbrella size={18} /> : <Compass size={18} />}<span>{notice}</span></div>
         {isLoading && <div className="state-card"><Loader2 className="spin" size={28} /><h3>{t.loadingTitle}</h3><p>{t.loadingBody}</p></div>}
         {status === 'empty' && <div className="state-card"><Telescope size={28} /><h3>{t.emptyTitle}</h3><p>{t.emptyBody}</p></div>}

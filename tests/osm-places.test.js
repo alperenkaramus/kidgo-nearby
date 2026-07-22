@@ -18,6 +18,7 @@ function makeOverpassFetch(assertRequest) {
       async json() {
         return {
           elements: [
+            { type: 'node', id: 0, lat: 40.1841, lon: 29.0564, tags: { leisure: 'playground' } },
             { type: 'node', id: 1, lat: 40.1923, lon: 29.0644, tags: { name: 'Hüdavendigar Kent Parkı Oyun Alanı', leisure: 'playground', fee: 'no' } },
             { type: 'node', id: 2, lat: 40.2522, lon: 29.0575, tags: { name: 'Bursa Bilim ve Teknoloji Merkezi', tourism: 'museum', toilets: 'yes' } },
           ],
@@ -39,6 +40,7 @@ test('OSM proxy returns real named nearby Bursa places with map coordinates', as
   assert.ok(places.length >= 2);
   assert.equal(places[0].source, 'osm');
   assert.ok(places.some((place) => /Hüdavendigar|Bursa Bilim/i.test(place.name)));
+  assert.ok(!places.slice(0, 6).some((place) => /nearby$/i.test(place.name)), 'generated unnamed OSM results should not lead Bursa current-location results');
   assert.ok(places.every((place) => place.mapsUrl?.startsWith('https://www.google.com/maps/search/')));
   assert.ok(places.every((place) => Number.isFinite(place.distanceM)));
 });

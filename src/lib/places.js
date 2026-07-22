@@ -4,8 +4,8 @@ import { searchFamilyPlaces } from './geodata/places.js';
 import { enrichUiPlacesWithGoogle } from './googlePlaces.js';
 import { fetchNearbyOsmPlaces } from './nearbyOsm.js';
 
-export const DEFAULT_LANGUAGE = 'en';
-export const DEFAULT_COUNTRY = 'US';
+export const DEFAULT_LANGUAGE = 'tr';
+export const DEFAULT_COUNTRY = 'TR';
 
 export const LANGUAGES = [
   { id: 'en', label: 'EN', name: 'English' },
@@ -180,7 +180,7 @@ const CURRENT_LOCATION_FALLBACK_CITIES = Object.freeze([
   { city: 'Dubai', lat: 25.2048, lon: 55.2708 },
 ]);
 
-function fallbackCityForCoords(coords) {
+export function nearestSupportedCityForCoords(coords) {
   if (!coords?.lat || !coords?.lon) return 'nearby';
   const nearest = CURRENT_LOCATION_FALLBACK_CITIES
     .map((item) => ({ ...item, distanceM: distanceMeters(coords.lat, coords.lon, item.lat, item.lon) }))
@@ -189,7 +189,7 @@ function fallbackCityForCoords(coords) {
 }
 
 export async function searchPlaces({ location = 'Istanbul', coords = null, age = '4', category = 'all', radiusKm = 5, intent = 'quick' } = {}) {
-  const fallbackCity = coords ? fallbackCityForCoords(coords) : location;
+  const fallbackCity = coords ? nearestSupportedCityForCoords(coords) : location;
   const liveNearbyPlaces = coords ? await fetchNearbyOsmPlaces({ coords, city: fallbackCity, age, intent, category, radiusKm }) : [];
   const places = liveNearbyPlaces.length ? liveNearbyPlaces : await searchFamilyPlaces({
     location: coords ? { lat: coords.lat, lon: coords.lon, label: 'Current location' } : undefined,

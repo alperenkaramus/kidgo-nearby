@@ -15,8 +15,8 @@ import {
 } from '../src/lib/places.js';
 import { getFallbackPlaces } from '../src/lib/geodata/index.js';
 
-assert.equal(DEFAULT_LANGUAGE, 'en', 'app default language is English');
-assert.equal(DEFAULT_COUNTRY, 'US', 'default country is abroad-first/global');
+assert.equal(DEFAULT_LANGUAGE, 'tr', 'app default language is Turkish for Turkey-first launch');
+assert.equal(DEFAULT_COUNTRY, 'TR', 'default country is Turkey for local launch');
 assert.deepEqual(LANGUAGES.map((item) => item.id), ['en', 'tr', 'ru', 'de'], 'English default + Turkish/Russian/German switch exists');
 assert.deepEqual(INTENTS.map((item) => item.id), ['quick', 'rainy', 'free', 'learning', 'active', 'foodBreak'], 'activity mood selector covers practical parent contexts');
 assert.ok(INTENTS.every((item) => item.labels.en && item.labels.tr && item.helpers.en && item.helpers.tr), 'activity moods have translated labels and helper copy');
@@ -31,9 +31,9 @@ assert.ok(TRENDING_TURKEY_SEARCHES.every((item) => item.labels.tr && item.labels
 
 const appSource = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8');
 const placesSource = await readFile(new URL('../src/lib/places.js', import.meta.url), 'utf8');
-assert.match(appSource, /useState\(DEFAULT_LANGUAGE\)/, 'React app initializes language from English default constant');
+assert.match(appSource, /useState\(DEFAULT_LANGUAGE\)/, 'React app initializes language from default constant');
 assert.match(appSource, /<select id="country"/, 'React app renders a country selector');
-assert.ok(!appSource.includes("useState('tr')"), 'React app no longer hardcodes Turkish default');
+assert.ok(!appSource.includes("useState('en')") && !appSource.includes("useState('tr')"), 'React app does not hardcode language default');
 
 const results = await searchPlaces({
   location: 'Diyarbakır',
@@ -71,7 +71,7 @@ const currentLocationFallback = getFallbackPlaces('Bursa', { lat: 40.1885, lon: 
 assert.ok(currentLocationFallback.length >= 4, 'Bursa current-location fallback uses curated Bursa cards around browser coordinates');
 assert.ok(currentLocationFallback.some((place) => /bursa|hüdavendigar|botanik|bilim/i.test(place.name)), 'Bursa current-location fallback has real local place names');
 assert.ok(currentLocationFallback.every((place) => Number.isFinite(place.distanceM)), 'Bursa current-location fallback cards include distance from provided coordinates');
-assert.match(placesSource, /fallbackCityForCoords/, 'browser geolocation falls back to nearest curated city instead of generic nearby labels');
+assert.match(placesSource, /nearestSupportedCityForCoords/, 'browser geolocation falls back to nearest curated city instead of generic nearby labels');
 assert.match(placesSource, /fetchNearbyOsmPlaces/, 'browser geolocation attempts live nearby OSM through the serverless proxy before fallback');
 assert.match(appSource, /noticeGeoReady/, 'browser geolocation success has a clear ready notice instead of staying on permission-waiting copy');
 
