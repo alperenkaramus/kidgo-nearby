@@ -1,193 +1,70 @@
-import { describe, it, expect, beforeEach, vi } from 'node:test';
-import { searchPlaces, COUNTRIES, DEFAULT_LANGUAGE, DEFAULT_COUNTRY } from '../src/lib/places.js';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+import {
+  CATEGORIES,
+  COUNTRIES,
+  DEFAULT_COUNTRY,
+  DEFAULT_LANGUAGE,
+  INTENTS,
+  LANGUAGES,
+  resolveInitialSearchSelection,
+  searchPlaces,
+} from '../src/lib/places.js';
 
-// Mock the geodata functions
-vi.mock('../src/lib/geodata/places.js', () => ({
-  searchFamilyPlaces: vi.fn(),
-}));
-
-vi.mock('../src/lib/nearbyOsm.js', () => ({
-  fetchNearbyOsmPlaces: vi.fn(),
-}));
-
-vi.mock('../src/lib/googlePlaces.js', () => ({
-  enrichUiPlacesWithGoogle: vi.fn((places) => places),
-}));
-
-vi.mock('../src/lib/geodata/geo.js', () => ({
-  distanceMeters: vi.fn(() => 1000),
-}));
+const localeIds = LANGUAGES.map((language) => language.id);
 
 describe('places library', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  it('uses the intended Turkish launch defaults', () => {
+    assert.equal(DEFAULT_LANGUAGE, 'tr');
+    assert.equal(DEFAULT_COUNTRY, 'TR');
   });
 
-  describe('searchPlaces', () => {
-    it('should return empty array when no places found', async () => {
-      // Mock dependencies to return empty results
-      const { fetchNearbyOsmPlaces } = await import('../src/lib/nearbyOsm.js');
-      const { searchFamilyPlaces } = await import('../src/lib/geodata/places.js');
-      const { enrichUiPlacesWithGoogle } = await import('../src/lib/googlePlaces.js');
-      
-      fetchNearbyOsmPlaces.mockResolvedValue([]);
-      searchFamilyPlaces.mockResolvedValue([]);
-      enrichUiPlacesWithGoogle.mockImplementation((places) => places);
+  it('opens localized SEO landing-page CTAs with the requested city and language', () => {
+    assert.deepEqual(resolveInitialSearchSelection('?city=London&lang=ru'), { language: 'ru', country: 'GB', city: 'London' });
+    assert.deepEqual(resolveInitialSearchSelection('?city=munich&lang=de'), { language: 'de', country: 'DE', city: 'Munich' });
+    assert.deepEqual(resolveInitialSearchSelection('?city=unknown&lang=xx'), { language: 'tr', country: 'TR', city: 'Istanbul' });
+  });
 
-      const result = await searchPlaces({
-        location: 'NonExistentCity',
-        coords: null,
-        age: '4',
-        category: 'all',
-        radiusKm: 5,
-        intent: 'quick'
-      });
+  it('provides complete EN/TR/RU/DE labels for countries, categories and intents', () => {
+    assert.deepEqual(localeIds, ['en', 'tr', 'ru', 'de']);
+    for (const item of [...COUNTRIES, ...CATEGORIES, ...INTENTS]) {
+      for (const locale of localeIds) {
+        assert.equal(typeof item.labels?.[locale], 'string', `${item.id} lacks ${locale}`);
+        assert.ok(item.labels[locale].trim().length > 0, `${item.id} has an empty ${locale} label`);
+      }
+    }
+  });
 
-      expect(result).toEqual([]);
-      expect(fetchNearbyOsmPlaces).toHaveBeenCalled();
-      expect(searchFamilyPlaces).toHaveBeenCalled();
-      expect(enrichUiPlacesWithGoogle).toHaveBeenCalledWith([]);
+  it('contains the default city inside every country city list', () => {
+    for (const country of COUNTRIES) {
+      assert.ok(country.cities.includes(country.defaultCity), `${country.id} lacks default city ${country.defaultCity}`);
+    }
+  });
+
+  it('returns deterministic city fallback results without paid API flags', async () => {
+    const results = await searchPlaces({
+      location: 'Istanbul',
+      coords: null,
+      age: '4',
+      category: 'park',
+      radiusKm: 5,
+      intent: 'quick',
     });
+    assert.ok(results.length > 0);
+    assert.ok(results.every((place) => place.category === 'park'));
+    assert.ok(results.every((place) => typeof place.name === 'string' && place.name.length > 0));
+  });
 
-    it('should use OSM places when coordinates are provided', async () => {
-      const mockCoords = { lat: 41.0082, lon: 28.9784 };
-      const mockOsmPlaces = [
-        { id: '1', name: 'Test Park', lat: 41.0, lon: 29.0, category: 'park', familyScore: 80 }
-      ];
-      
-      const { fetchNearbyOsmPlaces } = await import('../src/lib/nearbyOsm.js');
-      const { searchFamilyPlaces } = await import('../src/lib/geodata/places.js');
-      const { enrichUiPlacesWithGoogle } = await import('../src/lib/googlePlaces.js');
-      
-      fetchNearbyOsmPlaces.mockResolvedValue(mockOsmPlaces);
-      searchFamilyPlaces.mockResolvedValue([]);
-      enrichUiPlacesWithGoogle.mockImplementation((places) => places);
-
-      const result = await searchPlaces({
-        location: 'Istanbul',
-        coords: mockCoords,
-        age: '4',
-        category: 'park',
-        radiusKm: 5,
-        intent: 'quick'
-      });
-
-      expect(fetchNearbyOsmPlaces).toHaveBeenCalledWith({
-        coords: mockCoords,
-        city: 'Istanbul',
-        age: '4',
-        intent: 'quick',
-        category: 'park',
-        radiusKm: 5
-      });
-      expect(result.length).toBeGreaterThan(0);
+  it('applies category, age and radius inputs to real fallback results', async () => {
+    const museumResults = await searchPlaces({
+      location: 'London',
+      age: '7',
+      category: 'museum',
+      radiusKm: 10,
+      intent: 'learning',
     });
-
-    it('should fallback to seed data when no OSM places found', async () => {
-      const mockCoords = { lat: 41.0082, lon: 28.9784 };
-      const mockSeedPlaces = [
-        { id: '2', name: 'Seed Park', lat: 41.0, lon: 29.0, category: 'park', score: 75 }
-      ];
-      
-      const { fetchNearbyOsmPlaces } = await import('../src/lib/nearbyOsm.js');
-      const { searchFamilyPlaces } = await import('../src/lib/geodata/places.js');
-      const { enrichUiPlacesWithGoogle } = await import('../src/lib/googlePlaces.js');
-      
-      fetchNearbyOsmPlaces.mockResolvedValue([]);
-      searchFamilyPlaces.mockResolvedValue(mockSeedPlaces);
-      enrichUiPlacesWithGoogle.mockImplementation((places) => places);
-
-      const result = await searchPlaces({
-        location: 'Istanbul',
-        coords: mockCoords,
-        age: '4',
-        category: 'park',
-        radiusKm: 5,
-        intent: 'quick'
-      });
-
-      expect(searchFamilyPlaces).toHaveBeenCalledWith({
-        location: { lat: mockCoords.lat, lon: mockCoords.lon, label: 'Current location' },
-        query: undefined,
-        city: 'Istanbul',
-        category: 'park',
-        age: 4,
-        intent: 'quick',
-        radius: 5000,
-        limit: 36,
-        fetchImpl: expect.any(Function),
-        useFallback: true
-      });
-      expect(result.length).toBeGreaterThan(0);
-    });
-
-    it('should respect category filter', async () => {
-      const { searchFamilyPlaces } = await import('../src/lib/geodata/places.js');
-      const { enrichUiPlacesWithGoogle } = await import('../src/lib/googlePlaces.js');
-      
-      searchFamilyPlaces.mockResolvedValue([]);
-      enrichUiPlacesWithGoogle.mockImplementation((places) => places);
-
-      await searchPlaces({
-        location: 'Istanbul',
-        coords: null,
-        age: '4',
-        category: 'museum',
-        radiusKm: 5,
-        intent: 'quick'
-      });
-
-      expect(searchFamilyPlaces).toHaveBeenCalledWith(
-        expect.objectContaining({
-          category: 'museum'
-        })
-      );
-    });
-
-    it('should convert age string to number', async () => {
-      const { searchFamilyPlaces } = await import('../src/lib/geodata/places.js');
-      const { enrichUiPlacesWithGoogle } = await import('../src/lib/googlePlaces.js');
-      
-      searchFamilyPlaces.mockResolvedValue([]);
-      enrichUiPlacesWithGoogle.mockImplementation((places) => places);
-
-      await searchPlaces({
-        location: 'Istanbul',
-        coords: null,
-        age: '7',
-        category: 'all',
-        radiusKm: 5,
-        intent: 'learning'
-      });
-
-      expect(searchFamilyPlaces).toHaveBeenCalledWith(
-        expect.objectContaining({
-          age: 7
-        })
-      );
-    });
-
-    it('should convert radiusKm to meters', async () => {
-      const { searchFamilyPlaces } = await import('../src/lib/geodata/places.js');
-      const { enrichUiPlacesWithGoogle } = await import('../src/lib/googlePlaces.js');
-      
-      searchFamilyPlaces.mockResolvedValue([]);
-      enrichUiPlacesWithGoogle.mockImplementation((places) => places);
-
-      await searchPlaces({
-        location: 'Istanbul',
-        coords: null,
-        age: '4',
-        category: 'all',
-        radiusKm: 10,
-        intent: 'quick'
-      });
-
-      expect(searchFamilyPlaces).toHaveBeenCalledWith(
-        expect.objectContaining({
-          radius: 10000 // 10 km in meters
-        })
-      );
-    });
+    assert.ok(museumResults.length > 0);
+    assert.ok(museumResults.every((place) => place.category === 'museum'));
+    assert.ok(museumResults.every((place) => Number.isFinite(place.score)));
   });
 });

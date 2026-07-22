@@ -9,7 +9,7 @@ Why this name:
 - Better for app/PWA/store expansion than a purely generic SEO domain.
 - Still close to search intent phrases like “kids near me”, “kid-friendly places nearby”, and “things to do with kids nearby”.
 
-DNS check from the server showed `kidgonearby.com` currently has no DNS resolution, but this is not a guaranteed registrar availability check. Confirm and buy through a registrar before announcing it.
+Production is live at `https://kidgonearby.com`; use it as the only canonical host.
 
 ## Domain candidates checked
 
@@ -43,8 +43,14 @@ Resolved / likely taken:
 - `WebApplication` JSON-LD structured data.
 - `public/robots.txt`.
 - `public/sitemap.xml`.
+- Deterministic multilingual page generation and validation via `npm run seo:check`.
+- English, Turkish, Russian and German hubs with reciprocal `hreflang` and `x-default`.
+- Four intent families (general, indoor, rainy-day and free) for priority global cities.
+- Localized `WebPage`, `FAQPage`, `BreadcrumbList` and `ItemList` structured data.
+- Permanent redirects from legacy `/en`, `/tr`, `/ru` and `/de` roots.
+- Real 404 behavior instead of catch-all SPA soft-404 responses.
 
-## Next SEO upgrades after deploy
+## Next operational SEO steps
 
 1. Add real public URL to Google Search Console.
 2. Submit sitemap: `https://kidgonearby.com/sitemap.xml`.
@@ -54,9 +60,6 @@ Resolved / likely taken:
    - activity mood switch
    - Google Maps click
    - directions click
-4. Add indexable landing pages later, not now:
-   - `/things-to-do-with-kids/new-york`
-   - `/things-to-do-with-kids/london`
-   - `/things-to-do-with-kids/paris`
-   - `/cocukla-gezilecek-yerler/istanbul`
-5. Add privacy policy before broader ads/app-store launch because location and Google Places are involved.
+4. Monitor indexing, duplicate-canonical and hreflang reports after each page expansion.
+5. Expand city coverage only with useful, city-specific planning guidance; avoid thin doorway pages.
+6. Add a privacy policy before broader ads/app-store launch because location is involved.

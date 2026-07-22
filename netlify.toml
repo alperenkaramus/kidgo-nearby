@@ -9,9 +9,24 @@
   status = 200
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+  from = "/en"
+  to = "/things-to-do-with-kids/"
+  status = 301
+
+[[redirects]]
+  from = "/tr"
+  to = "/cocukla-gezilecek-yerler/"
+  status = 301
+
+[[redirects]]
+  from = "/ru"
+  to = "/ru/kuda-poiti-s-detmi/"
+  status = 301
+
+[[redirects]]
+  from = "/de"
+  to = "/de/aktivitaeten-mit-kindern/"
+  status = 301
 
 [[headers]]
   for = "/assets/*"

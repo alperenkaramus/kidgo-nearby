@@ -7,6 +7,21 @@ import { fetchNearbyOsmPlaces } from './nearbyOsm.js';
 export const DEFAULT_LANGUAGE = 'tr';
 export const DEFAULT_COUNTRY = 'TR';
 
+export function resolveInitialSearchSelection(search = '') {
+  const params = new URLSearchParams(search);
+  const requestedLanguage = params.get('lang');
+  const language = ['en', 'tr', 'ru', 'de'].includes(requestedLanguage) ? requestedLanguage : DEFAULT_LANGUAGE;
+  const requestedCity = params.get('city')?.trim();
+  const matchedCountry = requestedCity
+    ? COUNTRIES.find((item) => item.cities.some((city) => city.toLocaleLowerCase('en') === requestedCity.toLocaleLowerCase('en')))
+    : null;
+  const country = matchedCountry || COUNTRIES.find((item) => item.id === DEFAULT_COUNTRY) || COUNTRIES[0];
+  const city = matchedCountry
+    ? matchedCountry.cities.find((item) => item.toLocaleLowerCase('en') === requestedCity.toLocaleLowerCase('en'))
+    : country.defaultCity;
+  return { language, country: country.id, city };
+}
+
 export const LANGUAGES = [
   { id: 'en', label: 'EN', name: 'English' },
   { id: 'tr', label: 'TR', name: 'Türkçe' },

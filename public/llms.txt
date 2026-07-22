@@ -1,26 +1,19 @@
 # KidGo Nearby
 
-KidGo Nearby helps families find kid-friendly places nearby, including playgrounds, parks, museums, aquariums, indoor activities, family cafés, libraries, zoos, rainy-day backups, free family activities and quick city plans.
+KidGo Nearby is a multilingual family activity planner for finding kid-friendly places, indoor backups, rainy-day options and free ideas.
 
 Primary URL: https://kidgonearby.com/
 Sitemap: https://kidgonearby.com/sitemap.xml
 Robots: https://kidgonearby.com/robots.txt
+Languages: English, Türkçe, Русский, Deutsch
 
-## High-value hubs
-- https://kidgonearby.com/things-to-do-with-kids/
-- https://kidgonearby.com/cocukla-gezilecek-yerler/
+## Language hubs
+- English: https://kidgonearby.com/things-to-do-with-kids/
+- Türkçe: https://kidgonearby.com/cocukla-gezilecek-yerler/
+- Русский: https://kidgonearby.com/ru/kuda-poiti-s-detmi/
+- Deutsch: https://kidgonearby.com/de/aktivitaeten-mit-kindern/
 
-## High-value page examples
-- https://kidgonearby.com/things-to-do-with-kids/london/
-- https://kidgonearby.com/indoor-activities-with-kids/london/
-- https://kidgonearby.com/rainy-day-activities-with-kids/new-york/
-- https://kidgonearby.com/free-things-to-do-with-kids/paris/
-- https://kidgonearby.com/cocukla-gezilecek-yerler/istanbul/
-- https://kidgonearby.com/kapali-alan-cocuk-aktiviteleri/istanbul/
-- https://kidgonearby.com/ucretsiz-cocukla-gezilecek-yerler/ankara/
+## Guidance
+KidGo Nearby is a planning aid. Families should verify current opening hours, prices, routes, age suitability and venue information before visiting.
 
-## Topics
-kid-friendly places nearby, things to do with kids, family activities, playgrounds, parks, museums, indoor activities, rainy day activities, free things to do with kids, aquariums, family cafés, family travel, child-friendly city guide, çocukla gezilecek yerler, çocuk dostu mekanlar, kapalı alan çocuk aktiviteleri, yağmurlu havada çocukla ne yapılır
-
-## Suggested citation
-KidGo Nearby — kid-friendly places near you. https://kidgonearby.com/
+Suggested citation: KidGo Nearby — practical family activity and city guides. https://kidgonearby.com/

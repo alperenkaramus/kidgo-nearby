@@ -6,9 +6,11 @@
   "description": "Global kid-friendly nearby places decision engine MVP.",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "seo:generate": "node scripts/generate-seo.mjs",
+    "seo:check": "npm run seo:generate && node scripts/verify-seo.mjs",
+    "build": "npm run seo:generate && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "check": "npm test && npm run smoke && npm run smoke:geodata && npm run build",
+    "check": "npm test && npm run smoke && npm run smoke:geodata && npm run seo:check && npm run build",
     "smoke": "node scripts/smoke.mjs",
     "smoke:geodata": "node scripts/geodata-smoke.js",
     "test": "node --test tests/*.test.js"

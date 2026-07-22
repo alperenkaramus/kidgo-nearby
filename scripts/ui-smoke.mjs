@@ -8,6 +8,7 @@ import {
   LANGUAGES,
   TURKEY_CITIES,
   TRENDING_TURKEY_SEARCHES,
+  resolveInitialSearchSelection,
   searchPlaces,
   getMapUrl,
   getDirectionsUrl,
@@ -17,7 +18,7 @@ import { getFallbackPlaces } from '../src/lib/geodata/index.js';
 
 assert.equal(DEFAULT_LANGUAGE, 'tr', 'app default language is Turkish for Turkey-first launch');
 assert.equal(DEFAULT_COUNTRY, 'TR', 'default country is Turkey for local launch');
-assert.deepEqual(LANGUAGES.map((item) => item.id), ['en', 'tr', 'ru', 'de'], 'English default + Turkish/Russian/German switch exists');
+assert.deepEqual(LANGUAGES.map((item) => item.id), ['en', 'tr', 'ru', 'de'], 'English, Turkish, Russian and German switch exists');
 assert.deepEqual(INTENTS.map((item) => item.id), ['quick', 'rainy', 'free', 'learning', 'active', 'foodBreak'], 'activity mood selector covers practical parent contexts');
 assert.ok(INTENTS.every((item) => item.labels.en && item.labels.tr && item.helpers.en && item.helpers.tr), 'activity moods have translated labels and helper copy');
 assert.ok(LANGUAGES.every((item) => item.label && item.name), 'all languages have UI labels');
@@ -31,9 +32,10 @@ assert.ok(TRENDING_TURKEY_SEARCHES.every((item) => item.labels.tr && item.labels
 
 const appSource = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8');
 const placesSource = await readFile(new URL('../src/lib/places.js', import.meta.url), 'utf8');
-assert.match(appSource, /useState\(DEFAULT_LANGUAGE\)/, 'React app initializes language from default constant');
+assert.match(appSource, /resolveInitialSearchSelection/, 'React app initializes from validated SEO landing-page parameters');
+assert.deepEqual(resolveInitialSearchSelection('?city=London&lang=ru'), { language: 'ru', country: 'GB', city: 'London' }, 'SEO CTA opens the requested city and language');
 assert.match(appSource, /<select id="country"/, 'React app renders a country selector');
-assert.ok(!appSource.includes("useState('en')") && !appSource.includes("useState('tr')"), 'React app does not hardcode language default');
+assert.ok(!appSource.includes("useState('en')") && !appSource.includes("useState('tr')"), 'React app does not hardcode language state');
 
 const results = await searchPlaces({
   location: 'Diyarbakır',

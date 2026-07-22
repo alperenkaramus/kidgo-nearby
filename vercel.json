@@ -10,11 +10,11 @@
       "maxDuration": 15
     }
   },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+  "redirects": [
+    { "source": "/en", "destination": "/things-to-do-with-kids/", "permanent": true },
+    { "source": "/tr", "destination": "/cocukla-gezilecek-yerler/", "permanent": true },
+    { "source": "/ru", "destination": "/ru/kuda-poiti-s-detmi/", "permanent": true },
+    { "source": "/de", "destination": "/de/aktivitaeten-mit-kindern/", "permanent": true }
   ],
   "headers": [
     {

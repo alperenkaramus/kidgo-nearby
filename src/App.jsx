@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Baby, Compass, ExternalLink, Globe2, MapPin, Navigation, Search, Sparkles, Telescope, TrendingUp, Umbrella } from 'lucide-react';
 import useDebounce from './hooks/useDebounce';
 import SkeletonLoader from './components/SkeletonLoader';
-import { AGE_GROUPS, CATEGORIES, COUNTRIES, DEFAULT_COUNTRY, DEFAULT_LANGUAGE, INTENTS, LANGUAGES, TRENDING_TURKEY_SEARCHES, TURKEY_CITIES, getDirectionsUrl, getGoogleSearchUrl, getMapUrl, nearestSupportedCityForCoords, searchPlaces } from './lib/places.js';
+import { AGE_GROUPS, CATEGORIES, COUNTRIES, INTENTS, LANGUAGES, TRENDING_TURKEY_SEARCHES, TURKEY_CITIES, getDirectionsUrl, getGoogleSearchUrl, getMapUrl, nearestSupportedCityForCoords, resolveInitialSearchSelection, searchPlaces } from './lib/places.js';
 import './styles.css';
 
 const radiusOptions = [2, 5, 10, 20];
@@ -56,12 +57,16 @@ CATEGORY_SUMMARIES.de = {
 };
 
 function App() {
-  const defaultCountry = COUNTRIES.find((item) => item.id === DEFAULT_COUNTRY) || COUNTRIES[0];
-  const [lang, setLang] = useState(DEFAULT_LANGUAGE);
+  const initialSelection = useMemo(
+    () => resolveInitialSearchSelection(typeof window === 'undefined' ? '' : window.location.search),
+    [],
+  );
+  const defaultCountry = COUNTRIES.find((item) => item.id === initialSelection.country) || COUNTRIES[0];
+  const [lang, setLang] = useState(initialSelection.language);
   const [country, setCountry] = useState(defaultCountry.id);
-  const [location, setLocation] = useState(defaultCountry.defaultCity);
-  const [submittedLocation, setSubmittedLocation] = useState(defaultCountry.defaultCity);
-  const [debouncedLocation, setDebouncedLocation] = useState(defaultCountry.defaultCity);
+  const [location, setLocation] = useState(initialSelection.city);
+  const [submittedLocation, setSubmittedLocation] = useState(initialSelection.city);
+  const [debouncedLocation, setDebouncedLocation] = useState(initialSelection.city);
   const [coords, setCoords] = useState(null);
   const [age, setAge] = useState('4');
   const [intent, setIntent] = useState('quick');
@@ -70,7 +75,7 @@ function App() {
   const [places, setPlaces] = useState([]);
   const [status, setStatus] = useState('idle');
   const [activeTrendIndex, setActiveTrendIndex] = useState(0);
-  const [notice, setNotice] = useState(COPY[DEFAULT_LANGUAGE].noticeFallback);
+  const [notice, setNotice] = useState(COPY[initialSelection.language].noticeFallback);
   const [geoNoticeOverride, setGeoNoticeOverride] = useState('');
 
   const t = COPY[lang];
