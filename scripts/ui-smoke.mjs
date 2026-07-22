@@ -67,11 +67,12 @@ const genericGlobal = getFallbackPlaces('Lisbon');
 assert.ok(genericGlobal.length >= 8, 'generic abroad fallback produces a richer option set');
 assert.ok(genericGlobal.every((place) => /lisbon/i.test(place.name)), 'generic global fallback is city-labeled');
 
-const currentLocationFallback = getFallbackPlaces('nearby', { lat: 41.0082, lon: 28.9784 });
-assert.ok(currentLocationFallback.length >= 8, 'current-location fallback produces nearby cards around browser coordinates');
-assert.ok(currentLocationFallback.every((place) => /nearby/i.test(place.name)), 'current-location fallback uses nearby labels, not the literal Current location field value');
-assert.ok(currentLocationFallback.every((place) => Number.isFinite(place.distanceM) && place.distanceM < 2500), 'current-location fallback cards are close to provided coordinates');
-assert.match(placesSource, /city: coords \? 'nearby' : undefined/, 'browser geolocation searches use a stable nearby fallback key instead of localized Current location text');
+const currentLocationFallback = getFallbackPlaces('Bursa', { lat: 40.1885, lon: 29.0610 });
+assert.ok(currentLocationFallback.length >= 4, 'Bursa current-location fallback uses curated Bursa cards around browser coordinates');
+assert.ok(currentLocationFallback.some((place) => /bursa|hüdavendigar|botanik|bilim/i.test(place.name)), 'Bursa current-location fallback has real local place names');
+assert.ok(currentLocationFallback.every((place) => Number.isFinite(place.distanceM)), 'Bursa current-location fallback cards include distance from provided coordinates');
+assert.match(placesSource, /fallbackCityForCoords/, 'browser geolocation falls back to nearest curated city instead of generic nearby labels');
+assert.match(placesSource, /fetchNearbyOsmPlaces/, 'browser geolocation attempts live nearby OSM through the serverless proxy before fallback');
 assert.match(appSource, /noticeGeoReady/, 'browser geolocation success has a clear ready notice instead of staying on permission-waiting copy');
 
-console.log(`ui-smoke ok: ${results.length} Diyarbakır places, ${globalResults.length} Paris places, ${genericGlobal.length} Lisbon fallback places, ${currentLocationFallback.length} current-location fallback places, ${TURKEY_CITIES.length} TR cities, ${LANGUAGES.length} languages, ${COUNTRIES.length} countries`);
+console.log(`ui-smoke ok: ${results.length} Diyarbakır places, ${globalResults.length} Paris places, ${genericGlobal.length} Lisbon fallback places, ${currentLocationFallback.length} Bursa current-location fallback places, ${TURKEY_CITIES.length} TR cities, ${LANGUAGES.length} languages, ${COUNTRIES.length} countries`);

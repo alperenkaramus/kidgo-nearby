@@ -5,6 +5,9 @@
   "functions": {
     "api/google-places.mjs": {
       "maxDuration": 10
+    },
+    "api/osm-places.mjs": {
+      "maxDuration": 15
     }
   },
   "rewrites": [

@@ -1,6 +1,8 @@
 import { CATEGORY_LABELS } from './geodata/categories.js';
+import { distanceMeters } from './geodata/geo.js';
 import { searchFamilyPlaces } from './geodata/places.js';
 import { enrichUiPlacesWithGoogle } from './googlePlaces.js';
+import { fetchNearbyOsmPlaces } from './nearbyOsm.js';
 
 export const DEFAULT_LANGUAGE = 'en';
 export const DEFAULT_COUNTRY = 'US';
@@ -165,11 +167,34 @@ function timeoutFetch(url, options = {}) {
   return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timeout));
 }
 
+const CURRENT_LOCATION_FALLBACK_CITIES = Object.freeze([
+  { city: 'Bursa', lat: 40.1885, lon: 29.0610 },
+  { city: 'Istanbul', lat: 41.0082, lon: 28.9784 },
+  { city: 'Ankara', lat: 39.9334, lon: 32.8597 },
+  { city: 'Izmir', lat: 38.4237, lon: 27.1428 },
+  { city: 'Antalya', lat: 36.8969, lon: 30.7133 },
+  { city: 'London', lat: 51.5072, lon: -0.1276 },
+  { city: 'New York', lat: 40.7128, lon: -74.0060 },
+  { city: 'Paris', lat: 48.8566, lon: 2.3522 },
+  { city: 'Berlin', lat: 52.52, lon: 13.405 },
+  { city: 'Dubai', lat: 25.2048, lon: 55.2708 },
+]);
+
+function fallbackCityForCoords(coords) {
+  if (!coords?.lat || !coords?.lon) return 'nearby';
+  const nearest = CURRENT_LOCATION_FALLBACK_CITIES
+    .map((item) => ({ ...item, distanceM: distanceMeters(coords.lat, coords.lon, item.lat, item.lon) }))
+    .sort((a, b) => a.distanceM - b.distanceM)[0];
+  return nearest && nearest.distanceM <= 50000 ? nearest.city : 'nearby';
+}
+
 export async function searchPlaces({ location = 'Istanbul', coords = null, age = '4', category = 'all', radiusKm = 5, intent = 'quick' } = {}) {
-  const places = await searchFamilyPlaces({
+  const fallbackCity = coords ? fallbackCityForCoords(coords) : location;
+  const liveNearbyPlaces = coords ? await fetchNearbyOsmPlaces({ coords, city: fallbackCity, age, intent, category, radiusKm }) : [];
+  const places = liveNearbyPlaces.length ? liveNearbyPlaces : await searchFamilyPlaces({
     location: coords ? { lat: coords.lat, lon: coords.lon, label: 'Current location' } : undefined,
     query: coords ? undefined : location,
-    city: coords ? 'nearby' : undefined,
+    city: coords ? fallbackCity : undefined,
     category: category === 'all' ? undefined : category,
     age: Number(age),
     intent,
