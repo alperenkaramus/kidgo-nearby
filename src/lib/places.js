@@ -169,7 +169,7 @@ export async function searchPlaces({ location = 'Istanbul', coords = null, age =
   const places = await searchFamilyPlaces({
     location: coords ? { lat: coords.lat, lon: coords.lon, label: 'Current location' } : undefined,
     query: coords ? undefined : location,
-    city: coords ? location : undefined,
+    city: coords ? 'nearby' : undefined,
     category: category === 'all' ? undefined : category,
     age: Number(age),
     intent,

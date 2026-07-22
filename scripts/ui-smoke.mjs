@@ -30,6 +30,7 @@ assert.ok(TRENDING_TURKEY_SEARCHES.length >= 8, 'global city radar includes inte
 assert.ok(TRENDING_TURKEY_SEARCHES.every((item) => item.labels.tr && item.labels.en && item.labels.ru && item.labels.de), 'global trend chips have four-language labels');
 
 const appSource = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8');
+const placesSource = await readFile(new URL('../src/lib/places.js', import.meta.url), 'utf8');
 assert.match(appSource, /useState\(DEFAULT_LANGUAGE\)/, 'React app initializes language from English default constant');
 assert.match(appSource, /<select id="country"/, 'React app renders a country selector');
 assert.ok(!appSource.includes("useState('tr')"), 'React app no longer hardcodes Turkish default');
@@ -66,4 +67,11 @@ const genericGlobal = getFallbackPlaces('Lisbon');
 assert.ok(genericGlobal.length >= 8, 'generic abroad fallback produces a richer option set');
 assert.ok(genericGlobal.every((place) => /lisbon/i.test(place.name)), 'generic global fallback is city-labeled');
 
-console.log(`ui-smoke ok: ${results.length} Diyarbakır places, ${globalResults.length} Paris places, ${genericGlobal.length} Lisbon fallback places, ${TURKEY_CITIES.length} TR cities, ${LANGUAGES.length} languages, ${COUNTRIES.length} countries`);
+const currentLocationFallback = getFallbackPlaces('nearby', { lat: 41.0082, lon: 28.9784 });
+assert.ok(currentLocationFallback.length >= 8, 'current-location fallback produces nearby cards around browser coordinates');
+assert.ok(currentLocationFallback.every((place) => /nearby/i.test(place.name)), 'current-location fallback uses nearby labels, not the literal Current location field value');
+assert.ok(currentLocationFallback.every((place) => Number.isFinite(place.distanceM) && place.distanceM < 2500), 'current-location fallback cards are close to provided coordinates');
+assert.match(placesSource, /city: coords \? 'nearby' : undefined/, 'browser geolocation searches use a stable nearby fallback key instead of localized Current location text');
+assert.match(appSource, /noticeGeoReady/, 'browser geolocation success has a clear ready notice instead of staying on permission-waiting copy');
+
+console.log(`ui-smoke ok: ${results.length} Diyarbakır places, ${globalResults.length} Paris places, ${genericGlobal.length} Lisbon fallback places, ${currentLocationFallback.length} current-location fallback places, ${TURKEY_CITIES.length} TR cities, ${LANGUAGES.length} languages, ${COUNTRIES.length} countries`);
