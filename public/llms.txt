@@ -1,0 +1,27 @@
+# KidGo Nearby
+
+KidGo Nearby helps families find kid-friendly places nearby, including playgrounds, parks, museums, aquariums, indoor activities, family cafés, libraries, zoos, and quick city plans.
+
+Primary URL: https://kidgonearby.com/
+Sitemap: https://kidgonearby.com/sitemap.xml
+Robots: https://kidgonearby.com/robots.txt
+
+## What the product does
+- Ranks nearby family places by child age, activity mood, category, distance, family amenities, and map signals.
+- Supports English, Turkish, Russian, and German UI.
+- Covers global family travel cities and Turkey city discovery.
+- Runs as a free web/PWA-first product. Paid Google Places enrichment is optional and disabled unless explicit server/client flags are enabled.
+
+## High-value pages
+- https://kidgonearby.com/things-to-do-with-kids/istanbul/
+- https://kidgonearby.com/things-to-do-with-kids/london/
+- https://kidgonearby.com/things-to-do-with-kids/new-york/
+- https://kidgonearby.com/things-to-do-with-kids/paris/
+- https://kidgonearby.com/things-to-do-with-kids/dubai/
+- https://kidgonearby.com/cocukla-gezilecek-yerler/istanbul/
+
+## Topics
+kid-friendly places nearby, things to do with kids, family activities, playgrounds, parks, museums, indoor activities, rainy day activities, aquariums, family cafés, family travel, child-friendly city guide, çocukla gezilecek yerler, çocuk dostu mekanlar
+
+## Suggested citation
+KidGo Nearby — kid-friendly places near you. https://kidgonearby.com/

@@ -26,26 +26,51 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "KidGo Nearby",
-        "alternateName": "Geo Adviser",
-        "url": "https://kidgonearby.com/",
-        "applicationCategory": "TravelApplication",
-        "operatingSystem": "Web, iOS, Android",
-        "description": "KidGo Nearby helps families discover kid-friendly places nearby across global cities, including parks, playgrounds, museums, indoor activities, aquariums, family cafés, and quick plans.",
-        "inLanguage": ["en", "tr", "ru", "de"],
-        "isAccessibleForFree": true,
-        "audience": {
-          "@type": "PeopleAudience",
-          "suggestedMinAge": 18
-        },
-        "featureList": [
-          "Kid-friendly nearby place search",
-          "Google Places rating enrichment",
-          "Mood-aware family recommendations",
-          "Global city coverage",
-          "Turkey 81-city coverage",
-          "English, Turkish, Russian, German UI"
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://kidgonearby.com/#organization",
+            "name": "KidGo Nearby",
+            "url": "https://kidgonearby.com/",
+            "logo": "https://kidgonearby.com/favicon.svg"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://kidgonearby.com/#website",
+            "name": "KidGo Nearby",
+            "url": "https://kidgonearby.com/",
+            "publisher": { "@id": "https://kidgonearby.com/#organization" },
+            "inLanguage": ["en", "tr", "ru", "de"],
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://kidgonearby.com/?city={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://kidgonearby.com/#app",
+            "name": "KidGo Nearby",
+            "alternateName": "Kid-friendly places near you",
+            "url": "https://kidgonearby.com/",
+            "applicationCategory": "TravelApplication",
+            "operatingSystem": "Web, iOS, Android",
+            "description": "KidGo Nearby helps families discover kid-friendly places nearby across global cities, including parks, playgrounds, museums, indoor activities, aquariums, family cafés, and quick plans.",
+            "inLanguage": ["en", "tr", "ru", "de"],
+            "isAccessibleForFree": true,
+            "publisher": { "@id": "https://kidgonearby.com/#organization" },
+            "audience": {
+              "@type": "PeopleAudience",
+              "suggestedMinAge": 18
+            },
+            "featureList": [
+              "Kid-friendly nearby place search",
+              "Mood-aware family recommendations",
+              "Global city coverage",
+              "Turkey city coverage",
+              "English, Turkish, Russian, German UI"
+            ]
+          }
         ]
       }
     </script>
